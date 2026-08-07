@@ -1,0 +1,32 @@
+{% extends "base.html" %}{% block content %}
+<div class="container-fluid my-4">
+<div class="d-flex justify-content-between align-items-center mb-4"><h2 class="fw-bold text-primary" data-translate="admin_dash_title">📊 Admin Analytics & Survey Response Dashboard</h2><div><a href="/" class="btn btn-outline-primary me-2" data-translate="return_home">← Return to Home</a><a href="/admin-logout" class="btn btn-outline-danger" data-translate="logout_btn">Logout</a></div></div>
+<div class="row text-center mb-4"><div class="col-md-4 mb-3"><div class="card shadow border-0 p-3"><h6 data-translate="total_respondents">Total Respondents</h6><h2>{{ total_submissions }}</h2></div></div><div class="col-md-4 mb-3"><div class="card shadow border-0 p-3"><h6 data-translate="videos_evaluated">Video Answers Collected</h6><h2>{{ total_submissions * 9 }}</h2></div></div><div class="col-md-4 mb-3"><div class="card shadow border-0 p-3"><h6 data-translate="average_score">Average Quiz Score</h6><h2>{{ avg_score }}%</h2></div></div></div>
+
+<div class="card shadow border-0 p-4 mb-4">
+  <h5 class="fw-bold text-primary" data-translate="warning_evidence_title">Warning-Label Evidence Dashboard</h5>
+  <p class="text-muted" data-translate="warning_evidence_desc">These values summarize whether believability and trust remain after participants are explicitly told that a clip is AI-generated.</p>
+  <div class="row text-center g-3 mb-4">
+    <div class="col-md-3"><div class="card h-100 bg-body-tertiary"><div class="card-body"><h6 data-translate="avg_before_belief">Avg. belief before label</h6><h3>{{ avg_before_belief }}/5</h3></div></div></div>
+    <div class="col-md-3"><div class="card h-100 bg-body-tertiary"><div class="card-body"><h6 data-translate="avg_after_belief">Avg. belief after label</h6><h3>{{ avg_after_belief }}/5</h3></div></div></div>
+    <div class="col-md-3"><div class="card h-100 bg-body-tertiary"><div class="card-body"><h6 data-translate="avg_before_trust">Avg. trust before label</h6><h3>{{ avg_before_trust }}/5</h3></div></div></div>
+    <div class="col-md-3"><div class="card h-100 bg-body-tertiary"><div class="card-body"><h6 data-translate="avg_after_trust">Avg. trust after label</h6><h3>{{ avg_after_trust }}/5</h3></div></div></div>
+  </div>
+  <div class="alert alert-warning"><strong data-translate="continued_belief_rate">Continued-belief rate after an AI label (rating ≥ 3/5):</strong> <span class="fs-5 fw-bold">{{ continued_belief_rate }}%</span><br><small data-translate="continued_belief_note">Use this as descriptive evidence only. It shows residual perceived believability after the label; it does not prove that participants accepted the claim as fact.</small></div>
+  <canvas id="warningChart" style="max-height:330px"></canvas>
+</div>
+
+<div class="card shadow border-0 p-4 mb-4"><h5 class="fw-bold text-primary" data-translate="answer_distribution">Real vs AI-Generated Participant Answers</h5><canvas id="answerChart" style="max-height:330px"></canvas></div>
+<div class="card shadow border-0 p-4"><h4 class="fw-bold mb-3" data-translate="submissions_table_title">Complete Survey Submissions</h4><div class="table-responsive" style="max-height:560px"><table class="table table-striped table-bordered table-hover align-middle small"><thead class="table-dark sticky-top"><tr>{% for h in headers %}<th data-header-key="{{ h }}">{{ h }}</th>{% endfor %}</tr></thead><tbody>{% for row in responses %}<tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>{% else %}<tr><td colspan="{{ headers|length if headers else 1 }}" class="text-center text-muted py-4" data-translate="no_responses">No survey responses recorded yet.</td></tr>{% endfor %}</tbody></table></div></div>
+</div>
+<script>
+let answerChart, warningChart;
+function renderAdminCharts(lang){
+  const d=translations[lang]||translations.en;
+  if(answerChart)answerChart.destroy();
+  answerChart=new Chart(document.getElementById('answerChart'),{type:'bar',data:{labels:[d.real_answers,d.ai_answers],datasets:[{label:d.videos_evaluated,data:[{{ real_answers }},{{ ai_answers }}]}]},options:{responsive:true,scales:{y:{beginAtZero:true}}}});
+  if(warningChart)warningChart.destroy();
+  warningChart=new Chart(document.getElementById('warningChart'),{type:'bar',data:{labels:[d.before_label_belief,d.after_label_belief,d.before_label_trust,d.after_label_trust],datasets:[{label:d.warning_scale_label,data:[{{ avg_before_belief }},{{ avg_after_belief }},{{ avg_before_trust }},{{ avg_after_trust }}]}]},options:{responsive:true,scales:{y:{beginAtZero:true,max:5}}}});
+}
+document.addEventListener('DOMContentLoaded',()=>renderAdminCharts(localStorage.getItem('lang')||'en'));window.addEventListener('languageChanged',e=>renderAdminCharts(e.detail.lang));
+</script>{% endblock %}
