@@ -497,7 +497,29 @@ def admin_login():
 def admin_logout():
     session.pop('admin_logged_in', None)
     return redirect(url_for('admin_login'))
+    
+def get_all_responses():
+    responses = []
 
+    if not DATABASE_URL:
+        return responses
+
+    with psycopg.connect(DATABASE_URL) as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT participant_id, submitted_at, data
+                FROM survey_responses
+                ORDER BY submitted_at DESC
+            """)
+
+            for participant_id, submitted_at, data in cur.fetchall():
+                responses.append({
+                    'participant_id': participant_id,
+                    'submitted_at': submitted_at,
+                    'data': data
+                })
+
+    return responses
 
 @app.route('/admin')
 @admin_required
@@ -740,5 +762,8 @@ def get_participant_id():
 
 
 if __name__ == '__main__':
-    ensure_csv_headers()
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(
+        host='0.0.0.0',
+        port=int(os.environ.get('PORT', 5001)),
+        debug=False
+    )
