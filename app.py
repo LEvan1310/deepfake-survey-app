@@ -367,8 +367,28 @@ def save_survey_response():
         row_map[f'Warning_{i}_Reaction'] = p8.get(f'w{i}_reaction', '')
         row_map[f'Warning_{i}_Reason'] = p8.get(f'w{i}_reason', '')
 
-    with open(RESULTS_FILE, 'a', newline='', encoding='utf-8') as f:
-        csv.writer(f).writerow([row_map.get(h, '') for h in HEADERS])
+    participant_id = get_participant_id()
+
+with psycopg.connect(DATABASE_URL) as conn:
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            INSERT INTO survey_responses
+                (participant_id, data)
+            VALUES
+                (%s, %s::jsonb)
+            ON CONFLICT (participant_id)
+            DO UPDATE SET
+                data = EXCLUDED.data,
+                submitted_at = CURRENT_TIMESTAMP
+            """,
+            (
+                participant_id,
+                json.dumps(row_map)
+            )
+        )
+
+    conn.commit()
     session['survey_saved'] = True
 
 
@@ -711,7 +731,14 @@ def init_database():
                 )
             """)
         conn.commit()
-        
+
+def get_participant_id():
+    if 'participant_id' not in session:
+        session['participant_id'] = 'DF-' + secrets.token_hex(4).upper()
+
+    return session['participant_id']
+
+
 if __name__ == '__main__':
     ensure_csv_headers()
     app.run(host='0.0.0.0', port=5001, debug=True)
