@@ -199,11 +199,6 @@ def calculate_quiz():
     return correct, 9, percent, details
 
 
-@app.before_request
-def prepare_storage():
-    
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -370,26 +365,27 @@ def save_survey_response():
 
     participant_id = get_participant_id()
 
-with psycopg.connect(DATABASE_URL) as conn:
-    with conn.cursor() as cur:
-        cur.execute(
-            """
-            INSERT INTO survey_responses
-                (participant_id, data)
-            VALUES
-                (%s, %s::jsonb)
-            ON CONFLICT (participant_id)
-            DO UPDATE SET
-                data = EXCLUDED.data,
-                submitted_at = CURRENT_TIMESTAMP
-            """,
-            (
-                participant_id,
-                json.dumps(row_map)
+    with psycopg.connect(DATABASE_URL) as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO survey_responses
+                    (participant_id, data)
+                VALUES
+                    (%s, %s::jsonb)
+                ON CONFLICT (participant_id)
+                DO UPDATE SET
+                    data = EXCLUDED.data,
+                    submitted_at = CURRENT_TIMESTAMP
+                """,
+                (
+                    participant_id,
+                    json.dumps(row_map)
+                )
             )
-        )
 
-    conn.commit()
+        conn.commit()
+
     session['survey_saved'] = True
 
 
@@ -433,16 +429,30 @@ def survey_page8():
 
 
 def save_reward(prize):
-    new_file = not os.path.exists(REWARDS_FILE) or os.path.getsize(REWARDS_FILE) == 0
-    with open(REWARDS_FILE, 'a', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        if new_file:
-            writer.writerow(['Timestamp', 'Name', 'Prize'])
-        writer.writerow([
-            datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            session.get('page1', {}).get('name', ''),
-            prize['key']
-        ])
+    if not DATABASE_URL:
+        return
+
+    participant_id = get_participant_id()
+
+    with psycopg.connect(DATABASE_URL) as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO reward_results (participant_id, name, prize)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (participant_id)
+                DO UPDATE SET
+                    name = EXCLUDED.name,
+                    prize = EXCLUDED.prize,
+                    submitted_at = CURRENT_TIMESTAMP
+                """,
+                (
+                    participant_id,
+                    session.get('page1', {}).get('name', ''),
+                    prize['key']
+                )
+            )
+        conn.commit()
 
 
 @app.route('/reward', methods=['GET', 'POST'])
@@ -525,12 +535,10 @@ def get_all_responses():
 @app.route('/admin')
 @admin_required
 def admin():
-    """Research-focused dashboard built from participant-level survey rows."""
-    responses = []
-    headers = []
+    """Research-focused dashboard built from participant-level responses stored in Neon."""
+    responses = get_all_responses()
     participant_summaries = []
 
-    # Aggregate quiz metrics
     total_real_answers = 0
     total_ai_answers = 0
     total_unsure_answers = 0
@@ -541,7 +549,6 @@ def admin():
     per_video_confidence = {i: [] for i in range(1, 10)}
     cue_counts = {}
 
-    # Warning-label / Section F metrics
     section_f_count = 0
     warning_before_belief = []
     warning_after_belief = []
@@ -558,124 +565,122 @@ def admin():
         except (TypeError, ValueError):
             return None
 
-    if os.path.exists(RESULTS_FILE):
-        with open(RESULTS_FILE, 'r', newline='', encoding='utf-8') as f:
-            reader = csv.reader(f)
-            headers = next(reader, [])
-            hmap = {h: i for i, h in enumerate(headers)}
+    for response in responses:
+        participant_id = response['participant_id']
+        submitted_at = response['submitted_at']
+        data = response['data'] or {}
 
-            def cell(row, header, default=''):
-                idx = hmap.get(header)
-                return row[idx] if idx is not None and idx < len(row) else default
+        name = data.get('Name') or '—'
+        watched_before = data.get('Watched_Deepfake_Before') or '—'
+        section_f = data.get('Section_F_Participation') or 'Skip'
+        if section_f == 'Participate':
+            section_f_count += 1
 
-            for row_number, row in enumerate(reader, start=1):
-                if not row:
-                    continue
-                responses.append(row)
+        score_correct = data.get('Video_Score_Correct') or '0'
+        score_total = data.get('Video_Score_Total') or '9'
+        score_percent = safe_float(data.get('Video_Score_Percent'))
+        if score_percent is not None:
+            scores.append(score_percent)
 
-                participant_id = cell(row, 'Participant_ID') or f'LEGACY-{row_number:04d}'
-                name = cell(row, 'Name') or '—'
-                watched_before = cell(row, 'Watched_Deepfake_Before') or '—'
-                section_f = cell(row, 'Section_F_Participation') or 'Skip'
-                if section_f == 'Participate':
-                    section_f_count += 1
+        participant_video_details = []
+        participant_conf = []
 
-                score_correct = cell(row, 'Video_Score_Correct') or '0'
-                score_total = cell(row, 'Video_Score_Total') or '9'
-                score_percent = safe_float(cell(row, 'Video_Score_Percent'))
-                if score_percent is not None:
-                    scores.append(score_percent)
+        for i in range(1, 10):
+            answer = data.get(f'Video_{i}_Classification', '')
+            confidence = safe_float(data.get(f'Video_{i}_Confidence'))
+            cue = data.get(f'Video_{i}_Cue', '')
+            expected = VIDEO_QUIZ[i]['answer']
+            is_correct = answer == expected if answer else False
 
-                participant_video_details = []
-                participant_conf = []
-                for i in range(1, 10):
-                    answer = cell(row, f'Video_{i}_Classification')
-                    confidence = safe_float(cell(row, f'Video_{i}_Confidence'))
-                    cue = cell(row, f'Video_{i}_Cue')
-                    expected = VIDEO_QUIZ[i]['answer']
-                    is_correct = answer == expected if answer else False
+            if answer:
+                per_video_answered[i] += 1
+                if is_correct:
+                    per_video_correct[i] += 1
+                if answer == 'Real':
+                    total_real_answers += 1
+                elif answer == 'AI-Generated':
+                    total_ai_answers += 1
+                elif answer == 'Not sure':
+                    total_unsure_answers += 1
 
-                    if answer:
-                        per_video_answered[i] += 1
-                        if is_correct:
-                            per_video_correct[i] += 1
-                        if answer == 'Real':
-                            total_real_answers += 1
-                        elif answer == 'AI-Generated':
-                            total_ai_answers += 1
-                        elif answer == 'Not sure':
-                            total_unsure_answers += 1
-                    if confidence is not None:
-                        per_video_confidence[i].append(confidence)
-                        all_confidence.append(confidence)
-                        participant_conf.append(confidence)
-                    if cue:
-                        cue_counts[cue] = cue_counts.get(cue, 0) + 1
+            if confidence is not None:
+                per_video_confidence[i].append(confidence)
+                all_confidence.append(confidence)
+                participant_conf.append(confidence)
 
-                    participant_video_details.append({
-                        'number': i,
-                        'answer': answer or '—',
-                        'expected': expected,
-                        'correct': is_correct,
-                        'confidence': confidence if confidence is not None else '—',
-                        'cue': cue or '—'
-                    })
+            if cue:
+                cue_counts[cue] = cue_counts.get(cue, 0) + 1
 
-                # Section F values for participant drill-down and aggregates.
-                b_before = safe_float(cell(row, 'Warning_1_Belief_Before'))
-                b_after = safe_float(cell(row, 'Warning_1_Belief_After'))
-                t_before = safe_float(cell(row, 'Warning_1_Trust_Before'))
-                t_after = safe_float(cell(row, 'Warning_1_Trust_After'))
-                if b_before is not None: warning_before_belief.append(b_before)
-                if b_after is not None: warning_after_belief.append(b_after)
-                if t_before is not None: warning_before_trust.append(t_before)
-                if t_after is not None: warning_after_trust.append(t_after)
+            participant_video_details.append({
+                'number': i,
+                'answer': answer or '—',
+                'expected': expected,
+                'correct': is_correct,
+                'confidence': confidence if confidence is not None else '—',
+                'cue': cue or '—'
+            })
 
-                warning_details = []
-                for wi in range(1, 4):
-                    belief_after = safe_float(cell(row, f'Warning_{wi}_Belief_After'))
-                    realism = safe_float(cell(row, f'Warning_{wi}_Realism'))
-                    trust_after = safe_float(cell(row, f'Warning_{wi}_Trust_After'))
-                    if belief_after is not None:
-                        labelled_belief_values.append(belief_after)
-                        condition_belief[wi].append(belief_after)
-                    if realism is not None:
-                        condition_realism[wi].append(realism)
-                    if trust_after is not None:
-                        condition_trust[wi].append(trust_after)
-                    warning_details.append({
-                        'number': wi,
-                        'belief_before': cell(row, f'Warning_{wi}_Belief_Before') or '—',
-                        'belief_after': cell(row, f'Warning_{wi}_Belief_After') or '—',
-                        'realism': cell(row, f'Warning_{wi}_Realism') or '—',
-                        'trust_before': cell(row, f'Warning_{wi}_Trust_Before') or '—',
-                        'trust_after': cell(row, f'Warning_{wi}_Trust_After') or '—',
-                        'reaction': cell(row, f'Warning_{wi}_Reaction') or '—',
-                        'reason': cell(row, f'Warning_{wi}_Reason') or '—'
-                    })
+        b_before = safe_float(data.get('Warning_1_Belief_Before'))
+        b_after = safe_float(data.get('Warning_1_Belief_After'))
+        t_before = safe_float(data.get('Warning_1_Trust_Before'))
+        t_after = safe_float(data.get('Warning_1_Trust_After'))
 
-                participant_summaries.append({
-                    'id': participant_id,
-                    'name': name,
-                    'timestamp': cell(row, 'Timestamp') or '—',
-                    'age_group': cell(row, 'Age_Group') or '—',
-                    'gender': cell(row, 'Gender') or '—',
-                    'education': cell(row, 'Education_Level') or '—',
-                    'watched_before': watched_before,
-                    'score_correct': score_correct,
-                    'score_total': score_total,
-                    'score_percent': round(score_percent, 1) if score_percent is not None else 0,
-                    'avg_confidence': round(sum(participant_conf) / len(participant_conf), 2) if participant_conf else 0,
-                    'section_f': section_f,
-                    'belief_before': b_before if b_before is not None else '—',
-                    'belief_after': b_after if b_after is not None else '—',
-                    'belief_change': round(b_after - b_before, 2) if b_before is not None and b_after is not None else '—',
-                    'trust_before': t_before if t_before is not None else '—',
-                    'trust_after': t_after if t_after is not None else '—',
-                    'trust_change': round(t_after - t_before, 2) if t_before is not None and t_after is not None else '—',
-                    'videos': participant_video_details,
-                    'warnings': warning_details,
-                })
+        if b_before is not None:
+            warning_before_belief.append(b_before)
+        if b_after is not None:
+            warning_after_belief.append(b_after)
+        if t_before is not None:
+            warning_before_trust.append(t_before)
+        if t_after is not None:
+            warning_after_trust.append(t_after)
+
+        warning_details = []
+        for wi in range(1, 4):
+            belief_after = safe_float(data.get(f'Warning_{wi}_Belief_After'))
+            realism = safe_float(data.get(f'Warning_{wi}_Realism'))
+            trust_after = safe_float(data.get(f'Warning_{wi}_Trust_After'))
+
+            if belief_after is not None:
+                labelled_belief_values.append(belief_after)
+                condition_belief[wi].append(belief_after)
+            if realism is not None:
+                condition_realism[wi].append(realism)
+            if trust_after is not None:
+                condition_trust[wi].append(trust_after)
+
+            warning_details.append({
+                'number': wi,
+                'belief_before': data.get(f'Warning_{wi}_Belief_Before') or '—',
+                'belief_after': data.get(f'Warning_{wi}_Belief_After') or '—',
+                'realism': data.get(f'Warning_{wi}_Realism') or '—',
+                'trust_before': data.get(f'Warning_{wi}_Trust_Before') or '—',
+                'trust_after': data.get(f'Warning_{wi}_Trust_After') or '—',
+                'reaction': data.get(f'Warning_{wi}_Reaction') or '—',
+                'reason': data.get(f'Warning_{wi}_Reason') or '—'
+            })
+
+        participant_summaries.append({
+            'id': participant_id,
+            'name': name,
+            'timestamp': data.get('Timestamp') or (submitted_at.strftime('%Y-%m-%d %H:%M:%S') if submitted_at else '—'),
+            'age_group': data.get('Age_Group') or '—',
+            'gender': data.get('Gender') or '—',
+            'education': data.get('Education_Level') or '—',
+            'watched_before': watched_before,
+            'score_correct': score_correct,
+            'score_total': score_total,
+            'score_percent': round(score_percent, 1) if score_percent is not None else 0,
+            'avg_confidence': round(sum(participant_conf) / len(participant_conf), 2) if participant_conf else 0,
+            'section_f': section_f,
+            'belief_before': b_before if b_before is not None else '—',
+            'belief_after': b_after if b_after is not None else '—',
+            'belief_change': round(b_after - b_before, 2) if b_before is not None and b_after is not None else '—',
+            'trust_before': t_before if t_before is not None else '—',
+            'trust_after': t_after if t_after is not None else '—',
+            'trust_change': round(t_after - t_before, 2) if t_before is not None and t_after is not None else '—',
+            'videos': participant_video_details,
+            'warnings': warning_details,
+        })
 
     total_submissions = len(participant_summaries)
     avg_score = round(sum(scores) / len(scores), 1) if scores else 0
@@ -753,13 +758,26 @@ def init_database():
                     data JSONB NOT NULL
                 )
             """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS reward_results (
+                    id SERIAL PRIMARY KEY,
+                    participant_id VARCHAR(50) UNIQUE NOT NULL,
+                    name TEXT,
+                    prize TEXT NOT NULL,
+                    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
         conn.commit()
+
 
 def get_participant_id():
     if 'participant_id' not in session:
         session['participant_id'] = 'DF-' + secrets.token_hex(4).upper()
 
     return session['participant_id']
+
+
+init_database()
 
 
 if __name__ == '__main__':
