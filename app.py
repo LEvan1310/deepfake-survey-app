@@ -201,7 +201,7 @@ def calculate_quiz():
 
 @app.before_request
 def prepare_storage():
-    ensure_csv_headers()
+    
 
 
 @app.route('/')
