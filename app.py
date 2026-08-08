@@ -15,10 +15,10 @@ REWARDS_FILE = 'reward_results.csv'
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Evan')
 
 VIDEO_QUIZ = {
-    1: {'youtube_id': 'cQ54GDm1eL0', 'answer': 'AI-Generated',
+    1: {'youtube_id': 'vON7Y5MRBlw', 'answer': 'AI-Generated',
         'reason_en': 'The study answer key classifies this research clip as AI-generated. Look for inconsistencies across face movement, voice, lighting and context rather than relying on one visual clue.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေတွင် ဤကလစ်ကို AI ဖြင့် ဖန်တီးထားသော ဗီဒီယိုအဖြစ် သတ်မှတ်ထားသည်။ တစ်ချက်တည်းကို မယုံဘဲ မျက်နှာလှုပ်ရှားမှု၊ အသံ၊ အလင်းရောင်နှင့် အကြောင်းအရာကို ပေါင်းစပ်စစ်ဆေးပါ။'},
-    2: {'youtube_id': 'JZl3cQTL6U0', 'answer': 'AI-Generated',
+    2: {'youtube_id': 'vON7Y5MRBlw', 'answer': 'AI-Generated',
         'reason_en': 'This copy uses the same verified research clip as Video 1, so the answer is also AI-generated. Repeated exposure tests whether confidence changes over time.',
         'reason_my': 'ဤကလစ်သည် ဗီဒီယို ၁ နှင့် တူညီသော သုတေသနကလစ်ဖြစ်သောကြောင့် AI ဖြင့် ဖန်တီးထားသော ဗီဒီယိုဟု သတ်မှတ်ထားသည်။ ထပ်ခါတလဲလဲ ကြည့်ရှုခြင်းကြောင့် ယုံကြည်ချက် ပြောင်းလဲမှုရှိမရှိ လေ့လာရန် အသုံးပြုထားသည်။'},
     3: {'youtube_id': 'vON7Y5MRBlw', 'answer': 'AI-Generated',
@@ -51,11 +51,11 @@ VIDEO_QUIZ = {
 # three DIFFERENT clips whose AI-generated/deepfake status you have independently verified.
 WARNING_EXPERIMENT = {
     1: {
-    'youtube_id': 'vui5TFU3DCM',
-    'condition': 'reveal',
-    'title_en': 'Condition 1 - Before vs After AI Label',
-    'title_my': 'စမ်းသပ်အခြေအနေ ၁ - AI တံဆိပ် မပြမီနှင့် ပြပြီးနောက်',
-},
+        'youtube_id': 'vON7Y5MRBlw',
+        'condition': 'reveal',
+        'title_en': 'Condition 1 - Before vs After AI Label',
+        'title_my': 'စမ်းသပ်အခြေအနေ ၁ - AI တံဆိပ် မပြမီနှင့် ပြပြီးနောက်',
+    },
     2: {
         'youtube_id': 'vON7Y5MRBlw',
         'condition': 'labelled',
@@ -90,7 +90,7 @@ REWARD_OPTIONS = [
 ]
 
 HEADERS = [
-    'Timestamp', 'Name', 'Age_Group', 'Gender', 'Education_Level', 'News_Frequency', 'News_Source',
+    'Timestamp', 'Participant_ID', 'Name', 'Age_Group', 'Gender', 'Education_Level', 'News_Frequency', 'News_Source',
     'Watched_Deepfake_Before', 'Heard_Deepfake', 'Deepfake_Description', 'Suspected_Deepfake_Before',
     'Confidence_Identifying', 'Suspicious_Signs',
     'Political_Video_Authenticity', 'Media_Authenticity_Confidence', 'Deepfake_Believability',
@@ -114,6 +114,7 @@ HEADERS.extend(['Video_Score_Correct', 'Video_Score_Total', 'Video_Score_Percent
 
 
 def ensure_csv_headers():
+    """Create/migrate the CSV while preserving older participant responses."""
     if not os.path.exists(RESULTS_FILE) or os.path.getsize(RESULTS_FILE) == 0:
         with open(RESULTS_FILE, 'w', newline='', encoding='utf-8') as f:
             csv.writer(f).writerow(HEADERS)
@@ -123,15 +124,35 @@ def ensure_csv_headers():
         rows = list(csv.reader(f))
     if not rows:
         rows = [HEADERS]
-    if rows[0] == HEADERS:
+    old_headers = rows[0]
+    if old_headers == HEADERS:
         return
 
-    # Preserve older survey data instead of rewriting it into an incompatible schema.
+    # Keep a backup, then map every existing column into the new schema.
     legacy_file = 'survey_responses_legacy.csv'
     if not os.path.exists(legacy_file):
         shutil.copy2(RESULTS_FILE, legacy_file)
+
+    old_index = {h: i for i, h in enumerate(old_headers)}
+    migrated = []
+    for row_number, row in enumerate(rows[1:], start=1):
+        if not row:
+            continue
+        new_row = []
+        for header in HEADERS:
+            if header == 'Participant_ID':
+                idx = old_index.get(header)
+                existing = row[idx] if idx is not None and idx < len(row) else ''
+                new_row.append(existing or f'LEGACY-{row_number:04d}')
+            else:
+                idx = old_index.get(header)
+                new_row.append(row[idx] if idx is not None and idx < len(row) else '')
+        migrated.append(new_row)
+
     with open(RESULTS_FILE, 'w', newline='', encoding='utf-8') as f:
-        csv.writer(f).writerow(HEADERS)
+        writer = csv.writer(f)
+        writer.writerow(HEADERS)
+        writer.writerows(migrated)
 
 
 def admin_required(view):
@@ -189,6 +210,10 @@ def index():
 def survey_page1():
     if request.method == 'POST':
         session.clear()
+        # Anonymous tracking ID used by the research dashboard to connect one
+        # respondent's quiz, warning-label and demographic answers without
+        # relying on their name as the primary identifier.
+        session['participant_id'] = 'DF-' + secrets.token_hex(4).upper()
         session['page1'] = request.form.to_dict()
         return redirect(url_for('survey_page2'))
     return render_template('survey_page1.html')
@@ -303,6 +328,7 @@ def save_survey_response():
 
     row_map = {
         'Timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'Participant_ID': session.get('participant_id', ''),
         'Name': p1.get('name', ''), 'Age_Group': p1.get('age_group', ''), 'Gender': p1.get('gender', ''),
         'Education_Level': p1.get('education_level', ''), 'News_Frequency': p1.get('news_frequency', ''), 'News_Source': p1.get('news_source', ''),
         'Watched_Deepfake_Before': p2.get('watched_deepfake_before', ''), 'Heard_Deepfake': p2.get('heard_deepfake', ''),
@@ -454,64 +480,220 @@ def admin_logout():
 @app.route('/admin')
 @admin_required
 def admin():
+    """Research-focused dashboard built from participant-level survey rows."""
     responses = []
     headers = []
-    real_answers = 0
-    ai_answers = 0
+    participant_summaries = []
+
+    # Aggregate quiz metrics
+    total_real_answers = 0
+    total_ai_answers = 0
+    total_unsure_answers = 0
     scores = []
+    all_confidence = []
+    per_video_correct = {i: 0 for i in range(1, 10)}
+    per_video_answered = {i: 0 for i in range(1, 10)}
+    per_video_confidence = {i: [] for i in range(1, 10)}
+    cue_counts = {}
+
+    # Warning-label / Section F metrics
+    section_f_count = 0
     warning_before_belief = []
     warning_after_belief = []
     warning_before_trust = []
     warning_after_trust = []
     labelled_belief_values = []
+    condition_belief = {1: [], 2: [], 3: []}
+    condition_realism = {1: [], 2: [], 3: []}
+    condition_trust = {1: [], 2: [], 3: []}
+
+    def safe_float(value):
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
+
     if os.path.exists(RESULTS_FILE):
         with open(RESULTS_FILE, 'r', newline='', encoding='utf-8') as f:
             reader = csv.reader(f)
             headers = next(reader, [])
             hmap = {h: i for i, h in enumerate(headers)}
-            for row in reader:
+
+            def cell(row, header, default=''):
+                idx = hmap.get(header)
+                return row[idx] if idx is not None and idx < len(row) else default
+
+            for row_number, row in enumerate(reader, start=1):
                 if not row:
                     continue
                 responses.append(row)
+
+                participant_id = cell(row, 'Participant_ID') or f'LEGACY-{row_number:04d}'
+                name = cell(row, 'Name') or '—'
+                watched_before = cell(row, 'Watched_Deepfake_Before') or '—'
+                section_f = cell(row, 'Section_F_Participation') or 'Skip'
+                if section_f == 'Participate':
+                    section_f_count += 1
+
+                score_correct = cell(row, 'Video_Score_Correct') or '0'
+                score_total = cell(row, 'Video_Score_Total') or '9'
+                score_percent = safe_float(cell(row, 'Video_Score_Percent'))
+                if score_percent is not None:
+                    scores.append(score_percent)
+
+                participant_video_details = []
+                participant_conf = []
                 for i in range(1, 10):
-                    idx = hmap.get(f'Video_{i}_Classification')
-                    if idx is not None and idx < len(row):
-                        if row[idx] == 'Real': real_answers += 1
-                        elif row[idx] == 'AI-Generated': ai_answers += 1
-                sidx = hmap.get('Video_Score_Percent')
-                if sidx is not None and sidx < len(row):
-                    try: scores.append(float(row[sidx]))
-                    except ValueError: pass
+                    answer = cell(row, f'Video_{i}_Classification')
+                    confidence = safe_float(cell(row, f'Video_{i}_Confidence'))
+                    cue = cell(row, f'Video_{i}_Cue')
+                    expected = VIDEO_QUIZ[i]['answer']
+                    is_correct = answer == expected if answer else False
 
-                def add_numeric(header, target):
-                    idx = hmap.get(header)
-                    if idx is not None and idx < len(row):
-                        try: target.append(float(row[idx]))
-                        except (ValueError, TypeError): pass
+                    if answer:
+                        per_video_answered[i] += 1
+                        if is_correct:
+                            per_video_correct[i] += 1
+                        if answer == 'Real':
+                            total_real_answers += 1
+                        elif answer == 'AI-Generated':
+                            total_ai_answers += 1
+                        elif answer == 'Not sure':
+                            total_unsure_answers += 1
+                    if confidence is not None:
+                        per_video_confidence[i].append(confidence)
+                        all_confidence.append(confidence)
+                        participant_conf.append(confidence)
+                    if cue:
+                        cue_counts[cue] = cue_counts.get(cue, 0) + 1
 
-                add_numeric('Warning_1_Belief_Before', warning_before_belief)
-                add_numeric('Warning_1_Belief_After', warning_after_belief)
-                add_numeric('Warning_1_Trust_Before', warning_before_trust)
-                add_numeric('Warning_1_Trust_After', warning_after_trust)
+                    participant_video_details.append({
+                        'number': i,
+                        'answer': answer or '—',
+                        'expected': expected,
+                        'correct': is_correct,
+                        'confidence': confidence if confidence is not None else '—',
+                        'cue': cue or '—'
+                    })
+
+                # Section F values for participant drill-down and aggregates.
+                b_before = safe_float(cell(row, 'Warning_1_Belief_Before'))
+                b_after = safe_float(cell(row, 'Warning_1_Belief_After'))
+                t_before = safe_float(cell(row, 'Warning_1_Trust_Before'))
+                t_after = safe_float(cell(row, 'Warning_1_Trust_After'))
+                if b_before is not None: warning_before_belief.append(b_before)
+                if b_after is not None: warning_after_belief.append(b_after)
+                if t_before is not None: warning_before_trust.append(t_before)
+                if t_after is not None: warning_after_trust.append(t_after)
+
+                warning_details = []
                 for wi in range(1, 4):
-                    add_numeric(f'Warning_{wi}_Belief_After', labelled_belief_values)
+                    belief_after = safe_float(cell(row, f'Warning_{wi}_Belief_After'))
+                    realism = safe_float(cell(row, f'Warning_{wi}_Realism'))
+                    trust_after = safe_float(cell(row, f'Warning_{wi}_Trust_After'))
+                    if belief_after is not None:
+                        labelled_belief_values.append(belief_after)
+                        condition_belief[wi].append(belief_after)
+                    if realism is not None:
+                        condition_realism[wi].append(realism)
+                    if trust_after is not None:
+                        condition_trust[wi].append(trust_after)
+                    warning_details.append({
+                        'number': wi,
+                        'belief_before': cell(row, f'Warning_{wi}_Belief_Before') or '—',
+                        'belief_after': cell(row, f'Warning_{wi}_Belief_After') or '—',
+                        'realism': cell(row, f'Warning_{wi}_Realism') or '—',
+                        'trust_before': cell(row, f'Warning_{wi}_Trust_Before') or '—',
+                        'trust_after': cell(row, f'Warning_{wi}_Trust_After') or '—',
+                        'reaction': cell(row, f'Warning_{wi}_Reaction') or '—',
+                        'reason': cell(row, f'Warning_{wi}_Reason') or '—'
+                    })
 
+                participant_summaries.append({
+                    'id': participant_id,
+                    'name': name,
+                    'timestamp': cell(row, 'Timestamp') or '—',
+                    'age_group': cell(row, 'Age_Group') or '—',
+                    'gender': cell(row, 'Gender') or '—',
+                    'education': cell(row, 'Education_Level') or '—',
+                    'watched_before': watched_before,
+                    'score_correct': score_correct,
+                    'score_total': score_total,
+                    'score_percent': round(score_percent, 1) if score_percent is not None else 0,
+                    'avg_confidence': round(sum(participant_conf) / len(participant_conf), 2) if participant_conf else 0,
+                    'section_f': section_f,
+                    'belief_before': b_before if b_before is not None else '—',
+                    'belief_after': b_after if b_after is not None else '—',
+                    'belief_change': round(b_after - b_before, 2) if b_before is not None and b_after is not None else '—',
+                    'trust_before': t_before if t_before is not None else '—',
+                    'trust_after': t_after if t_after is not None else '—',
+                    'trust_change': round(t_after - t_before, 2) if t_before is not None and t_after is not None else '—',
+                    'videos': participant_video_details,
+                    'warnings': warning_details,
+                })
+
+    total_submissions = len(participant_summaries)
     avg_score = round(sum(scores) / len(scores), 1) if scores else 0
+    avg_confidence = round(sum(all_confidence) / len(all_confidence), 2) if all_confidence else 0
+    section_f_rate = round((section_f_count / total_submissions) * 100, 1) if total_submissions else 0
+
     avg_before_belief = round(sum(warning_before_belief) / len(warning_before_belief), 2) if warning_before_belief else 0
     avg_after_belief = round(sum(warning_after_belief) / len(warning_after_belief), 2) if warning_after_belief else 0
     avg_before_trust = round(sum(warning_before_trust) / len(warning_before_trust), 2) if warning_before_trust else 0
     avg_after_trust = round(sum(warning_after_trust) / len(warning_after_trust), 2) if warning_after_trust else 0
+    belief_change = round(avg_after_belief - avg_before_belief, 2) if warning_before_belief and warning_after_belief else 0
+    trust_change = round(avg_after_trust - avg_before_trust, 2) if warning_before_trust and warning_after_trust else 0
     continued_belief_rate = round((sum(1 for v in labelled_belief_values if v >= 3) / len(labelled_belief_values)) * 100, 1) if labelled_belief_values else 0
 
-    return render_template('admin.html', responses=responses, headers=headers,
-                           total_submissions=len(responses), real_answers=real_answers,
-                           ai_answers=ai_answers, avg_score=avg_score,
-                           avg_before_belief=avg_before_belief, avg_after_belief=avg_after_belief,
-                           avg_before_trust=avg_before_trust, avg_after_trust=avg_after_trust,
-                           continued_belief_rate=continued_belief_rate)
+    video_labels = [f'Video {i}' for i in range(1, 10)]
+    video_correct_rates = [
+        round((per_video_correct[i] / per_video_answered[i]) * 100, 1) if per_video_answered[i] else 0
+        for i in range(1, 10)
+    ]
+    video_avg_confidence = [
+        round(sum(per_video_confidence[i]) / len(per_video_confidence[i]), 2) if per_video_confidence[i] else 0
+        for i in range(1, 10)
+    ]
+
+    top_cues = sorted(cue_counts.items(), key=lambda kv: kv[1], reverse=True)[:8]
+    cue_labels = [k for k, _ in top_cues]
+    cue_values = [v for _, v in top_cues]
+
+    condition_labels = ['Condition 1', 'Condition 2', 'Condition 3']
+    condition_belief_avg = [round(sum(condition_belief[i]) / len(condition_belief[i]), 2) if condition_belief[i] else 0 for i in range(1, 4)]
+    condition_realism_avg = [round(sum(condition_realism[i]) / len(condition_realism[i]), 2) if condition_realism[i] else 0 for i in range(1, 4)]
+    condition_trust_avg = [round(sum(condition_trust[i]) / len(condition_trust[i]), 2) if condition_trust[i] else 0 for i in range(1, 4)]
+
+    return render_template(
+        'admin.html',
+        total_submissions=total_submissions,
+        section_f_count=section_f_count,
+        section_f_rate=section_f_rate,
+        avg_score=avg_score,
+        avg_confidence=avg_confidence,
+        real_answers=total_real_answers,
+        ai_answers=total_ai_answers,
+        unsure_answers=total_unsure_answers,
+        avg_before_belief=avg_before_belief,
+        avg_after_belief=avg_after_belief,
+        avg_before_trust=avg_before_trust,
+        avg_after_trust=avg_after_trust,
+        belief_change=belief_change,
+        trust_change=trust_change,
+        continued_belief_rate=continued_belief_rate,
+        video_labels=video_labels,
+        video_correct_rates=video_correct_rates,
+        video_avg_confidence=video_avg_confidence,
+        cue_labels=cue_labels,
+        cue_values=cue_values,
+        condition_labels=condition_labels,
+        condition_belief_avg=condition_belief_avg,
+        condition_realism_avg=condition_realism_avg,
+        condition_trust_avg=condition_trust_avg,
+        participant_summaries=participant_summaries,
+    )
 
 
 if __name__ == '__main__':
     ensure_csv_headers()
-    port = int(os.environ.get('PORT', 5001))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=5001, debug=True)
