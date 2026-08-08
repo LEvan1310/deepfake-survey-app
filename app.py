@@ -3,6 +3,7 @@ import csv
 import datetime
 import shutil
 import secrets
+import psycopg
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session
 
@@ -11,6 +12,7 @@ app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'deepfake_research_secret_ke
 
 RESULTS_FILE = 'survey_responses.csv'
 REWARDS_FILE = 'reward_results.csv'
+DATABASE_URL = os.environ.get('DATABASE_URL')
 # Set ADMIN_PASSWORD in your hosting environment for production.
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Evan')
 
@@ -693,7 +695,23 @@ def admin():
         participant_summaries=participant_summaries,
     )
 
+def init_database():
+    if not DATABASE_URL:
+        print("DATABASE_URL is not configured.")
+        return
 
+    with psycopg.connect(DATABASE_URL) as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS survey_responses (
+                    id SERIAL PRIMARY KEY,
+                    participant_id VARCHAR(50) UNIQUE NOT NULL,
+                    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    data JSONB NOT NULL
+                )
+            """)
+        conn.commit()
+        
 if __name__ == '__main__':
     ensure_csv_headers()
     app.run(host='0.0.0.0', port=5001, debug=True)
