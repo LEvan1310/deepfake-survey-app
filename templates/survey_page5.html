@@ -1,3 +1,4 @@
+{% from "_media.html" import render_media %}
 {% extends "base.html" %}{% block content %}
 <div class="card shadow border-0 p-4 survey-card">
 <h3 class="text-primary fw-bold" data-translate="sec_e_title">Section E - Deepfake Video Quiz (Clips 1 to 3)</h3>
@@ -12,15 +13,10 @@
 <p class="text-muted" data-translate="video_instruction">Watch each clip and answer the same verification questions.</p>
 <form method="POST">
 {% for i,v in videos.items() %}
-<div class="card p-3 mb-4 bg-body-tertiary border"><h5 class="fw-bold"><span data-translate="clip_word">Video Clip</span> {{ i }}</h5><div class="ratio ratio-16x9 mb-3"><iframe src="https://www.youtube.com/embed/{{ v.youtube_id }}" allowfullscreen></iframe></div>
+<div class="card p-3 mb-4 bg-body-tertiary border"><h5 class="fw-bold"><span data-translate="clip_word">Video Clip</span> {{ i }}</h5>{{ render_media(v, 'Video Clip ' ~ i) }}
 <label class="fw-bold" data-translate="real_or_ai">1. Is this clip real or AI-generated?</label><select class="form-select mb-3" name="v_real_{{ i }}" required><option value="" disabled selected data-translate="select_short">Select...</option><option value="Real" data-translate="real">Real</option><option value="AI-Generated" data-translate="ai_generated">AI-Generated</option><option value="Not sure" data-translate="unsure">Not sure</option></select>
 <label class="fw-bold" data-translate="confidence_video">2. How confident are you in that judgement?</label><select class="form-select mb-3" name="v_confidence_{{ i }}" required><option value="" disabled selected data-translate="select_short">Select...</option>{% for n in range(1,6) %}<option value="{{ n }}" data-translate="conf_{{ n }}">{{ n }}</option>{% endfor %}</select>
 <label class="fw-bold" data-translate="cue_video">3. What most influenced your judgement?</label><select class="form-select" name="v_cue_{{ i }}" required><option value="" disabled selected data-translate="select_short">Select...</option><option value="Face" data-translate="cue_face">Facial movement / expression</option><option value="Audio" data-translate="cue_audio">Voice or lip synchronization</option><option value="Lighting" data-translate="cue_light">Lighting / shadows / texture</option><option value="Context" data-translate="cue_context">Context or plausibility of the claim</option><option value="Source" data-translate="cue_source">Source credibility / cross-checking</option><option value="No obvious cue" data-translate="cue_none">No obvious clue / mostly intuition</option></select>
 </div>{% endfor %}
-<hr><h4 class="fw-bold text-success" data-translate="qual_title">Short Reflection Questions</h4>
-<div class="mb-3"><label class="fw-bold" data-translate="q27">What features made any of the videos appear real or fake to you?</label><textarea class="form-control" name="q27" rows="2" required></textarea></div>
-<div class="mb-3"><label class="fw-bold" data-translate="q28">Did any clip change your opinion or trust toward the person/event shown? Explain briefly.</label><textarea class="form-control" name="q28" rows="2" required></textarea></div>
-<div class="mb-3"><label class="fw-bold" data-translate="q29">How would a fact-checking warning affect your judgement of these clips?</label><textarea class="form-control" name="q29" rows="2" required></textarea></div>
-<div class="mb-4"><label class="fw-bold" data-translate="q30">What should platforms, media organizations or governments do to reduce harmful political deepfakes?</label><textarea class="form-control" name="q30" rows="2" required></textarea></div>
 <div class="d-flex justify-content-between"><a href="{{ '/survey/page2' if skipped else '/survey/page4' }}" class="btn btn-secondary" data-translate="back_btn">← Back</a><button class="btn btn-primary btn-lg" data-translate="next_4_6">Next Page (Videos 4–6) →</button></div>
 </form></div>{% endblock %}
