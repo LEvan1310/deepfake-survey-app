@@ -1,4 +1,6 @@
-{% extends "base.html" %}{% block content %}
+{% from "_media.html" import render_media %}
+{% extends "base.html" %}
+{% block content %}
 <div class="card shadow border-0 p-4 survey-card">
   <h3 class="text-primary fw-bold">
     <span data-lang-block="en">Section F - Deepfake Warning & Continued-Belief Experiment</span>
@@ -6,13 +8,13 @@
   </h3>
 
   <div class="alert alert-primary">
-    <div data-lang-block="en"><strong>Optional section:</strong> Section F is your choice. You may skip it and still finish the main survey. If you choose to participate, you must answer every question in this section to unlock one gift-wheel spin.</div>
-    <div data-lang-block="my" style="display:none"><strong>ရွေးချယ်နိုင်သောအပိုင်း:</strong> Section F ကို ဖြေမဖြေ သင်ရွေးချယ်နိုင်ပါသည်။ မဖြေဘဲလည်း ပင်မစစ်တမ်းကို ပြီးဆုံးနိုင်ပါသည်။ ပါဝင်ဖြေဆိုပါက ဤအပိုင်းရှိ မေးခွန်းအားလုံးကို ဖြေပြီးမှ Gift Wheel တစ်ကြိမ် လှည့်ခွင့်ရပါမည်။</div>
+    <div data-lang-block="en"><strong>Optional section:</strong> You may skip Section F and still complete the main survey. If you choose to participate, every visible question in this section is required and completing it unlocks one gift-wheel spin.</div>
+    <div data-lang-block="my" style="display:none"><strong>ရွေးချယ်နိုင်သောအပိုင်း:</strong> Section F ကို မဖြေဘဲ ပင်မစစ်တမ်းကို ပြီးဆုံးနိုင်ပါသည်။ ပါဝင်ရန်ရွေးချယ်ပါက မြင်ရသော မေးခွန်းအားလုံးကို ဖြေရမည်ဖြစ်ပြီး ပြီးဆုံးပါက Gift Wheel တစ်ကြိမ် လှည့်ခွင့်ရပါမည်။</div>
   </div>
 
   <div class="alert alert-info">
-    <div data-lang-block="en"><strong>⏱ Estimated time for Section F:</strong> about 5–7 minutes.</div>
-    <div data-lang-block="my" style="display:none"><strong>⏱ Section F အတွက် ခန့်မှန်းဖြေဆိုချိန်:</strong> ၅–၇ မိနစ်ခန့်။</div>
+    <div data-lang-block="en"><strong>⏱ Estimated time:</strong> about 5–7 minutes.</div>
+    <div data-lang-block="my" style="display:none"><strong>⏱ ခန့်မှန်းဖြေဆိုချိန်:</strong> ၅–၇ မိနစ်ခန့်။</div>
   </div>
 
   {% if error == 'choose_section_f' %}
@@ -22,8 +24,8 @@
   </div>
   {% elif error == 'complete_section_f' %}
   <div class="alert alert-danger">
-    <span data-lang-block="en">Because you chose to participate, every Section F question must be answered before continuing.</span>
-    <span data-lang-block="my" style="display:none">Section F တွင် ပါဝင်ရန်ရွေးချယ်ထားသောကြောင့် ဆက်မသွားမီ မေးခွန်းအားလုံးကို ဖြေရပါမည်။</span>
+    <span data-lang-block="en">Because you chose to participate, please answer every required Section F question before continuing.</span>
+    <span data-lang-block="my" style="display:none">Section F တွင် ပါဝင်ရန်ရွေးထားသောကြောင့် ဆက်မသွားမီ လိုအပ်သော မေးခွန်းအားလုံးကို ဖြေပါ။</span>
   </div>
   {% endif %}
 
@@ -36,102 +38,222 @@
       <div class="form-check mb-2">
         <input class="form-check-input section-choice" type="radio" name="section_f_choice" id="participateF" value="Participate" required>
         <label class="form-check-label fw-semibold" for="participateF">
-          <span data-lang-block="en">Yes — I want to participate and unlock the gift wheel after completing all questions.</span>
-          <span data-lang-block="my" style="display:none">ဟုတ်ကဲ့ — ပါဝင်ဖြေဆိုပြီး မေးခွန်းအားလုံးပြီးပါက Gift Wheel လှည့်ချင်ပါသည်။</span>
+          <span data-lang-block="en">Yes — participate and unlock the gift wheel after completing Section F.</span>
+          <span data-lang-block="my" style="display:none">ဟုတ်ကဲ့ — Section F ကို ဖြေပြီး Gift Wheel လှည့်ခွင့်ရယူမည်။</span>
         </label>
       </div>
       <div class="form-check">
         <input class="form-check-input section-choice" type="radio" name="section_f_choice" id="skipF" value="Skip" required>
         <label class="form-check-label" for="skipF">
-          <span data-lang-block="en">No — Skip Section F and finish the survey without the gift-wheel spin.</span>
-          <span data-lang-block="my" style="display:none">မပါဝင်ပါ — Section F ကို ကျော်ပြီး Gift Wheel မလှည့်ဘဲ စစ်တမ်းကို ပြီးဆုံးပါမည်။</span>
+          <span data-lang-block="en">No — skip Section F and go directly to the results.</span>
+          <span data-lang-block="my" style="display:none">မပါဝင်ပါ — Section F ကို ကျော်ပြီး ရလဒ်စာမျက်နှာသို့ တိုက်ရိုက်သွားမည်။</span>
         </label>
       </div>
     </div>
 
     <div id="sectionFContent" style="display:none">
       <div class="alert alert-warning">
-        <div data-lang-block="en">This section tests whether knowing that media is AI-generated fully removes its believability or influence. There are no correct or incorrect answers; answer based on your genuine reaction.</div>
-        <div data-lang-block="my" style="display:none">မီဒီယာတစ်ခု AI ဖြင့် ဖန်တီးထားကြောင်း သိရှိပြီးနောက်တောင် ၎င်း၏ ယုံကြည်ဖွယ်မှု သို့မဟုတ် သက်ရောက်မှု ဆက်ရှိမရှိကို ဤအပိုင်းက လေ့လာသည်။ မှန်/မှားအဖြေမရှိပါ။ သင်၏ အမှန်တကယ်ခံစားချက်အတိုင်း ဖြေပါ။</div>
+        <div data-lang-block="en"><strong>Purpose:</strong> This section measures whether an AI/deepfake warning changes believability, trust and perceived realism. These are opinion/reaction questions, so there is no correct or incorrect response.</div>
+        <div data-lang-block="my" style="display:none"><strong>ရည်ရွယ်ချက်:</strong> AI/Deepfake သတိပေးတံဆိပ်သည် ယုံကြည်ဖွယ်မှု၊ ယုံကြည်မှုနှင့် အစစ်ပုံပေါက်မှုအပေါ် မည်သို့ သက်ရောက်သည်ကို လေ့လာခြင်းဖြစ်သည်။ ဤအပိုင်းတွင် မှန်/မှားအဖြေမရှိပါ။</div>
       </div>
+
       <div class="bg-body-tertiary rounded p-3 mb-4 edu-box">
-        <strong data-lang-block="en">Important distinction:</strong><strong data-lang-block="my" style="display:none">အရေးကြီးသော ခွဲခြားချက်:</strong>
-        <span data-lang-block="en"> An “AI-generated” label describes how the media was created. It does not by itself prove that every statement is false. Claims still need independent source and context verification.</span>
-        <span data-lang-block="my" style="display:none"> “AI-generated” တံဆိပ်သည် မီဒီယာကို မည်သို့ဖန်တီးထားကြောင်း ဖော်ပြခြင်းသာဖြစ်ပြီး အတွင်းရှိ အဆိုအားလုံး မှားသည်ဟု တစ်ချက်တည်းဖြင့် မသက်သေပြနိုင်ပါ။ အဆိုများကို သီးခြားရင်းမြစ်နှင့် context ဖြင့် စစ်ဆေးရန်လိုပါသည်။</span>
+        <strong data-lang-block="en">Important:</strong><strong data-lang-block="my" style="display:none">အရေးကြီးသည်:</strong>
+        <span data-lang-block="en"> An AI-generated label describes how the media was created. It does not automatically prove that every claim in the video is false. Claims still need independent verification.</span>
+        <span data-lang-block="my" style="display:none"> AI-generated တံဆိပ်သည် မီဒီယာကို မည်သို့ ဖန်တီးထားကြောင်း ဖော်ပြသည်။ ဗီဒီယိုထဲရှိ အဆိုအားလုံး မှားသည်ဟု အလိုအလျောက် မဆိုလိုပါ။ အဆိုများကို သီးခြားစစ်ဆေးရန် လိုအပ်ပါသည်။</span>
       </div>
 
       {% for i,v in experiments.items() %}
       <div class="card p-3 mb-4 border warning-condition" data-condition="{{ v.condition }}" data-exp="{{ i }}">
-        <h5 class="fw-bold"><span data-lang-block="en">{{ v.title_en }}</span><span data-lang-block="my" style="display:none">{{ v.title_my }}</span></h5>
+        <h5 class="fw-bold mb-3">
+          <span data-lang-block="en">{{ v.title_en }}</span>
+          <span data-lang-block="my" style="display:none">{{ v.title_my }}</span>
+        </h5>
 
         {% if v.condition == 'labelled' %}
         <div class="alert alert-danger text-center fw-bold mb-3">
-          <span data-lang-block="en">⚠ AI-GENERATED / DEEPFAKE CONTENT</span><span data-lang-block="my" style="display:none">⚠ AI ဖြင့် ဖန်တီးထားသော / DEEPFAKE အကြောင်းအရာ</span><br>
-          <small data-lang-block="en">This clip is presented in this study as AI-generated. Evaluate your reaction even though the label is visible.</small>
-          <small data-lang-block="my" style="display:none">ဤကလစ်ကို သုတေသနတွင် AI ဖြင့် ဖန်တီးထားသော ကလစ်အဖြစ် ပြထားသည်။ တံဆိပ်မြင်နေရသော်လည်း သင့်တုံ့ပြန်မှုကို ဖြေဆိုပါ။</small>
+          <span data-lang-block="en">⚠ AI-GENERATED / DEEPFAKE CONTENT</span>
+          <span data-lang-block="my" style="display:none">⚠ AI ဖြင့် ဖန်တီးထားသော / DEEPFAKE အကြောင်းအရာ</span><br>
+          <small data-lang-block="en">The AI label is visible from the beginning. Answer based on your reaction even though you already know the clip is presented as AI-generated.</small>
+          <small data-lang-block="my" style="display:none">AI တံဆိပ်ကို အစကတည်းက ပြထားပါသည်။ ဗီဒီယိုကို AI-generated အဖြစ် ပြထားကြောင်း သိထားသော်လည်း သင့်တုံ့ပြန်မှုအတိုင်း ဖြေပါ။</small>
         </div>
         {% endif %}
 
         <div class="position-relative mb-3">
-          {% if v.condition == 'labelled' %}<div class="position-absolute top-0 start-0 m-2 badge bg-danger fs-6" style="z-index:2"><span data-lang-block="en">AI-GENERATED</span><span data-lang-block="my" style="display:none">AI ဖြင့် ဖန်တီးထားသည်</span></div>{% endif %}
-          <div class="ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/{{ v.youtube_id }}" allowfullscreen></iframe></div>
+          {% if v.condition == 'labelled' %}
+          <div class="position-absolute top-0 start-0 m-2 badge bg-danger fs-6" style="z-index:2">
+            <span data-lang-block="en">AI-GENERATED</span>
+            <span data-lang-block="my" style="display:none">AI ဖြင့် ဖန်တီးထားသည်</span>
+          </div>
+          {% endif %}
+          {{ render_media(v, v.title_en) }}
         </div>
 
         {% if v.condition == 'reveal' %}
         <div class="baseline-block" id="baseline-{{ i }}">
-          <div class="alert alert-secondary"><span data-lang-block="en">First answer these two questions before the AI verification label is revealed.</span><span data-lang-block="my" style="display:none">AI အတည်ပြုတံဆိပ် မပြမီ ဤမေးခွန်း ၂ ခုကို အရင်ဖြေပါ။</span></div>
-          <label class="fw-bold"><span data-lang-block="en">1. Based only on what you watched, how believable did the message feel?</span><span data-lang-block="my" style="display:none">၁။ ကြည့်ခဲ့သည့်အရာပေါ်သာ အခြေခံ၍ ဗီဒီယို၏ message ကို မည်မျှ ယုံကြည်ဖွယ်ဟု ခံစားရသနည်း။</span></label>
-          <select class="form-select mb-3 section-f-field" name="w{{ i }}_belief_before" required disabled><option value="" disabled selected data-translate="select_short">Select...</option>{% for n in range(1,6) %}<option value="{{ n }}" data-translate="belief_scale_{{ n }}">{{ n }}</option>{% endfor %}</select>
-          <label class="fw-bold"><span data-lang-block="en">2. Before seeing any verification label, how much would you trust the claim in the video?</span><span data-lang-block="my" style="display:none">၂။ အတည်ပြုတံဆိပ်မမြင်မီ ဗီဒီယိုထဲရှိ အဆိုကို မည်မျှ ယုံကြည်မည်နည်း။</span></label>
-          <select class="form-select mb-3 section-f-field" name="w{{ i }}_trust_before" required disabled><option value="" disabled selected data-translate="select_short">Select...</option>{% for n in range(1,6) %}<option value="{{ n }}" data-translate="trust_scale_{{ n }}">{{ n }}</option>{% endfor %}</select>
-          <button type="button" class="btn btn-warning fw-bold reveal-label" data-exp="{{ i }}" disabled><span data-lang-block="en">Reveal AI Verification Label →</span><span data-lang-block="my" style="display:none">AI အတည်ပြုတံဆိပ်ကို ပြပါ →</span></button>
+          <div class="alert alert-secondary">
+            <span data-lang-block="en"><strong>Before-label stage:</strong> Answer Questions 1 and 2 first. After both are answered, the AI/deepfake label will appear automatically and the remaining questions will unlock.</span>
+            <span data-lang-block="my" style="display:none"><strong>တံဆိပ်မပြမီအဆင့်:</strong> မေးခွန်း ၁ နှင့် ၂ ကို အရင်ဖြေပါ။ နှစ်ခုလုံး ဖြေပြီးသည်နှင့် AI/Deepfake တံဆိပ် အလိုအလျောက် ပေါ်လာပြီး ကျန်မေးခွန်းများ ဖွင့်ပေးမည်။</span>
+          </div>
+
+          <label class="fw-bold">
+            <span data-lang-block="en">1. Based only on what you watched, how believable did the message feel?</span>
+            <span data-lang-block="my" style="display:none">၁။ ကြည့်ခဲ့သည့်အရာပေါ်သာ အခြေခံ၍ ဗီဒီယို၏ အကြောင်းအရာကို မည်မျှ ယုံကြည်ဖွယ်ဟု ခံစားရသနည်း။</span>
+          </label>
+          <select class="form-select mb-3 section-f-field baseline-trigger" name="w{{ i }}_belief_before" required disabled>
+            <option value="" disabled selected data-translate="select_short">Select...</option>
+            {% for n in range(1,6) %}<option value="{{ n }}" data-translate="belief_scale_{{ n }}">{{ n }}</option>{% endfor %}
+          </select>
+
+          <label class="fw-bold">
+            <span data-lang-block="en">2. Before seeing any AI/deepfake label, how much would you trust the claim in the video?</span>
+            <span data-lang-block="my" style="display:none">၂။ AI/Deepfake တံဆိပ် မမြင်မီ ဗီဒီယိုထဲရှိ အဆိုကို မည်မျှ ယုံကြည်မည်နည်း။</span>
+          </label>
+          <select class="form-select mb-3 section-f-field baseline-trigger" name="w{{ i }}_trust_before" required disabled>
+            <option value="" disabled selected data-translate="select_short">Select...</option>
+            {% for n in range(1,6) %}<option value="{{ n }}" data-translate="trust_scale_{{ n }}">{{ n }}</option>{% endfor %}
+          </select>
         </div>
+
         <div class="after-label-block mt-3" id="after-label-{{ i }}" style="display:none">
-          <div class="alert alert-danger text-center fw-bold"><span data-lang-block="en">⚠ AI-GENERATED / DEEPFAKE CONTENT<br><small>For this research condition, the clip is identified as AI-generated/deepfake content.</small></span><span data-lang-block="my" style="display:none">⚠ AI ဖြင့် ဖန်တီးထားသော / DEEPFAKE အကြောင်းအရာ<br><small>ဤသုတေသနအခြေအနေတွင် ကလစ်ကို AI-generated/deepfake အဖြစ် သတ်မှတ်ထားသည်။</small></span></div>
+          <div class="alert alert-danger text-center fw-bold">
+            <span data-lang-block="en">⚠ AI-GENERATED / DEEPFAKE CONTENT<br><small>This study presents this clip as AI-generated/deepfake content. Now answer the same type of judgement questions after seeing the label.</small></span>
+            <span data-lang-block="my" style="display:none">⚠ AI ဖြင့် ဖန်တီးထားသော / DEEPFAKE အကြောင်းအရာ<br><small>ဤသုတေသနတွင် ဤကလစ်ကို AI-generated/deepfake အဖြစ် ပြထားသည်။ ယခု တံဆိပ်မြင်ပြီးနောက် သင့်ဆုံးဖြတ်ချက်ကို ဖြေပါ။</small></span>
+          </div>
         {% else %}
-        <div class="after-label-block"><input type="hidden" name="w{{ i }}_belief_before" value=""><input type="hidden" name="w{{ i }}_trust_before" value="">
+        <div class="after-label-block">
+          <input type="hidden" name="w{{ i }}_belief_before" value="">
+          <input type="hidden" name="w{{ i }}_trust_before" value="">
         {% endif %}
 
-          <label class="fw-bold"><span data-lang-block="en">3. Even though this video is labelled AI-generated, how believable does its message feel?</span><span data-lang-block="my" style="display:none">၃။ AI-generated ဟု တံဆိပ်တပ်ထားသော်လည်း ဗီဒီယို၏ message ကို မည်မျှ ယုံကြည်ဖွယ်ဟု ခံစားရသနည်း။</span></label>
-          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_belief_after" required disabled><option value="" disabled selected data-translate="select_short">Select...</option>{% for n in range(1,6) %}<option value="{{ n }}" data-translate="belief_scale_{{ n }}">{{ n }}</option>{% endfor %}</select>
-          <label class="fw-bold"><span data-lang-block="en">4. Even knowing it is AI-generated, how realistic does the video appear?</span><span data-lang-block="my" style="display:none">၄။ AI-generated ဖြစ်ကြောင်း သိသော်လည်း ဗီဒီယိုက မည်မျှ အစစ်ပုံပေါက်သနည်း။</span></label>
-          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_realism" required disabled><option value="" disabled selected data-translate="select_short">Select...</option>{% for n in range(1,6) %}<option value="{{ n }}" data-translate="realism_scale_{{ n }}">{{ n }}</option>{% endfor %}</select>
-          <label class="fw-bold"><span data-lang-block="en">5. Knowing this video is AI-generated, how much would you trust the information or claim presented?</span><span data-lang-block="my" style="display:none">၅။ ဤဗီဒီယိုသည် AI-generated ဖြစ်ကြောင်း သိပြီးနောက် အတွင်းရှိ သတင်းအချက်အလက် သို့မဟုတ် အဆိုကို မည်မျှ ယုံကြည်မည်နည်း။</span></label>
-          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_trust_after" required disabled><option value="" disabled selected data-translate="select_short">Select...</option>{% for n in range(1,6) %}<option value="{{ n }}" data-translate="trust_scale_{{ n }}">{{ n }}</option>{% endfor %}</select>
-          <label class="fw-bold"><span data-lang-block="en">6. Did knowing that the video was AI-generated completely remove its influence on your opinion?</span><span data-lang-block="my" style="display:none">၆။ AI-generated ဖြစ်ကြောင်း သိခြင်းက သင့်အမြင်အပေါ် ဗီဒီယို၏ သက်ရောက်မှုကို လုံးဝဖယ်ရှားပေးခဲ့သလား။</span></label>
-          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_influence_removed" required disabled><option value="" disabled selected data-translate="select_short">Select...</option><option value="Completely" data-translate="influence_completely">Yes, completely</option><option value="Mostly" data-translate="influence_mostly">Mostly</option><option value="Partly" data-translate="influence_partly">Partly</option><option value="Very little" data-translate="influence_little">Very little</option><option value="Still influenced" data-translate="influence_still">No, it still influenced my opinion</option></select>
-          <label class="fw-bold"><span data-lang-block="en">7. Even with the AI-generated warning, how likely are you to think some part of the message could still be true?</span><span data-lang-block="my" style="display:none">၇။ AI-generated သတိပေးတံဆိပ်ရှိနေသော်လည်း message ၏ တစ်စိတ်တစ်ပိုင်းက မှန်နိုင်သည်ဟု မည်မျှ ယူဆမိသနည်း။</span></label>
-          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_could_be_true" required disabled><option value="" disabled selected data-translate="select_short">Select...</option>{% for n in range(1,6) %}<option value="{{ n }}" data-translate="likelihood_scale_{{ n }}">{{ n }}</option>{% endfor %}</select>
-          <label class="fw-bold"><span data-lang-block="en">8. How strongly did the realism of the video affect your judgement even though you knew it was AI-generated?</span><span data-lang-block="my" style="display:none">၈။ AI-generated ဖြစ်ကြောင်း သိထားသော်လည်း ဗီဒီယို၏ အစစ်ပုံပေါက်မှုက သင့်ဆုံးဖြတ်ချက်ကို မည်မျှ သက်ရောက်စေသနည်း။</span></label>
-          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_realism_influence" required disabled><option value="" disabled selected data-translate="select_short">Select...</option>{% for n in range(1,6) %}<option value="{{ n }}" data-translate="strength_scale_{{ n }}">{{ n }}</option>{% endfor %}</select>
-          <label class="fw-bold"><span data-lang-block="en">9. Which best describes your reaction?</span><span data-lang-block="my" style="display:none">၉။ သင့်တုံ့ပြန်မှုကို အကောင်းဆုံးဖော်ပြသော အဖြေကို ရွေးပါ။</span></label>
-          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_reaction" required disabled><option value="" disabled selected data-translate="select_short">Select...</option><option value="Knew fake and did not believe" data-translate="reaction_1">I knew it was fake and did not believe its message.</option><option value="Some parts believable" data-translate="reaction_2">I knew it was fake, but some parts still seemed believable.</option><option value="Realism caused uncertainty" data-translate="reaction_3">I knew it was fake, but the realism made me uncertain.</option><option value="Still affected opinion" data-translate="reaction_4">I knew it was fake, but it still affected my opinion.</option><option value="Would verify claims" data-translate="reaction_5">I knew it was fake, but I would still verify the claims before deciding.</option></select>
-          <label class="fw-bold"><span data-lang-block="en">10. Why did you believe or disbelieve the message even after seeing the AI-generated warning?</span><span data-lang-block="my" style="display:none">၁၀။ AI-generated သတိပေးတံဆိပ်မြင်ပြီးနောက်တောင် အဆိုကို ယုံကြည်ခဲ့ခြင်း သို့မဟုတ် မယုံကြည်ခဲ့ခြင်း၏ အကြောင်းရင်းကို ရှင်းပြပါ။</span></label>
+          <label class="fw-bold">
+            <span data-lang-block="en">{{ 3 if v.condition == 'reveal' else 1 }}. Even though this video is labelled AI-generated, how believable does its message feel?</span>
+            <span data-lang-block="my" style="display:none">{{ 3 if v.condition == 'reveal' else 1 }}။ AI-generated ဟု တံဆိပ်တပ်ထားသော်လည်း ဗီဒီယို၏ အကြောင်းအရာကို မည်မျှ ယုံကြည်ဖွယ်ဟု ခံစားရသနည်း။</span>
+          </label>
+          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_belief_after" required disabled>
+            <option value="" disabled selected data-translate="select_short">Select...</option>
+            {% for n in range(1,6) %}<option value="{{ n }}" data-translate="belief_scale_{{ n }}">{{ n }}</option>{% endfor %}
+          </select>
+
+          <label class="fw-bold">
+            <span data-lang-block="en">{{ 4 if v.condition == 'reveal' else 2 }}. Even knowing it is AI-generated, how realistic does the video appear?</span>
+            <span data-lang-block="my" style="display:none">{{ 4 if v.condition == 'reveal' else 2 }}။ AI-generated ဖြစ်ကြောင်း သိသော်လည်း ဗီဒီယိုက မည်မျှ အစစ်ပုံပေါက်သနည်း။</span>
+          </label>
+          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_realism" required disabled>
+            <option value="" disabled selected data-translate="select_short">Select...</option>
+            {% for n in range(1,6) %}<option value="{{ n }}" data-translate="realism_scale_{{ n }}">{{ n }}</option>{% endfor %}
+          </select>
+
+          <label class="fw-bold">
+            <span data-lang-block="en">{{ 5 if v.condition == 'reveal' else 3 }}. Knowing this video is AI-generated, how much would you trust the information or claim presented?</span>
+            <span data-lang-block="my" style="display:none">{{ 5 if v.condition == 'reveal' else 3 }}။ ဤဗီဒီယိုသည် AI-generated ဖြစ်ကြောင်း သိပြီးနောက် အတွင်းရှိ သတင်းအချက်အလက် သို့မဟုတ် အဆိုကို မည်မျှ ယုံကြည်မည်နည်း။</span>
+          </label>
+          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_trust_after" required disabled>
+            <option value="" disabled selected data-translate="select_short">Select...</option>
+            {% for n in range(1,6) %}<option value="{{ n }}" data-translate="trust_scale_{{ n }}">{{ n }}</option>{% endfor %}
+          </select>
+
+          <label class="fw-bold">
+            <span data-lang-block="en">{{ 6 if v.condition == 'reveal' else 4 }}. Did knowing that the video was AI-generated completely remove its influence on your opinion?</span>
+            <span data-lang-block="my" style="display:none">{{ 6 if v.condition == 'reveal' else 4 }}။ AI-generated ဖြစ်ကြောင်း သိခြင်းက သင့်အမြင်အပေါ် ဗီဒီယို၏ သက်ရောက်မှုကို လုံးဝဖယ်ရှားပေးခဲ့သလား။</span>
+          </label>
+          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_influence_removed" required disabled>
+            <option value="" disabled selected data-translate="select_short">Select...</option>
+            <option value="Completely" data-translate="influence_completely">Yes, completely</option>
+            <option value="Mostly" data-translate="influence_mostly">Mostly</option>
+            <option value="Partly" data-translate="influence_partly">Partly</option>
+            <option value="Very little" data-translate="influence_little">Very little</option>
+            <option value="Still influenced" data-translate="influence_still">No, it still influenced my opinion</option>
+          </select>
+
+          <label class="fw-bold">
+            <span data-lang-block="en">{{ 7 if v.condition == 'reveal' else 5 }}. Even with the AI-generated warning, how likely are you to think some part of the message could still be true?</span>
+            <span data-lang-block="my" style="display:none">{{ 7 if v.condition == 'reveal' else 5 }}။ AI-generated သတိပေးတံဆိပ်ရှိနေသော်လည်း အကြောင်းအရာ၏ တစ်စိတ်တစ်ပိုင်းက မှန်နိုင်သည်ဟု မည်မျှ ယူဆမိသနည်း။</span>
+          </label>
+          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_could_be_true" required disabled>
+            <option value="" disabled selected data-translate="select_short">Select...</option>
+            {% for n in range(1,6) %}<option value="{{ n }}" data-translate="likelihood_scale_{{ n }}">{{ n }}</option>{% endfor %}
+          </select>
+
+          <label class="fw-bold">
+            <span data-lang-block="en">{{ 8 if v.condition == 'reveal' else 6 }}. How strongly did the realism of the video affect your judgement even though you knew it was AI-generated?</span>
+            <span data-lang-block="my" style="display:none">{{ 8 if v.condition == 'reveal' else 6 }}။ AI-generated ဖြစ်ကြောင်း သိထားသော်လည်း ဗီဒီယို၏ အစစ်ပုံပေါက်မှုက သင့်ဆုံးဖြတ်ချက်ကို မည်မျှ သက်ရောက်စေသနည်း။</span>
+          </label>
+          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_realism_influence" required disabled>
+            <option value="" disabled selected data-translate="select_short">Select...</option>
+            {% for n in range(1,6) %}<option value="{{ n }}" data-translate="strength_scale_{{ n }}">{{ n }}</option>{% endfor %}
+          </select>
+
+          <label class="fw-bold">
+            <span data-lang-block="en">{{ 9 if v.condition == 'reveal' else 7 }}. Which best describes your reaction?</span>
+            <span data-lang-block="my" style="display:none">{{ 9 if v.condition == 'reveal' else 7 }}။ သင့်တုံ့ပြန်မှုကို အကောင်းဆုံးဖော်ပြသော အဖြေကို ရွေးပါ။</span>
+          </label>
+          <select class="form-select mb-3 section-f-field after-required" name="w{{ i }}_reaction" required disabled>
+            <option value="" disabled selected data-translate="select_short">Select...</option>
+            <option value="Knew fake and did not believe" data-translate="reaction_1">I knew it was fake and did not believe its message.</option>
+            <option value="Some parts believable" data-translate="reaction_2">I knew it was fake, but some parts still seemed believable.</option>
+            <option value="Realism caused uncertainty" data-translate="reaction_3">I knew it was fake, but the realism made me uncertain.</option>
+            <option value="Still affected opinion" data-translate="reaction_4">I knew it was fake, but it still affected my opinion.</option>
+            <option value="Would verify claims" data-translate="reaction_5">I knew it was fake, but I would still verify the claims before deciding.</option>
+          </select>
+
+          <label class="fw-bold">
+            <span data-lang-block="en">{{ 10 if v.condition == 'reveal' else 8 }}. Why did you believe or disbelieve the message after seeing the AI-generated warning?</span>
+            <span data-lang-block="my" style="display:none">{{ 10 if v.condition == 'reveal' else 8 }}။ AI-generated သတိပေးတံဆိပ် မြင်ပြီးနောက် အဆိုကို ယုံကြည်ခြင်း သို့မဟုတ် မယုံကြည်ခြင်း၏ အကြောင်းရင်းကို ရှင်းပြပါ။</span>
+          </label>
           <textarea class="form-control section-f-field after-required" name="w{{ i }}_reason" rows="2" required disabled></textarea>
         </div>
       </div>
       {% endfor %}
-      <div class="alert alert-success"><span data-lang-block="en">🎁 Complete all Section F questions to unlock one spin of the gift wheel.</span><span data-lang-block="my" style="display:none">🎁 Section F မေးခွန်းအားလုံးကို ဖြေပြီးပါက Gift Wheel တစ်ကြိမ် လှည့်ခွင့်ရပါမည်။</span></div>
+
+      <div class="alert alert-success">
+        <span data-lang-block="en">🎁 Complete all Section F questions to unlock one gift-wheel spin.</span>
+        <span data-lang-block="my" style="display:none">🎁 Section F မေးခွန်းအားလုံးကို ဖြေပြီးပါက Gift Wheel တစ်ကြိမ် လှည့်ခွင့်ရပါမည်။</span>
+      </div>
     </div>
 
-    <div class="d-flex justify-content-between gap-3 mt-4"><a href="/survey/page7" class="btn btn-secondary">← Back</a><button class="btn btn-success btn-lg" id="sectionFSubmit"><span data-lang-block="en">Continue →</span><span data-lang-block="my" style="display:none">ဆက်သွားရန် →</span></button></div>
+    <div class="d-flex justify-content-between gap-3 mt-4">
+      <a href="/survey/page7" class="btn btn-secondary">← Back</a>
+      <button class="btn btn-success btn-lg" id="sectionFSubmit">
+        <span data-lang-block="en">Continue →</span>
+        <span data-lang-block="my" style="display:none">ဆက်သွားရန် →</span>
+      </button>
+    </div>
   </form>
 </div>
+
 <script>
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', function () {
   const content = document.getElementById('sectionFContent');
   const choices = document.querySelectorAll('.section-choice');
   const allFields = document.querySelectorAll('.section-f-field');
-  const revealButtons = document.querySelectorAll('.reveal-label');
   const submitButton = document.getElementById('sectionFSubmit');
 
-  function setParticipation(choice){
+  function revealConditionAutomatically(condition) {
+    if (!condition || condition.dataset.condition !== 'reveal') return;
+    const i = condition.dataset.exp;
+    const belief = condition.querySelector(`[name="w${i}_belief_before"]`);
+    const trust = condition.querySelector(`[name="w${i}_trust_before"]`);
+    const afterBlock = document.getElementById(`after-label-${i}`);
+    if (belief && trust && belief.value && trust.value) {
+      afterBlock.style.display = '';
+      afterBlock.querySelectorAll('.after-required').forEach(el => el.disabled = false);
+    }
+  }
+
+  function setParticipation(choice) {
     const participating = choice === 'Participate';
     content.style.display = participating ? '' : 'none';
-    allFields.forEach(el => { el.disabled = !participating; });
-    revealButtons.forEach(btn => { btn.disabled = !participating; });
-    if(participating){
-      document.querySelectorAll('.warning-condition[data-condition="reveal"] .after-required').forEach(el => el.disabled = true);
+
+    allFields.forEach(el => {
+      el.disabled = !participating;
+    });
+
+    if (participating) {
+      document.querySelectorAll('.warning-condition[data-condition="reveal"]').forEach(condition => {
+        condition.querySelectorAll('.after-required').forEach(el => el.disabled = true);
+        revealConditionAutomatically(condition);
+      });
       submitButton.querySelector('[data-lang-block="en"]').textContent = 'Complete Section F & Unlock Gift Wheel →';
       submitButton.querySelector('[data-lang-block="my"]').textContent = 'Section F ပြီးဆုံးပြီး Gift Wheel ဖွင့်ရန် →';
     } else {
@@ -140,22 +262,18 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   }
 
-  choices.forEach(r => r.addEventListener('change', () => setParticipation(r.value)));
+  choices.forEach(radio => {
+    radio.addEventListener('change', () => setParticipation(radio.value));
+  });
 
-  revealButtons.forEach(btn => {
-    btn.addEventListener('click', function(){
-      const i = this.dataset.exp;
-      const belief = document.querySelector(`[name="w${i}_belief_before"]`);
-      const trust = document.querySelector(`[name="w${i}_trust_before"]`);
-      if(!belief.value || !trust.value){ belief.reportValidity(); if(belief.value) trust.reportValidity(); return; }
-      document.getElementById(`after-label-${i}`).style.display = '';
-      document.querySelectorAll(`#after-label-${i} .after-required`).forEach(el => { el.disabled = false; });
-      this.disabled = true;
-      this.querySelector('[data-lang-block="en"]').textContent = 'AI Label Revealed ✓';
-      this.querySelector('[data-lang-block="my"]').textContent = 'AI တံဆိပ်ကို ပြပြီးပါပြီ ✓';
-      document.getElementById(`after-label-${i}`).scrollIntoView({behavior:'smooth', block:'start'});
+  document.querySelectorAll('.warning-condition[data-condition="reveal"] .baseline-trigger').forEach(field => {
+    field.addEventListener('change', function () {
+      revealConditionAutomatically(this.closest('.warning-condition'));
     });
   });
+
+  const selected = document.querySelector('.section-choice:checked');
+  if (selected) setParticipation(selected.value);
 });
 </script>
 {% endblock %}
