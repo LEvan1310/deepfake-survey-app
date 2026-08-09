@@ -1,21 +1,115 @@
-{% extends "base.html" %}{% block content %}
+{% extends "base.html" %}
+{% block content %}
 <style>
-.reward-wrap{max-width:760px;margin:auto}.wheel-shell{position:relative;width:min(82vw,460px);aspect-ratio:1;margin:28px auto 18px}.wheel{width:100%;height:100%;border-radius:50%;border:10px solid var(--bs-body-color);background:conic-gradient(#f7c948 0deg 72deg,#77c66e 72deg 144deg,#6cb6ff 144deg 216deg,#ff8a80 216deg 288deg,#b39ddb 288deg 360deg);position:relative;transition:transform 4.5s cubic-bezier(.12,.72,.08,1)}.wheel:after{content:"";position:absolute;inset:43%;border-radius:50%;background:var(--bs-body-bg);border:5px solid var(--bs-body-color)}.wheel-label{position:absolute;left:50%;top:50%;width:42%;transform-origin:0 0;text-align:right;font-weight:800;font-size:.9rem;padding-right:12px}.wheel-pointer{position:absolute;left:50%;top:-15px;transform:translateX(-50%);z-index:5;font-size:2.5rem}.reward-result{font-size:1.35rem}.spin-note{font-size:.92rem}
+.reward-wrap{max-width:760px;margin:auto}
+.wheel-shell{position:relative;width:min(82vw,460px);aspect-ratio:1;margin:28px auto 18px}
+.wheel{width:100%;height:100%;border-radius:50%;border:10px solid var(--bs-body-color);background:conic-gradient(#f7c948 0deg 72deg,#77c66e 72deg 144deg,#6cb6ff 144deg 216deg,#ff8a80 216deg 288deg,#b39ddb 288deg 360deg);position:relative;transition:transform 4.5s cubic-bezier(.12,.72,.08,1)}
+.wheel:after{content:"";position:absolute;inset:43%;border-radius:50%;background:var(--bs-body-bg);border:5px solid var(--bs-body-color)}
+.wheel-label{position:absolute;left:50%;top:50%;width:42%;transform-origin:0 0;text-align:right;font-weight:800;font-size:.9rem;padding-right:12px}
+.wheel-pointer{position:absolute;left:50%;top:-15px;transform:translateX(-50%);z-index:5;font-size:2.5rem;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+.reward-result{font-size:1.35rem}
+.spin-note{font-size:.92rem}
+#resultArea[hidden],#resultLink[hidden],#spinningMessage[hidden]{display:none!important}
 </style>
+
 <div class="card shadow border-0 p-4 reward-wrap text-center">
-  <h2 class="text-primary fw-bold"><span data-lang-block="en">🎁 Thank You Gift Wheel</span><span data-lang-block="my" style="display:none">🎁 ကျေးဇူးတင် Gift Wheel</span></h2>
-  <p class="text-muted"><span data-lang-block="en">You completed optional Section F, so you have unlocked one spin. Each of the five wheel segments has an equal 20% chance.</span><span data-lang-block="my" style="display:none">ရွေးချယ်နိုင်သော Section F ကို ပြီးဆုံးခဲ့သောကြောင့် Gift Wheel တစ်ကြိမ် လှည့်ခွင့်ရပါပြီ။ အပိုင်း ၅ ခုစလုံးတွင် ၂၀% စီ အခွင့်အရေးတူညီပါသည်။</span></p>
-  <div class="wheel-shell"><div class="wheel-pointer">▼</div><div class="wheel" id="giftWheel">
-    {% for r in rewards %}<div class="wheel-label" style="transform:rotate({{ 36 + loop.index0*72 }}deg)">{{ r.emoji }} <span data-lang-block="en">{{ r.label_en }}</span><span data-lang-block="my" style="display:none">{{ r.label_my }}</span></div>{% endfor %}
-  </div></div>
+  <h2 class="text-primary fw-bold">
+    <span data-lang-block="en">🎁 Thank You Gift Wheel</span>
+    <span data-lang-block="my" style="display:none">🎁 ကျေးဇူးတင် Gift Wheel</span>
+  </h2>
+
+  <p class="text-muted">
+    <span data-lang-block="en">You completed optional Section F, so you have unlocked one spin. The reward is the segment that stops directly under the arrow.</span>
+    <span data-lang-block="my" style="display:none">Section F ကို ပြီးဆုံးခဲ့သောကြောင့် Gift Wheel တစ်ကြိမ် လှည့်ခွင့်ရပါပြီ။ မြှားအောက်တွင် တိတိကျကျ ရပ်သည့် အပိုင်းသည် သင့်ဆုဖြစ်ပါသည်။</span>
+  </p>
+
+  <div class="wheel-shell">
+    <div class="wheel-pointer" aria-hidden="true">▼</div>
+    <div class="wheel" id="giftWheel">
+      {% for r in rewards %}
+      <div class="wheel-label" style="transform:rotate({{ 36 + loop.index0*72 }}deg)">
+        {{ r.emoji }}
+        <span data-lang-block="en">{{ r.label_en }}</span>
+        <span data-lang-block="my" style="display:none">{{ r.label_my }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 
   {% if not prize %}
-  <form method="POST"><button class="btn btn-success btn-lg px-5" id="spinButton"><span data-lang-block="en">Spin the Wheel 🎡</span><span data-lang-block="my" style="display:none">Wheel လှည့်ရန် 🎡</span></button></form>
-  <p class="spin-note text-muted mt-3"><span data-lang-block="en">Only one spin is available for this completed response.</span><span data-lang-block="my" style="display:none">ဤဖြေဆိုမှုအတွက် တစ်ကြိမ်သာ လှည့်နိုင်ပါသည်။</span></p>
+    <form method="POST" id="spinForm">
+      <button class="btn btn-success btn-lg px-5" id="spinButton" type="submit">
+        <span data-lang-block="en">Spin the Wheel 🎡</span>
+        <span data-lang-block="my" style="display:none">Wheel လှည့်ရန် 🎡</span>
+      </button>
+    </form>
+    <p class="spin-note text-muted mt-3">
+      <span data-lang-block="en">Only one spin is available for this completed response.</span>
+      <span data-lang-block="my" style="display:none">ဤဖြေဆိုမှုအတွက် တစ်ကြိမ်သာ လှည့်နိုင်ပါသည်။</span>
+    </p>
   {% else %}
-  <div class="alert alert-success reward-result mt-3"><strong><span data-lang-block="en">Your result:</span><span data-lang-block="my" style="display:none">သင့်ရလဒ်:</span></strong><br><span data-lang-block="en">{{ prize.emoji }} {{ prize.label_en }}</span><span data-lang-block="my" style="display:none">{{ prize.emoji }} {{ prize.label_my }}</span></div>
-  <a href="/results" class="btn btn-primary btn-lg"><span data-lang-block="en">View Survey & Quiz Results →</span><span data-lang-block="my" style="display:none">စစ်တမ်းနှင့် Quiz ရလဒ်များ ကြည့်ရန် →</span></a>
+    <div id="spinningMessage" class="alert alert-info mt-3">
+      <span data-lang-block="en">🎡 Spinning... your result will appear when the wheel stops.</span>
+      <span data-lang-block="my" style="display:none">🎡 Wheel လှည့်နေပါသည်... ရပ်သွားသည့်အခါ သင့်ဆုကို ပြပါမည်။</span>
+    </div>
+
+    <div id="resultArea" class="alert alert-success reward-result mt-3" hidden>
+      <strong>
+        <span data-lang-block="en">Your result:</span>
+        <span data-lang-block="my" style="display:none">သင့်ရလဒ်:</span>
+      </strong>
+      <br>
+      <span data-lang-block="en">{{ prize.emoji }} {{ prize.label_en }}</span>
+      <span data-lang-block="my" style="display:none">{{ prize.emoji }} {{ prize.label_my }}</span>
+    </div>
+
+    <a id="resultLink" href="/results" class="btn btn-primary btn-lg" hidden>
+      <span data-lang-block="en">View Survey & Quiz Results →</span>
+      <span data-lang-block="my" style="display:none">စစ်တမ်းနှင့် Quiz ရလဒ်များ ကြည့်ရန် →</span>
+    </a>
   {% endif %}
 </div>
-{% if prize_index is not none %}<script>document.addEventListener('DOMContentLoaded',()=>{const wheel=document.getElementById('giftWheel');const idx={{ prize_index }};const segmentCenter=idx*72+36;const target=360*6+(360-segmentCenter);requestAnimationFrame(()=>{wheel.style.transform=`rotate(${target}deg)`;});});</script>{% endif %}
+
+{% if prize_index is not none %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const wheel = document.getElementById('giftWheel');
+  const spinningMessage = document.getElementById('spinningMessage');
+  const resultArea = document.getElementById('resultArea');
+  const resultLink = document.getElementById('resultLink');
+
+  // Five equal segments = 72° each.
+  // The fixed arrow is at the top (0°). Rotate the selected segment's CENTER
+  // to 0° so the visible arrow and the saved reward always match exactly.
+  const idx = {{ prize_index|int }};
+  const segmentSize = 72;
+  const segmentCenter = (idx * segmentSize) + (segmentSize / 2);
+  const extraTurns = 6 * 360;
+  const finalRotation = extraTurns + (360 - segmentCenter);
+
+  let revealed = false;
+  const revealResult = () => {
+    if (revealed) return;
+    revealed = true;
+    if (spinningMessage) spinningMessage.hidden = true;
+    if (resultArea) resultArea.hidden = false;
+    if (resultLink) resultLink.hidden = false;
+  };
+
+  // Show the reward ONLY after the wheel animation has actually finished.
+  wheel.addEventListener('transitionend', (event) => {
+    if (event.propertyName === 'transform') revealResult();
+  }, { once: true });
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      wheel.style.transform = `rotate(${finalRotation}deg)`;
+    });
+  });
+
+  // Safe fallback in case a browser suppresses transitionend.
+  setTimeout(revealResult, 5000);
+});
+</script>
+{% endif %}
 {% endblock %}
