@@ -178,39 +178,16 @@ def admin_required(view):
     return wrapped
 
 
-def _quiz_item_snapshot(item):
-    # Store the exact stimulus configuration that a participant actually saw.
-    # This prevents the score page from showing a different video after a later deploy.
-    return {
-        'answer': item.get('answer', ''),
-        'reason_en': item.get('reason_en', ''),
-        'reason_my': item.get('reason_my', ''),
-        'source_type': item.get('source_type', 'youtube'),
-        'source_url': item.get('source_url', ''),
-        'youtube_id': item.get('youtube_id', ''),
-        'source_name': item.get('source_name', '')
-    }
-
-
-def remember_quiz_media(start, end):
-    snapshot = session.get('quiz_media_snapshot', {})
-    for i in range(start, end + 1):
-        key = str(i)
-        if key not in snapshot:
-            snapshot[key] = _quiz_item_snapshot(VIDEO_QUIZ[i])
-    session['quiz_media_snapshot'] = snapshot
-
-
 def video_page_context(start, end):
-    remember_quiz_media(start, end)
-    snapshot = session.get('quiz_media_snapshot', {})
-    return {i: snapshot.get(str(i), _quiz_item_snapshot(VIDEO_QUIZ[i])) for i in range(start, end + 1)}
+    # IMPORTANT: The quiz pages and the result page use this SAME VIDEO_QUIZ
+    # configuration. This guarantees Video 1 in the quiz is Video 1 in results,
+    # Video 2 is Video 2, and so on through Video 9.
+    return {i: VIDEO_QUIZ[i] for i in range(start, end + 1)}
 
 
 def calculate_quiz():
     details = []
     correct = 0
-    snapshot = session.get('quiz_media_snapshot', {})
 
     for i in range(1, 10):
         if i <= 3:
@@ -220,9 +197,10 @@ def calculate_quiz():
         else:
             data = session.get('page7', {})
 
-        stimulus = snapshot.get(str(i), _quiz_item_snapshot(VIDEO_QUIZ[i]))
+        # Use the exact same configured stimulus used on the quiz page.
+        stimulus = VIDEO_QUIZ[i]
         selected = data.get(f'v_real_{i}', '')
-        expected = stimulus.get('answer', VIDEO_QUIZ[i]['answer'])
+        expected = stimulus['answer']
         is_correct = selected == expected
         if is_correct:
             correct += 1
