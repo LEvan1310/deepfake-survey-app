@@ -288,7 +288,15 @@ def survey_page6():
     if request.method == 'POST':
         session['page6'] = request.form.to_dict()
         return redirect(url_for('survey_page7'))
-    return render_template('survey_page6.html', videos=video_page_context(4, 6))
+
+    # Clips 4–6 are explicitly the same three X sources used by the score page.
+    # Keeping this explicit prevents an older YouTube mapping from appearing here.
+    videos = {
+        4: VIDEO_QUIZ[4],
+        5: VIDEO_QUIZ[5],
+        6: VIDEO_QUIZ[6],
+    }
+    return render_template('survey_page6.html', videos=videos)
 
 
 @app.route('/survey/page7', methods=['GET', 'POST'])
