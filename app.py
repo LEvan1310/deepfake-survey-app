@@ -23,8 +23,8 @@ MEDIA_SOURCES = {
     3: {'source_type': 'x', 'source_url': 'https://x.com/GarudEyeIntel/status/2057702492738310186?s=20'},
     4: {'source_type': 'x', 'source_url': 'https://x.com/TheRubberDuck79/status/2033211923286708284?s=20'},
     5: {'source_type': 'x', 'source_url': 'https://x.com/tvir_X/status/2083951478746620388?s=20'},
-    6: {'source_type': 'youtube', 'source_url': 'https://www.youtube.com/watch?v=vui5TFU3DCM&t=1s', 'youtube_id': 'vui5TFU3DCM'},
-    7: {'source_type': 'youtube', 'source_url': 'https://www.youtube.com/watch?v=cQ54GDm1eL0', 'youtube_id': 'cQ54GDm1eL0'},
+    6: {'source_type': 'youtube', 'youtube_id': 'vui5TFU3DCM'},
+    7: {'source_type': 'youtube', 'youtube_id': 'cQ54GDm1eL0'},
     8: {'source_type': 'external', 'source_url': 'https://www.bbc.com/reel/video/p0hkflt4/watch', 'source_name': 'BBC Reel'},
 }
 
@@ -178,13 +178,40 @@ def admin_required(view):
     return wrapped
 
 
+def _quiz_item_snapshot(item):
+    # Store the exact stimulus configuration that a participant actually saw.
+    # This prevents the score page from showing a different video after a later deploy.
+    return {
+        'answer': item.get('answer', ''),
+        'reason_en': item.get('reason_en', ''),
+        'reason_my': item.get('reason_my', ''),
+        'source_type': item.get('source_type', 'youtube'),
+        'source_url': item.get('source_url', ''),
+        'youtube_id': item.get('youtube_id', ''),
+        'source_name': item.get('source_name', '')
+    }
+
+
+def remember_quiz_media(start, end):
+    snapshot = session.get('quiz_media_snapshot', {})
+    for i in range(start, end + 1):
+        key = str(i)
+        if key not in snapshot:
+            snapshot[key] = _quiz_item_snapshot(VIDEO_QUIZ[i])
+    session['quiz_media_snapshot'] = snapshot
+
+
 def video_page_context(start, end):
-    return {i: VIDEO_QUIZ[i] for i in range(start, end + 1)}
+    remember_quiz_media(start, end)
+    snapshot = session.get('quiz_media_snapshot', {})
+    return {i: snapshot.get(str(i), _quiz_item_snapshot(VIDEO_QUIZ[i])) for i in range(start, end + 1)}
 
 
 def calculate_quiz():
     details = []
     correct = 0
+    snapshot = session.get('quiz_media_snapshot', {})
+
     for i in range(1, 10):
         if i <= 3:
             data = session.get('page5', {})
@@ -192,23 +219,27 @@ def calculate_quiz():
             data = session.get('page6', {})
         else:
             data = session.get('page7', {})
+
+        stimulus = snapshot.get(str(i), _quiz_item_snapshot(VIDEO_QUIZ[i]))
         selected = data.get(f'v_real_{i}', '')
-        expected = VIDEO_QUIZ[i]['answer']
+        expected = stimulus.get('answer', VIDEO_QUIZ[i]['answer'])
         is_correct = selected == expected
         if is_correct:
             correct += 1
+
         details.append({
             'number': i,
             'selected': selected,
             'expected': expected,
             'correct': is_correct,
-            'reason_en': VIDEO_QUIZ[i]['reason_en'],
-            'reason_my': VIDEO_QUIZ[i]['reason_my'],
-            'source_type': VIDEO_QUIZ[i].get('source_type', 'youtube'),
-            'source_url': VIDEO_QUIZ[i].get('source_url', ''),
-            'youtube_id': VIDEO_QUIZ[i].get('youtube_id', ''),
-            'source_name': VIDEO_QUIZ[i].get('source_name', '')
+            'reason_en': stimulus.get('reason_en', ''),
+            'reason_my': stimulus.get('reason_my', ''),
+            'source_type': stimulus.get('source_type', 'youtube'),
+            'source_url': stimulus.get('source_url', ''),
+            'youtube_id': stimulus.get('youtube_id', ''),
+            'source_name': stimulus.get('source_name', '')
         })
+
     percent = round((correct / 9) * 100)
     return correct, 9, percent, details
 
