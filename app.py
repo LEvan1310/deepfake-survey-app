@@ -141,7 +141,6 @@ def ensure_csv_headers():
     old_headers = rows[0]
     if old_headers == HEADERS:
         return
-
     # Keep a backup, then map every existing column into the new schema.
     legacy_file = 'survey_responses_legacy.csv'
     if not os.path.exists(legacy_file):
