@@ -18,12 +18,12 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Evan')
 
 MEDIA_SOURCES = {
-    1: {'source_type': 'x', 'source_url': 'https://x.com/RajaFaisalPK/status/2033543923101319627?s=20'},
-    2: {'source_type': 'x', 'source_url': 'https://x.com/tvir_X/status/2083951574401908838?s=20'},
-    3: {'source_type': 'x', 'source_url': 'https://x.com/GarudEyeIntel/status/2057702492738310186?s=20'},
-    4: {'source_type': 'x', 'source_url': 'https://x.com/TheRubberDuck79/status/2033211923286708284?s=20'},
-    5: {'source_type': 'x', 'source_url': 'https://x.com/tvir_X/status/2083951478746620388?s=20'},
-    6: {'source_type': 'x', 'source_url': 'https://x.com/GarudEyeIntel/status/2057702492738310186?s=20'},
+    1: {'source_type': 'x', 'source_url': 'https://x.com/RajaFaisalPK/status/2033543923101319627?s=20', 'x_post_id': '2033543923101319627'},
+    2: {'source_type': 'x', 'source_url': 'https://x.com/tvir_X/status/2083951574401908838?s=20', 'x_post_id': '2083951574401908838'},
+    3: {'source_type': 'x', 'source_url': 'https://x.com/GarudEyeIntel/status/2057702492738310186?s=20', 'x_post_id': '2057702492738310186'},
+    4: {'source_type': 'x', 'source_url': 'https://x.com/TheRubberDuck79/status/2033211923286708284?s=20', 'x_post_id': '2033211923286708284'},
+    5: {'source_type': 'x', 'source_url': 'https://x.com/tvir_X/status/2083951478746620388?s=20', 'x_post_id': '2083951478746620388'},
+    6: {'source_type': 'youtube', 'youtube_id': 'vui5TFU3DCM'},
     7: {'source_type': 'youtube', 'youtube_id': 'cQ54GDm1eL0'},
     8: {'source_type': 'external', 'source_url': 'https://www.bbc.com/reel/video/p0hkflt4/watch', 'source_name': 'BBC Reel'},
 }
@@ -214,6 +214,7 @@ def calculate_quiz():
             'reason_my': stimulus.get('reason_my', ''),
             'source_type': stimulus.get('source_type', 'youtube'),
             'source_url': stimulus.get('source_url', ''),
+            'x_post_id': stimulus.get('x_post_id', ''),
             'youtube_id': stimulus.get('youtube_id', ''),
             'source_name': stimulus.get('source_name', '')
         })
