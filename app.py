@@ -23,7 +23,7 @@ MEDIA_SOURCES = {
     3: {'source_type': 'x', 'source_url': 'https://x.com/GarudEyeIntel/status/2057702492738310186?s=20'},
     4: {'source_type': 'x', 'source_url': 'https://x.com/TheRubberDuck79/status/2033211923286708284?s=20'},
     5: {'source_type': 'x', 'source_url': 'https://x.com/tvir_X/status/2083951478746620388?s=20'},
-    6: {'source_type': 'youtube', 'youtube_id': 'vui5TFU3DCM'},
+    6: {'source_type': 'x', 'source_url': 'https://x.com/GarudEyeIntel/status/2057702492738310186?s=20'},
     7: {'source_type': 'youtube', 'youtube_id': 'cQ54GDm1eL0'},
     8: {'source_type': 'external', 'source_url': 'https://www.bbc.com/reel/video/p0hkflt4/watch', 'source_name': 'BBC Reel'},
 }
