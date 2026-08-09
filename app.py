@@ -316,8 +316,30 @@ def survey_page6():
 def survey_page7():
     if request.method == 'POST':
         session['page7'] = request.form.to_dict()
-        return redirect(url_for('survey_page8'))
+
+        # Freeze the quiz result immediately after all 9 clips are answered.
+        # calculate_quiz() uses the exact media snapshot shown during the quiz,
+        # so the result page displays the same 9 clips the participant answered.
+        correct, total, percent, details = calculate_quiz()
+        session['quiz_correct'] = correct
+        session['quiz_total'] = total
+        session['quiz_percent'] = percent
+        session['quiz_details'] = details
+
+        return redirect(url_for('survey_reflection'))
     return render_template('survey_page7.html', videos=video_page_context(7, 9))
+
+
+@app.route('/survey/reflection', methods=['GET', 'POST'])
+def survey_reflection():
+    if 'page7' not in session:
+        return redirect(url_for('survey_page7'))
+
+    if request.method == 'POST':
+        session['reflection'] = request.form.to_dict()
+        return redirect(url_for('survey_page8'))
+
+    return render_template('survey_reflection.html', previous=session.get('reflection', {}))
 
 
 def warning_summary(data):
@@ -347,11 +369,19 @@ def warning_summary(data):
 
 
 def save_survey_response():
-    correct, total, percent, details = calculate_quiz()
-    session['quiz_correct'] = correct
-    session['quiz_total'] = total
-    session['quiz_percent'] = percent
-    session['quiz_details'] = details
+    # Prefer the frozen result created immediately after Video 9.
+    # Fall back to calculation only for an older/incomplete session.
+    if 'quiz_details' in session:
+        correct = session.get('quiz_correct', 0)
+        total = session.get('quiz_total', 9)
+        percent = session.get('quiz_percent', 0)
+        details = session.get('quiz_details', [])
+    else:
+        correct, total, percent, details = calculate_quiz()
+        session['quiz_correct'] = correct
+        session['quiz_total'] = total
+        session['quiz_percent'] = percent
+        session['quiz_details'] = details
 
     p1 = session.get('page1', {})
     p2 = session.get('page2', {})
@@ -361,6 +391,7 @@ def save_survey_response():
     p6 = session.get('page6', {})
     p7 = session.get('page7', {})
     p8 = session.get('page8', {})
+    reflection = session.get('reflection', {})
 
     if p8.get('section_f_choice') == 'Participate':
         session['warning_summary'] = warning_summary(p8)
@@ -386,8 +417,8 @@ def save_survey_response():
         'Post_Warning_Belief': p4.get('post_warning_belief', ''), 'Post_Warning_Believability': p4.get('post_warning_believability', ''),
         'Post_Warning_Trustworthiness': p4.get('post_warning_trustworthiness', ''), 'Warning_Effectiveness': p4.get('warning_effectiveness', ''),
         'Action_After_Warning': p4.get('action_after_warning', ''),
-        'Qual_Real_Or_Fake_Features': p7.get('q27', ''), 'Qual_Opinion_Effect': p7.get('q28', ''),
-        'Qual_Warning_Impact': p7.get('q29', ''), 'Qual_Recommended_Actions': p7.get('q30', ''),
+        'Qual_Real_Or_Fake_Features': reflection.get('q27', ''), 'Qual_Opinion_Effect': reflection.get('q28', ''),
+        'Qual_Warning_Impact': reflection.get('q29', ''), 'Qual_Recommended_Actions': reflection.get('q30', ''),
         'Section_F_Participation': p8.get('section_f_choice', 'Skip'),
         'Video_Score_Correct': str(correct), 'Video_Score_Total': str(total), 'Video_Score_Percent': str(percent)
     }
@@ -451,6 +482,8 @@ def validate_section_f(form):
 def survey_page8():
     if 'page7' not in session:
         return redirect(url_for('survey_page7'))
+    if 'reflection' not in session:
+        return redirect(url_for('survey_reflection'))
     error = None
     if request.method == 'POST':
         choice = request.form.get('section_f_choice', '')
