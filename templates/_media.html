@@ -1,0 +1,61 @@
+{% macro render_media(item, title='Research media') -%}
+  {% set st = item.source_type if item.source_type is defined else item.get('source_type', 'youtube') %}
+  {% set url = item.source_url if item.source_url is defined else item.get('source_url', '') %}
+  {% set yid = item.youtube_id if item.youtube_id is defined else item.get('youtube_id', '') %}
+  {% if st == 'youtube' and yid %}
+    {% set yt_origin = request.url_root.rstrip('/') %}
+    <div class="ratio ratio-16x9 mb-2">
+      <iframe
+        src="https://www.youtube.com/embed/{{ yid }}?enablejsapi=1&playsinline=1&rel=0&origin={{ yt_origin|urlencode }}&widget_referrer={{ request.url|urlencode }}"
+        title="{{ title }}"
+        frameborder="0"
+        loading="eager"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+        allowfullscreen>
+      </iframe>
+    </div>
+    <div class="text-center mb-3">
+      <div class="small text-muted mb-2">
+        <span data-lang-block="en">If the embedded video does not play, open the original video in a new tab.</span>
+        <span data-lang-block="my" style="display:none">ထည့်သွင်းထားသော ဗီဒီယို မဖွင့်ပါက မူရင်းဗီဒီယိုကို tab အသစ်တွင် ဖွင့်ကြည့်ပါ။</span>
+      </div>
+      <a
+        class="btn btn-outline-danger btn-sm"
+        href="{{ url if url else 'https://www.youtube.com/watch?v=' ~ yid }}"
+        target="_blank"
+        rel="noopener noreferrer">
+        <span data-lang-block="en">▶ Watch on YouTube ↗</span>
+        <span data-lang-block="my" style="display:none">▶ YouTube တွင် ကြည့်ရန် ↗</span>
+      </a>
+    </div>
+  {% elif st == 'x' and url %}
+    <div class="border rounded p-3 mb-3 bg-body-tertiary text-center">
+      <blockquote class="twitter-tweet mx-auto" data-dnt="true">
+        <a href="{{ url }}">View this research video/post on X</a>
+      </blockquote>
+      <div class="small text-muted mt-2">
+        <span data-lang-block="en">If the X post does not load here, open the original post in a new tab.</span>
+        <span data-lang-block="my" style="display:none">X post ကို ဤနေရာတွင် မဖွင့်နိုင်ပါက မူရင်း post ကို tab အသစ်တွင် ဖွင့်ကြည့်ပါ။</span>
+      </div>
+      <a class="btn btn-outline-primary btn-sm mt-2" href="{{ url }}" target="_blank" rel="noopener noreferrer">
+        <span data-lang-block="en">Open on X ↗</span>
+        <span data-lang-block="my" style="display:none">X တွင် ဖွင့်ရန် ↗</span>
+      </a>
+    </div>
+  {% elif url %}
+    <div class="border rounded p-4 mb-3 bg-body-tertiary text-center">
+      <div class="fw-bold mb-2">{{ item.source_name if item.source_name is defined else item.get('source_name', 'External video') }}</div>
+      <div class="small text-muted mb-3">
+        <span data-lang-block="en">This source may not permit playback inside another website. Open the original source in a new tab.</span>
+        <span data-lang-block="my" style="display:none">ဤ source သည် အခြား website အတွင်း တိုက်ရိုက်ဖွင့်ခွင့် မပေးနိုင်ပါ။ မူရင်း source ကို tab အသစ်တွင် ဖွင့်ကြည့်ပါ။</span>
+      </div>
+      <a class="btn btn-primary" href="{{ url }}" target="_blank" rel="noopener noreferrer">
+        <span data-lang-block="en">Open video source ↗</span>
+        <span data-lang-block="my" style="display:none">မူရင်းဗီဒီယိုကို ဖွင့်ရန် ↗</span>
+      </a>
+    </div>
+  {% else %}
+    <div class="alert alert-warning">Video source unavailable.</div>
+  {% endif %}
+{%- endmacro %}
