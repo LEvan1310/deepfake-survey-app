@@ -386,8 +386,8 @@ def save_survey_response():
         'Post_Warning_Belief': p4.get('post_warning_belief', ''), 'Post_Warning_Believability': p4.get('post_warning_believability', ''),
         'Post_Warning_Trustworthiness': p4.get('post_warning_trustworthiness', ''), 'Warning_Effectiveness': p4.get('warning_effectiveness', ''),
         'Action_After_Warning': p4.get('action_after_warning', ''),
-        'Qual_Real_Or_Fake_Features': p5.get('q27', ''), 'Qual_Opinion_Effect': p5.get('q28', ''),
-        'Qual_Warning_Impact': p5.get('q29', ''), 'Qual_Recommended_Actions': p5.get('q30', ''),
+        'Qual_Real_Or_Fake_Features': p7.get('q27', ''), 'Qual_Opinion_Effect': p7.get('q28', ''),
+        'Qual_Warning_Impact': p7.get('q29', ''), 'Qual_Recommended_Actions': p7.get('q30', ''),
         'Section_F_Participation': p8.get('section_f_choice', 'Skip'),
         'Video_Score_Correct': str(correct), 'Video_Score_Total': str(total), 'Video_Score_Percent': str(percent)
     }
