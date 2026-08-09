@@ -17,32 +17,43 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 # Set ADMIN_PASSWORD in your hosting environment for production.
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Evan')
 
+MEDIA_SOURCES = {
+    1: {'source_type': 'x', 'source_url': 'https://x.com/RajaFaisalPK/status/2033543923101319627?s=20'},
+    2: {'source_type': 'x', 'source_url': 'https://x.com/tvir_X/status/2083951574401908838?s=20'},
+    3: {'source_type': 'x', 'source_url': 'https://x.com/GarudEyeIntel/status/2057702492738310186?s=20'},
+    4: {'source_type': 'x', 'source_url': 'https://x.com/TheRubberDuck79/status/2033211923286708284?s=20'},
+    5: {'source_type': 'x', 'source_url': 'https://x.com/tvir_X/status/2083951478746620388?s=20'},
+    6: {'source_type': 'youtube', 'source_url': 'https://www.youtube.com/watch?v=vui5TFU3DCM&t=1s', 'youtube_id': 'vui5TFU3DCM'},
+    7: {'source_type': 'youtube', 'source_url': 'https://www.youtube.com/watch?v=cQ54GDm1eL0', 'youtube_id': 'cQ54GDm1eL0'},
+    8: {'source_type': 'external', 'source_url': 'https://www.bbc.com/reel/video/p0hkflt4/watch', 'source_name': 'BBC Reel'},
+}
+
 VIDEO_QUIZ = {
-    1: {'youtube_id': 'vON7Y5MRBlw', 'answer': 'AI-Generated',
+    1: {**MEDIA_SOURCES[1], 'answer': 'AI-Generated',
         'reason_en': 'The study answer key classifies this research clip as AI-generated. Look for inconsistencies across face movement, voice, lighting and context rather than relying on one visual clue.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေတွင် ဤကလစ်ကို AI ဖြင့် ဖန်တီးထားသော ဗီဒီယိုအဖြစ် သတ်မှတ်ထားသည်။ တစ်ချက်တည်းကို မယုံဘဲ မျက်နှာလှုပ်ရှားမှု၊ အသံ၊ အလင်းရောင်နှင့် အကြောင်းအရာကို ပေါင်းစပ်စစ်ဆေးပါ။'},
-    2: {'youtube_id': 'vON7Y5MRBlw', 'answer': 'AI-Generated',
+    2: {**MEDIA_SOURCES[2], 'answer': 'AI-Generated',
         'reason_en': 'This copy uses the same verified research clip as Video 1, so the answer is also AI-generated. Repeated exposure tests whether confidence changes over time.',
         'reason_my': 'ဤကလစ်သည် ဗီဒီယို ၁ နှင့် တူညီသော သုတေသနကလစ်ဖြစ်သောကြောင့် AI ဖြင့် ဖန်တီးထားသော ဗီဒီယိုဟု သတ်မှတ်ထားသည်။ ထပ်ခါတလဲလဲ ကြည့်ရှုခြင်းကြောင့် ယုံကြည်ချက် ပြောင်းလဲမှုရှိမရှိ လေ့လာရန် အသုံးပြုထားသည်။'},
-    3: {'youtube_id': 'vON7Y5MRBlw', 'answer': 'AI-Generated',
+    3: {**MEDIA_SOURCES[3], 'answer': 'AI-Generated',
         'reason_en': 'The configured answer is AI-generated. A reliable judgement should combine visual, audio and source/context verification.',
         'reason_my': 'သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ ယုံကြည်စိတ်ချရသော ခွဲခြားမှုအတွက် ရုပ်ပုံ၊ အသံနှင့် သတင်းရင်းမြစ်/အကြောင်းအရာကို ပေါင်းစပ်စစ်ဆေးသင့်သည်။'},
-    4: {'youtube_id': 'C5qglgqQrnQ', 'answer': 'Real',
+    4: {**MEDIA_SOURCES[4], 'answer': 'Real',
         'reason_en': 'The study answer key classifies this research clip as real. Natural-looking video alone is not proof; source and context verification remain important.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေတွင် ဤကလစ်ကို အစစ်အမှန်ဗီဒီယိုအဖြစ် သတ်မှတ်ထားသည်။ သဘာဝကျသလိုမြင်ရခြင်းတစ်ခုတည်းဖြင့် အစစ်ဟု မဆိုနိုင်သဖြင့် ရင်းမြစ်နှင့် အကြောင်းအရာကို ထပ်မံစစ်ဆေးရန် အရေးကြီးသည်။'},
-    5: {'youtube_id': 'vON7Y5MRBlw', 'answer': 'AI-Generated',
+    5: {**MEDIA_SOURCES[5], 'answer': 'AI-Generated',
         'reason_en': 'The configured answer is AI-generated. Pay attention to synchronization, facial consistency and whether the claim can be verified elsewhere.',
         'reason_my': 'သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ အသံနှင့် ရုပ်ပုံချိန်ညှိမှု၊ မျက်နှာပုံစံတည်ငြိမ်မှုနှင့် အခြားရင်းမြစ်များတွင် သတင်းကို အတည်ပြုနိုင်ခြင်းရှိမရှိ စစ်ဆေးပါ။'},
-    6: {'youtube_id': 'C5qglgqQrnQ', 'answer': 'Real',
+    6: {**MEDIA_SOURCES[6], 'answer': 'Real',
         'reason_en': 'The study answer key classifies this research clip as real. Correct verification depends on evidence and provenance, not on finding a single artifact.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေမှာ အစစ်အမှန်ဗီဒီယို ဖြစ်သည်။ မှန်ကန်စွာ စစ်ဆေးရန် အထောက်အထားနှင့် ဗီဒီယိုရင်းမြစ်ကို အဓိကထားသင့်ပြီး မူမမှန်ချက်တစ်ခုတည်းကိုသာ မမှီခိုသင့်ပါ။'},
-    7: {'youtube_id': 'vON7Y5MRBlw', 'answer': 'AI-Generated',
+    7: {**MEDIA_SOURCES[7], 'answer': 'AI-Generated',
         'reason_en': 'The configured answer is AI-generated. Check temporal consistency across frames as well as audio and source credibility.',
         'reason_my': 'သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ Frame များကြား တည်ငြိမ်မှု၊ အသံနှင့် ရင်းမြစ်၏ ယုံကြည်စိတ်ချရမှုကို စစ်ဆေးပါ။'},
-    8: {'youtube_id': 'C5qglgqQrnQ', 'answer': 'Real',
+    8: {**MEDIA_SOURCES[8], 'answer': 'Real',
         'reason_en': 'The study answer key classifies this research clip as real. Real clips can still be misleading when removed from context, so authenticity and context should be checked separately.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေမှာ အစစ်အမှန်ဗီဒီယို ဖြစ်သည်။ အစစ်အမှန်ဗီဒီယိုတစ်ခုလည်း အကြောင်းအရာမှ ဖြတ်ထုတ်ထားပါက လွဲမှားစေနိုင်သောကြောင့် စစ်မှန်မှုနှင့် အကြောင်းအရာကို သီးခြားစစ်ဆေးသင့်သည်။'},
-    9: {'youtube_id': 'vON7Y5MRBlw', 'answer': 'AI-Generated',
+    9: {**MEDIA_SOURCES[1], 'answer': 'AI-Generated',
         'reason_en': 'The configured answer is AI-generated. The strongest verification combines media cues with trusted-source cross-checking.',
         'reason_my': 'သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ အကောင်းဆုံးစစ်ဆေးနည်းမှာ မီဒီယာလက္ခဏာများနှင့် ယုံကြည်စိတ်ချရသော ရင်းမြစ်များကို နှိုင်းယှဉ်စစ်ဆေးခြင်း ဖြစ်သည်။'}
 }
@@ -54,19 +65,19 @@ VIDEO_QUIZ = {
 # three DIFFERENT clips whose AI-generated/deepfake status you have independently verified.
 WARNING_EXPERIMENT = {
     1: {
-        'youtube_id': 'vON7Y5MRBlw',
+        **MEDIA_SOURCES[6],
         'condition': 'reveal',
         'title_en': 'Condition 1 - Before vs After AI Label',
         'title_my': 'စမ်းသပ်အခြေအနေ ၁ - AI တံဆိပ် မပြမီနှင့် ပြပြီးနောက်',
     },
     2: {
-        'youtube_id': 'vON7Y5MRBlw',
+        **MEDIA_SOURCES[7],
         'condition': 'labelled',
         'title_en': 'Condition 2 - AI Label Visible From the Start',
         'title_my': 'စမ်းသပ်အခြေအနေ ၂ - အစကတည်းက AI တံဆိပ်မြင်ရခြင်း',
     },
     3: {
-        'youtube_id': 'vON7Y5MRBlw',
+        **MEDIA_SOURCES[8],
         'condition': 'labelled',
         'title_en': 'Condition 3 - Realism Challenge With AI Label',
         'title_my': 'စမ်းသပ်အခြေအနေ ၃ - AI တံဆိပ်ရှိသည့် Realism Challenge',
@@ -193,7 +204,10 @@ def calculate_quiz():
             'correct': is_correct,
             'reason_en': VIDEO_QUIZ[i]['reason_en'],
             'reason_my': VIDEO_QUIZ[i]['reason_my'],
-            'youtube_id': VIDEO_QUIZ[i]['youtube_id']
+            'source_type': VIDEO_QUIZ[i].get('source_type', 'youtube'),
+            'source_url': VIDEO_QUIZ[i].get('source_url', ''),
+            'youtube_id': VIDEO_QUIZ[i].get('youtube_id', ''),
+            'source_name': VIDEO_QUIZ[i].get('source_name', '')
         })
     percent = round((correct / 9) * 100)
     return correct, 9, percent, details
