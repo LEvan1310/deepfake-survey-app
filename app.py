@@ -240,40 +240,34 @@ def quiz_intro():
 
 @app.route('/awareness-training/1')
 def awareness_training_1():
-    phase = session.get('awareness_phase')
-    if phase == 'pre_quiz':
-        if session.get('page2', {}).get('watched_deepfake_before') != 'No':
-            return redirect(url_for('survey_page2'))
-        back_url = url_for('survey_page2')
-    else:
-        if 'reflection' not in session:
-            return redirect(url_for('survey_reflection'))
-        back_url = url_for('survey_reflection')
+    # Both participant paths complete the same three awareness pages before
+    # the Deepfake Video Quiz. Participants who selected No reach this section
+    # directly from Section B; participants who selected Yes reach it after
+    # completing Sections C and D.
+    if session.get('awareness_phase') != 'pre_quiz' or 'page2' not in session:
+        return redirect(url_for('survey_page2'))
+    watched = session.get('page2', {}).get('watched_deepfake_before')
+    back_url = url_for('survey_page2') if watched == 'No' else url_for('survey_page4')
     return render_template('awareness_training_1.html', back_url=back_url)
 
 
 @app.route('/awareness-training/2')
 def awareness_training_2():
-    phase = session.get('awareness_phase')
-    if phase != 'pre_quiz' and 'reflection' not in session:
-        return redirect(url_for('survey_reflection'))
+    if session.get('awareness_phase') != 'pre_quiz':
+        return redirect(url_for('awareness_training_1'))
     return render_template('awareness_training_2.html')
 
 
 @app.route('/awareness-training/3')
 def awareness_training_3():
-    phase = session.get('awareness_phase')
-    if phase == 'pre_quiz':
-        next_url = url_for('quiz_intro')
-        next_en = 'Continue to Video Assessment →'
-        next_my = 'ဗီဒီယို စမ်းသပ်မှုသို့ ဆက်သွားရန် →'
-    else:
-        if 'reflection' not in session:
-            return redirect(url_for('survey_reflection'))
-        next_url = url_for('survey_page8')
-        next_en = 'Continue to Warning-Label Section →'
-        next_my = 'သတိပေးတံဆိပ်အပိုင်းသို့ ဆက်သွားရန် →'
-    return render_template('awareness_training_3.html', next_url=next_url, next_en=next_en, next_my=next_my)
+    if session.get('awareness_phase') != 'pre_quiz':
+        return redirect(url_for('awareness_training_1'))
+    return render_template(
+        'awareness_training_3.html',
+        next_url=url_for('quiz_intro'),
+        next_en='Continue to Deepfake Video Quiz →',
+        next_my='Deepfake Video Quiz သို့ ဆက်သွားရန် →'
+    )
 
 
 @app.route('/survey/page1', methods=['GET', 'POST'])
@@ -323,7 +317,10 @@ def survey_page3():
 def survey_page4():
     if request.method == 'POST':
         session['page4'] = request.form.to_dict()
-        return redirect(url_for('quiz_intro'))
+        # Participants who answered Yes in Section B complete the same three
+        # political-deepfake awareness pages before entering the video quiz.
+        session['awareness_phase'] = 'pre_quiz'
+        return redirect(url_for('awareness_training_1'))
     return render_template('survey_page4.html')
 
 
@@ -376,13 +373,10 @@ def survey_reflection():
 
     if request.method == 'POST':
         session['reflection'] = request.form.to_dict()
-        if session.get('skipped_pre_video_sections', False):
-            # This participant already completed awareness training before
-            # the quiz because they answered No to previous deepfake exposure.
-            session.pop('awareness_phase', None)
-            return redirect(url_for('survey_page8'))
-        session['awareness_phase'] = 'post_quiz'
-        return redirect(url_for('awareness_training_1'))
+        # Awareness training is completed before the quiz for both paths, so it
+        # must not be repeated after the participant finishes the 9 clips.
+        session.pop('awareness_phase', None)
+        return redirect(url_for('survey_page8'))
 
     return render_template('survey_reflection.html', previous=session.get('reflection', {}))
 
