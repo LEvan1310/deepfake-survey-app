@@ -11,7 +11,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'deepfake_research_secret_key_change_me')
 
-RESULTS_FILE = 'survey_responses.csv' 
+RESULTS_FILE = 'survey_responses.csv'
 REWARDS_FILE = 'reward_results.csv'
 DATABASE_URL = os.environ.get('DATABASE_URL')
 # Set ADMIN_PASSWORD in your hosting environment for production.
@@ -240,34 +240,23 @@ def quiz_intro():
 
 @app.route('/awareness-training/1')
 def awareness_training_1():
-    # Both participant paths complete the same three awareness pages before
-    # the Deepfake Video Quiz. Participants who selected No reach this section
-    # directly from Section B; participants who selected Yes reach it after
-    # completing Sections C and D.
-    if session.get('awareness_phase') != 'pre_quiz' or 'page2' not in session:
-        return redirect(url_for('survey_page2'))
-    watched = session.get('page2', {}).get('watched_deepfake_before')
-    back_url = url_for('survey_page2') if watched == 'No' else url_for('survey_page4')
-    return render_template('awareness_training_1.html', back_url=back_url)
+    if 'reflection' not in session:
+        return redirect(url_for('survey_reflection'))
+    return render_template('awareness_training_1.html')
 
 
 @app.route('/awareness-training/2')
 def awareness_training_2():
-    if session.get('awareness_phase') != 'pre_quiz':
-        return redirect(url_for('awareness_training_1'))
+    if 'reflection' not in session:
+        return redirect(url_for('survey_reflection'))
     return render_template('awareness_training_2.html')
 
 
 @app.route('/awareness-training/3')
 def awareness_training_3():
-    if session.get('awareness_phase') != 'pre_quiz':
-        return redirect(url_for('awareness_training_1'))
-    return render_template(
-        'awareness_training_3.html',
-        next_url=url_for('quiz_intro'),
-        next_en='Continue to Deepfake Video Quiz →',
-        next_my='Deepfake Video Quiz သို့ ဆက်သွားရန် →'
-    )
+    if 'reflection' not in session:
+        return redirect(url_for('survey_reflection'))
+    return render_template('awareness_training_3.html')
 
 
 @app.route('/survey/page1', methods=['GET', 'POST'])
@@ -295,12 +284,8 @@ def survey_page2():
         session['page2'] = form_data
         if watched == 'No':
             session['skipped_pre_video_sections'] = True
-            # Participants with no previous deepfake exposure receive the
-            # three short awareness pages before the video assessment.
-            session['awareness_phase'] = 'pre_quiz'
-            return redirect(url_for('awareness_training_1'))
+            return redirect(url_for('quiz_intro'))
         session['skipped_pre_video_sections'] = False
-        session.pop('awareness_phase', None)
         return redirect(url_for('survey_page3'))
     return render_template('survey_page2.html')
 
@@ -317,10 +302,7 @@ def survey_page3():
 def survey_page4():
     if request.method == 'POST':
         session['page4'] = request.form.to_dict()
-        # Participants who answered Yes in Section B complete the same three
-        # political-deepfake awareness pages before entering the video quiz.
-        session['awareness_phase'] = 'pre_quiz'
-        return redirect(url_for('awareness_training_1'))
+        return redirect(url_for('quiz_intro'))
     return render_template('survey_page4.html')
 
 
@@ -373,10 +355,7 @@ def survey_reflection():
 
     if request.method == 'POST':
         session['reflection'] = request.form.to_dict()
-        # Awareness training is completed before the quiz for both paths, so it
-        # must not be repeated after the participant finishes the 9 clips.
-        session.pop('awareness_phase', None)
-        return redirect(url_for('survey_page8'))
+        return redirect(url_for('awareness_training_1'))
 
     return render_template('survey_reflection.html', previous=session.get('reflection', {}))
 
@@ -505,11 +484,11 @@ def save_survey_response():
 
 
 def validate_section_f(form):
-    # All three labelled clips now use the same eight visible questions.
-    # The legacy before-label fields are hidden/blank for database compatibility
-    # and must NOT be required, otherwise the form loops back forever.
-    required = []
-    for i in (1, 2, 3):
+    required = [
+        'w1_belief_before', 'w1_trust_before',
+        'w1_belief_after', 'w1_realism', 'w1_trust_after', 'w1_influence_removed', 'w1_could_be_true', 'w1_realism_influence', 'w1_reaction', 'w1_reason'
+    ]
+    for i in (2, 3):
         required.extend([
             f'w{i}_belief_after', f'w{i}_realism', f'w{i}_trust_after', f'w{i}_influence_removed',
             f'w{i}_could_be_true', f'w{i}_realism_influence', f'w{i}_reaction', f'w{i}_reason'
