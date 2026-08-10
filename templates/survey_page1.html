@@ -1,40 +1,12 @@
 {% extends "base.html" %}{% block content %}
-<div class="card shadow border-0 p-4 survey-card"><h3 class="text-primary fw-bold" data-translate="sec_b_title">Section B - Previous Deepfake Experience</h3>
-<form method="POST" id="awarenessForm">
-<div class="mb-2"><label class="fw-bold" data-translate="q_watched_before">Have you watched or knowingly seen a deepfake video before?</label><select class="form-select" name="watched_deepfake_before" id="watchedBefore" required><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Yes" data-translate="opt_yes">Yes</option><option value="No" data-translate="opt_no">No</option></select></div>
-<div class="alert alert-info py-2 px-3 mt-2 mb-3 small">
-  <div data-lang-block="en"><strong>How this choice affects the flow:</strong> If you select “No”, questions that require previous deepfake experience will be skipped. You will still complete the three-page <strong>Political Deepfake Awareness & Verification</strong> section before the Deepfake Video Quiz. If you select “Yes”, complete the experience-based questions below; after Sections C and D, you will also complete the same three awareness pages before the quiz.</div>
-  <div data-lang-block="my" style="display:none"><strong>ဤရွေးချယ်မှုက flow ကို မည်သို့သက်ရောက်သလဲ:</strong> “No” ကိုရွေးပါက ယခင် Deepfake အတွေ့အကြုံလိုအပ်သော မေးခွန်းများကို ကျော်သွားမည်။ သို့သော် Deepfake Video Quiz မတိုင်မီ <strong>Political Deepfake Awareness & Verification</strong> စာမျက်နှာ ၃ ခုကို ဆက်လက်ဖတ်ရှုရမည်။ “Yes” ကိုရွေးပါက အောက်ပါ experience-based မေးခွန်းများကို ဖြေပြီး Sections C နှင့် D ပြီးနောက် quiz မတိုင်မီ အဆိုပါ awareness စာမျက်နှာ ၃ ခုကိုပင် ဆက်လက်ဖတ်ရှုရမည်။</div>
-</div>
-<fieldset id="experienceQuestions" disabled aria-disabled="true">
-<hr><div class="mb-3"><label class="fw-bold" data-translate="q_heard">Before today, had you heard the term “deepfake”?</label><select class="form-select conditional-required" name="heard_deepfake"><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Yes" data-translate="opt_yes">Yes</option><option value="No" data-translate="opt_no">No</option></select></div>
-<div class="mb-3"><label class="fw-bold" data-translate="q_desc">In your own words, what do you think a deepfake is?</label><textarea class="form-control conditional-required" name="deepfake_description" rows="2"></textarea></div>
-<div class="mb-3"><label class="fw-bold" data-translate="q_suspected">Have you ever suspected that an online political or news video might be AI-generated or manipulated?</label><select class="form-select conditional-required" name="suspected_deepfake_before"><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Yes" data-translate="opt_yes">Yes</option><option value="No" data-translate="opt_no">No</option></select></div>
-<div class="mb-3"><label class="fw-bold" data-translate="q_confidence">Before this study, how confident were you that you could identify a deepfake?</label><select class="form-select conditional-required" name="confidence_identifying"><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Very confident" data-translate="opt_very_high">Very confident</option><option value="Confident" data-translate="opt_high">Confident</option><option value="Neutral" data-translate="opt_moderate">Neither confident nor unconfident</option><option value="Not confident" data-translate="opt_low">Not confident</option><option value="Not confident at all" data-translate="opt_very_low">Not confident at all</option></select></div>
-<div class="mb-3"><label class="fw-bold" data-translate="q_signs">Which clues would make you question whether a video is authentic? (Select all that apply)</label>
-{% for value,key,text in [('Facial movement','sign_face','Unnatural facial movement or expression'),('Lip/audio mismatch','sign_lips','Lip-sync or voice mismatch'),('Lighting/texture','sign_light','Inconsistent lighting, shadows or skin texture'),('Unreliable source','sign_source','Unknown or unreliable source'),('Cannot cross-check','sign_context','Claim cannot be confirmed by other reliable sources'),('Do not know','sign_none','I do not know what clues to look for')] %}<div class="form-check"><input class="form-check-input" type="checkbox" name="suspicious_signs" value="{{ value }}"><label class="form-check-label" data-translate="{{ key }}">{{ text }}</label></div>{% endfor %}
-</div></fieldset>
-<div class="d-flex justify-content-between"><a href="/survey/page1" class="btn btn-secondary" data-translate="back_btn">← Back</a><button id="continueBtn" class="btn btn-primary" data-translate="next_btn">Next Page →</button></div>
-</form></div>
-<script>
-const watched=document.getElementById('watchedBefore'), box=document.getElementById('experienceQuestions'), btn=document.getElementById('continueBtn');
-function updateGate(){
-    const choice=watched.value;
-    const yes=choice==='Yes';
-    const no=choice==='No';
-
-    // Until the participant answers the first gate question, keep all
-    // experience questions visible but locked. Selecting Yes unlocks them;
-    // selecting No hides/skips them and goes straight to the video section.
-    box.disabled=!yes;
-    box.setAttribute('aria-disabled', String(!yes));
-    box.style.display=no?'none':'';
-    box.style.opacity=choice===''?'0.5':'1';
-    box.style.pointerEvents=yes?'auto':'none';
-
-    document.querySelectorAll('.conditional-required').forEach(x=>x.required=yes);
-    btn.dataset.translate=no?'go_video':'next_btn';
-    applyLanguage(localStorage.getItem('lang')||'en');
-}
-watched.addEventListener('change',updateGate);updateGate();
-</script>{% endblock %}
+<div class="card shadow border-0 p-4 survey-card">
+<h3 class="text-primary fw-bold mb-3" data-translate="sec_a_title">Section A - Demographic Information</h3>
+<form method="POST">
+<div class="mb-3"><label class="fw-bold" data-translate="name_label">Name:</label><input class="form-control" name="name" required maxlength="100" data-translate="name_placeholder" data-translate-target="placeholder" placeholder="Enter your name"></div>
+<div class="mb-3"><label class="fw-bold" data-translate="age_group">Age Group:</label><select class="form-select" name="age_group" required><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Under 18" data-translate="under_18">Under 18</option><option value="18-24">18 - 24</option><option value="25-34">25 - 34</option><option value="35-44">35 - 44</option><option value="45+">45+</option></select></div>
+<div class="mb-3"><label class="fw-bold" data-translate="gender">Gender:</label><select class="form-select" name="gender" required><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Male" data-translate="male">Male</option><option value="Female" data-translate="female">Female</option><option value="Other" data-translate="other">Other / Prefer another description</option><option value="Prefer not to say" data-translate="prefer_not">Prefer not to say</option></select></div>
+<div class="mb-3"><label class="fw-bold" data-translate="education_level">Education Level:</label><select class="form-select" name="education_level" required><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Secondary/High School" data-translate="secondary">Secondary / High School</option><option value="Diploma/HND" data-translate="diploma">Diploma / HND</option><option value="Bachelor's" data-translate="bachelors">Bachelor's Degree</option><option value="Master's/Higher" data-translate="masters">Master’s / Higher</option></select></div>
+<div class="mb-3"><label class="fw-bold" data-translate="news_frequency">How often do you follow political or current-affairs news?</label><select class="form-select" name="news_frequency" required><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Daily" data-translate="daily">Daily</option><option value="Several times a week" data-translate="several_week">Several times a week</option><option value="Weekly" data-translate="weekly">About once a week</option><option value="Rarely/Never" data-translate="rarely">Rarely / Never</option></select></div>
+<div class="mb-3"><label class="fw-bold" data-translate="news_source">Your main source of political or current-affairs news:</label><select class="form-select" name="news_source" required><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Social Media" data-translate="social_media">Social Media</option><option value="News Websites/Apps" data-translate="news_websites">News Websites / Apps</option><option value="Television/Radio" data-translate="television">Television / Radio</option><option value="Friends/Family/Messaging" data-translate="friends_family">Friends / Family / Messaging groups</option><option value="Other" data-translate="other_source">Other</option></select></div>
+<button class="btn btn-primary w-100 mt-2" data-translate="next_btn">Next Page →</button>
+</form></div>{% endblock %}
