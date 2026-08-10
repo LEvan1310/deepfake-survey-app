@@ -3,13 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title data-translate="page_title">Deepfake Research Study</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .survey-card{max-width:820px;margin:auto}.edu-box{border-left:4px solid var(--bs-primary)}
+        :root{--study-font:"Inter","Aptos","Segoe UI","Noto Sans Myanmar",Arial,sans-serif;--study-heading:"Aptos Display","Segoe UI","Noto Sans Myanmar",Arial,sans-serif}
+        html,body,button,input,select,textarea,.btn,.form-control,.form-select,.dropdown-menu,.alert,.card,.navbar{font-family:var(--study-font)!important}
+        body{line-height:1.62;letter-spacing:.005em}
+        h1,h2,h3,h4,h5,h6,.navbar-brand{font-family:var(--study-heading)!important;letter-spacing:-.018em;line-height:1.2}
+        p,li,label,.form-label,.form-check-label{line-height:1.62}
+        .survey-card{max-width:920px;margin:auto;border-radius:18px!important}
+        .survey-card h2,.survey-card h3{font-weight:800}
+        .survey-card h4{font-weight:750;margin-top:.25rem}
+        .form-control,.form-select{border-radius:10px;padding:.72rem .9rem}
+        .btn{border-radius:10px;font-weight:650;letter-spacing:.005em}
+        .edu-box{border-left:4px solid var(--bs-primary)}
         .score-circle{width:130px;height:130px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:auto;font-size:1.65rem;font-weight:700;border:8px solid var(--bs-success)}
+        .awareness-term{border:1px solid var(--bs-border-color);border-radius:14px;padding:1rem 1.1rem;height:100%;background:var(--bs-tertiary-bg)}
+        .awareness-term strong{display:block;margin-bottom:.25rem;color:var(--bs-primary)}
+        .awareness-callout{border-left:5px solid var(--bs-warning);border-radius:12px;padding:1rem 1.1rem;background:rgba(255,193,7,.12)}
+        [lang="my"] body,[lang="my"] button,[lang="my"] input,[lang="my"] select,[lang="my"] textarea{font-family:"Noto Sans Myanmar","Myanmar Text","Segoe UI",sans-serif!important;letter-spacing:0}
     </style>
     <script>
     const translations = {
@@ -21,7 +34,7 @@
         education_level:'Education Level:', secondary:'Secondary / High School', diploma:'Diploma / HND', bachelors:"Bachelor's Degree", masters:'Master’s / Higher',
         news_frequency:'How often do you follow political or current-affairs news?', daily:'Daily', several_week:'Several times a week', weekly:'About once a week', rarely:'Rarely / Never',
         news_source:'Your main source of political or current-affairs news:', social_media:'Social Media', news_websites:'News Websites / Apps', television:'Television / Radio', friends_family:'Friends / Family / Messaging groups', other_source:'Other',
-        sec_b_title:'Section B - Previous Deepfake Experience', q_watched_before:'Have you watched or knowingly seen a deepfake video before?', gate_help:'If you select “No”, experience-based questions will be skipped and you will go directly to the educational deepfake video section.',
+        sec_b_title:'Section B - Previous Deepfake Experience', q_watched_before:'Have you watched or knowingly seen a deepfake video before?', gate_help:'If you select “No”, questions requiring previous deepfake experience will be skipped. You will still complete Political Deepfake Awareness & Verification before the video quiz.',
         q_heard:'Before today, had you heard the term “deepfake”?', q_desc:'In your own words, what do you think a deepfake is?', q_suspected:'Have you ever suspected that an online political or news video might be AI-generated or manipulated?',
         q_confidence:'Before this study, how confident were you that you could identify a deepfake?', opt_very_high:'Very confident', opt_high:'Confident', opt_moderate:'Neither confident nor unconfident', opt_low:'Not confident', opt_very_low:'Not confident at all',
         q_signs:'Which clues would make you question whether a video is authentic? (Select all that apply)', sign_face:'Unnatural facial movement or expression', sign_lips:'Lip-sync or voice mismatch', sign_light:'Inconsistent lighting, shadows or skin texture', sign_source:'Unknown or unreliable source', sign_context:'Claim cannot be confirmed by other reliable sources', sign_none:'I do not know what clues to look for', go_video:'Go to Deepfake Video Section →',
@@ -126,6 +139,5 @@
   </div>
 </nav>
 <div class="container mb-5">{% block content %}{% endblock %}</div>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body></html>
