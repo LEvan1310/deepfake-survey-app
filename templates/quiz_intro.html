@@ -2,36 +2,34 @@
 <div class="card shadow border-0 p-4 p-md-5 survey-card">
   <div data-lang-block="en">
     <h2 class="fw-bold text-primary">🎬 Political Deepfake Video Assessment</h2>
-    <p class="fs-5 mt-3">You have completed the Political Deepfake Awareness & Verification pages. You will now apply that understanding while judging the study clips.</p>
+    <p class="fs-5 mt-3">You are about to begin the video assessment. This stage measures your judgement <strong>before receiving additional awareness training</strong>.</p>
     <div class="bg-body-tertiary rounded p-4 my-4">
       <h4 class="fw-bold">Instructions</h4>
       <ul class="mb-0">
         <li>Watch each political or news-related clip carefully.</li>
         <li>Decide whether you think the clip is <strong>Real</strong>, <strong>AI-Generated</strong>, or if you are <strong>Not sure</strong>.</li>
-        <li>Rate how confident you are in your judgement and identify what most influenced it.</li>
-        <li>Use the awareness principles you have just reviewed, but answer according to your own genuine judgement.</li>
-        <li>Do not search for the study answer while completing the classification quiz.</li>
+        <li>Rate how confident you are in your judgement.</li>
+        <li>Answer using your current knowledge and personal judgement.</li>
       </ul>
     </div>
-    <div class="alert alert-info"><strong>Remember:</strong> one visual or audio artifact is not enough to prove that a clip is fake. Consider source, context, evidence and media clues together.</div>
+    <div class="alert alert-info"><strong>Why this stage matters:</strong> Your answers provide a baseline that can later be compared with your responses after the awareness and warning-label sections.</div>
   </div>
   <div data-lang-block="my" style="display:none">
     <h2 class="fw-bold text-primary">🎬 နိုင်ငံရေး Deepfake ဗီဒီယို စမ်းသပ်မှု</h2>
-    <p class="fs-5 mt-3">Political Deepfake Awareness & Verification စာမျက်နှာများကို ဖတ်ရှုပြီးဖြစ်ပါသည်။ ယခု လေ့လာထားသည့်အချက်များကို အသုံးပြု၍ study clips များကို ခွဲခြားဆုံးဖြတ်ပါမည်။</p>
+    <p class="fs-5 mt-3">ယခု ဗီဒီယိုစမ်းသပ်မှုကို စတင်ပါမည်။ ဤအပိုင်းသည် <strong>ထပ်ဆောင်းအသိပညာပေးမှု မရရှိမီ</strong> သင့်၏ ကိုယ်ပိုင်ဆုံးဖြတ်ချက်ကို တိုင်းတာရန် ဖြစ်သည်။</p>
     <div class="bg-body-tertiary rounded p-4 my-4">
       <h4 class="fw-bold">ညွှန်ကြားချက်</h4>
       <ul class="mb-0">
         <li>နိုင်ငံရေး သို့မဟုတ် သတင်းဆိုင်ရာ ဗီဒီယိုတစ်ခုချင်းကို ဂရုတစိုက် ကြည့်ပါ။</li>
         <li>ဗီဒီယိုကို <strong>အစစ်</strong>၊ <strong>AI ဖြင့် ဖန်တီးထားသည်</strong> သို့မဟုတ် <strong>မသေချာ</strong> ဟု ဆုံးဖြတ်ပါ။</li>
-        <li>မိမိဆုံးဖြတ်ချက်အပေါ် ယုံကြည်မှုအဆင့်နှင့် အဓိကသက်ရောက်သည့်အချက်ကို ဖြေဆိုပါ။</li>
-        <li>ယခုဖတ်ရှုထားသော awareness principles များကို အသုံးပြုနိုင်သော်လည်း မိမိ၏ အမှန်တကယ် judgement အတိုင်း ဖြေဆိုပါ။</li>
-        <li>Classification quiz ဖြေဆိုနေစဉ် study answer ကို အွန်လိုင်းတွင် မရှာဖွေပါနှင့်။</li>
+        <li>မိမိဆုံးဖြတ်ချက်အပေါ် ယုံကြည်မှုအဆင့်ကို ဖြေဆိုပါ။</li>
+        <li>လက်ရှိသိရှိထားသည့်အရာနှင့် ကိုယ်ပိုင်ဆုံးဖြတ်ချက်အတိုင်း ဖြေဆိုပါ။</li>
       </ul>
     </div>
-    <div class="alert alert-info"><strong>မှတ်ထားရန်:</strong> ရုပ်ပုံ/အသံ artifact တစ်ခုတည်းနဲ့ fake ဖြစ်ကြောင်း မသက်သေပြနိုင်ပါ။ Source၊ context၊ evidence နှင့် media clues များကို ပေါင်းစပ်စဉ်းစားပါ။</div>
+    <div class="alert alert-info"><strong>ဤအပိုင်း အရေးကြီးရသည့်အကြောင်း:</strong> ဤအဖြေများကို နောက်ပိုင်း အသိပညာပေးမှုနှင့် သတိပေးတံဆိပ်အပိုင်းပြီးနောက် အဖြေများနှင့် နှိုင်းယှဉ်နိုင်ရန် baseline အဖြစ် အသုံးပြုနိုင်သည်။</div>
   </div>
   <div class="d-flex justify-content-between mt-4">
-    <a href="/awareness-training/3" class="btn btn-secondary">← Back</a>
+    <a href="{{ '/survey/page2' if skipped else '/survey/page4' }}" class="btn btn-secondary">← Back</a>
     <a href="/survey/page5" class="btn btn-primary btn-lg">Start Video Assessment →</a>
   </div>
 </div>
