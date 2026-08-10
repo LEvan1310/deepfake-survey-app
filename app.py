@@ -11,7 +11,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'deepfake_research_secret_key_change_me')
 
-RESULTS_FILE = 'survey_responses.csv'
+RESULTS_FILE = 'survey_responses.csv' 
 REWARDS_FILE = 'reward_results.csv'
 DATABASE_URL = os.environ.get('DATABASE_URL')
 # Set ADMIN_PASSWORD in your hosting environment for production.
