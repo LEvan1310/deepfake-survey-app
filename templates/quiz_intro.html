@@ -2,7 +2,7 @@
 <div class="card shadow border-0 p-4 p-md-5 survey-card">
   <div data-lang-block="en">
     <h2 class="fw-bold text-primary">🎬 Political Deepfake Video Assessment</h2>
-    <p class="fs-5 mt-3">You are about to begin the video assessment. This stage measures your judgement <strong>before receiving additional awareness training</strong>.</p>
+    {% if skipped %}<p class="fs-5 mt-3">You are about to begin the video assessment. Because you indicated that you had not previously watched a deepfake, you first received a short awareness introduction. Now classify the videos using what you understand.</p>{% else %}<p class="fs-5 mt-3">You are about to begin the video assessment. This stage measures your judgement <strong>before receiving additional awareness training</strong>.</p>{% endif %}
     <div class="bg-body-tertiary rounded p-4 my-4">
       <h4 class="fw-bold">Instructions</h4>
       <ul class="mb-0">
@@ -12,11 +12,11 @@
         <li>Answer using your current knowledge and personal judgement.</li>
       </ul>
     </div>
-    <div class="alert alert-info"><strong>Why this stage matters:</strong> Your answers provide a baseline that can later be compared with your responses after the awareness and warning-label sections.</div>
+    {% if skipped %}<div class="alert alert-info"><strong>Why this stage matters:</strong> Your answers show how you apply the short awareness guidance when distinguishing the videos.</div>{% else %}<div class="alert alert-info"><strong>Why this stage matters:</strong> Your answers provide a baseline that can later be compared with your responses after the awareness and warning-label sections.</div>{% endif %}
   </div>
   <div data-lang-block="my" style="display:none">
     <h2 class="fw-bold text-primary">🎬 နိုင်ငံရေး Deepfake ဗီဒီယို စမ်းသပ်မှု</h2>
-    <p class="fs-5 mt-3">ယခု ဗီဒီယိုစမ်းသပ်မှုကို စတင်ပါမည်။ ဤအပိုင်းသည် <strong>ထပ်ဆောင်းအသိပညာပေးမှု မရရှိမီ</strong> သင့်၏ ကိုယ်ပိုင်ဆုံးဖြတ်ချက်ကို တိုင်းတာရန် ဖြစ်သည်။</p>
+    {% if skipped %}<p class="fs-5 mt-3">Deepfake ဗီဒီယိုကို ယခင်က မကြည့်ဖူးကြောင်း ဖြေဆိုထားသောကြောင့် အခြေခံအသိပညာပေးစာမျက်နှာများကို အရင်ဖတ်ရှုပြီးဖြစ်ပါသည်။ ယခု သင်နားလည်ထားသည့်အတိုင်း ဗီဒီယိုများကို ခွဲခြားပါ။</p>{% else %}<p class="fs-5 mt-3">ယခု ဗီဒီယိုစမ်းသပ်မှုကို စတင်ပါမည်။ ဤအပိုင်းသည် <strong>ထပ်ဆောင်းအသိပညာပေးမှု မရရှိမီ</strong> သင့်၏ ကိုယ်ပိုင်ဆုံးဖြတ်ချက်ကို တိုင်းတာရန် ဖြစ်သည်။</p>{% endif %}
     <div class="bg-body-tertiary rounded p-4 my-4">
       <h4 class="fw-bold">ညွှန်ကြားချက်</h4>
       <ul class="mb-0">
@@ -26,7 +26,7 @@
         <li>လက်ရှိသိရှိထားသည့်အရာနှင့် ကိုယ်ပိုင်ဆုံးဖြတ်ချက်အတိုင်း ဖြေဆိုပါ။</li>
       </ul>
     </div>
-    <div class="alert alert-info"><strong>ဤအပိုင်း အရေးကြီးရသည့်အကြောင်း:</strong> ဤအဖြေများကို နောက်ပိုင်း အသိပညာပေးမှုနှင့် သတိပေးတံဆိပ်အပိုင်းပြီးနောက် အဖြေများနှင့် နှိုင်းယှဉ်နိုင်ရန် baseline အဖြစ် အသုံးပြုနိုင်သည်။</div>
+    {% if skipped %}<div class="alert alert-info"><strong>ဤအပိုင်း အရေးကြီးရသည့်အကြောင်း:</strong> အခြေခံအသိပညာပေးမှုကို အသုံးချပြီး ဗီဒီယိုများကို မည်သို့ ခွဲခြားနိုင်သည်ကို တိုင်းတာရန် ဖြစ်သည်။</div>{% else %}<div class="alert alert-info"><strong>ဤအပိုင်း အရေးကြီးရသည့်အကြောင်း:</strong> ဤအဖြေများကို နောက်ပိုင်း အသိပညာပေးမှုနှင့် သတိပေးတံဆိပ်အပိုင်းပြီးနောက် အဖြေများနှင့် နှိုင်းယှဉ်နိုင်ရန် baseline အဖြစ် အသုံးပြုနိုင်သည်။</div>{% endif %}
   </div>
   <div class="d-flex justify-content-between mt-4">
     <a href="{{ '/survey/page2' if skipped else '/survey/page4' }}" class="btn btn-secondary">← Back</a>
