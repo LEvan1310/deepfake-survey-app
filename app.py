@@ -242,9 +242,11 @@ def quiz_intro():
 def awareness_training_1():
     phase = session.get('awareness_phase')
     if phase == 'pre_quiz':
-        if session.get('page2', {}).get('watched_deepfake_before') != 'No':
-            return redirect(url_for('survey_page2'))
-        back_url = url_for('survey_page2')
+        # Both paths receive the same 3-page awareness module before the quiz.
+        # No  -> comes here directly from Section B.
+        # Yes -> completes Sections C and D first, then comes here.
+        watched = session.get('page2', {}).get('watched_deepfake_before')
+        back_url = url_for('survey_page2') if watched == 'No' else url_for('survey_page4')
     else:
         if 'reflection' not in session:
             return redirect(url_for('survey_reflection'))
@@ -323,7 +325,12 @@ def survey_page3():
 def survey_page4():
     if request.method == 'POST':
         session['page4'] = request.form.to_dict()
-        return redirect(url_for('quiz_intro'))
+
+        # After Sections C and D, show the same 3 awareness pages BEFORE
+        # the Deepfake Video Assessment.
+        session['awareness_phase'] = 'pre_quiz'
+        return redirect(url_for('awareness_training_1'))
+
     return render_template('survey_page4.html')
 
 
