@@ -1,7 +1,54 @@
 {% extends "base.html" %}{% block content %}
-<div class="p-5 bg-body-secondary rounded shadow-sm text-center my-5">
-  <h1 class="display-5 fw-bold text-primary" data-translate="main_heading">Political Deepfakes & Audience Trust Study</h1>
-  <p class="fs-5 text-secondary mt-3" data-translate="main_sub">Research survey on how AI-generated political and warfare videos can affect perception, media trust and political trust.</p>
-  <a class="btn btn-primary btn-lg px-4 mt-3" href="/survey/page1" data-translate="start_survey">Start Survey →</a>
-  <div class="mt-4"><a class="small text-muted text-decoration-none" href="/admin-login" data-translate="researcher_login">🔒 Researcher Login</a></div>
-</div>{% endblock %}
+<div class="card shadow border-0 p-4 p-md-5 survey-card">
+  <div data-lang-block="en">
+    <div class="text-center mb-4">
+      <div class="display-5 mb-2">🎭</div>
+      <h1 class="display-6 fw-bold text-primary">AI-Generated Political Deepfake Research Study</h1>
+      <p class="fs-5 text-secondary mb-1"><strong>Research Title:</strong> AI-Generated Deepfakes as Tools of Political Misinformation and Information Warfare</p>
+    </div>
+    <p class="fs-5">Welcome. This academic research investigates how AI-generated political and news-related video content may influence audience perception, judgement and political trust.</p>
+    <div class="bg-body-tertiary rounded p-4 my-4">
+      <h4 class="fw-bold">What will you do?</h4>
+      <ol class="mb-0">
+        <li class="mb-2"><strong>Background Information</strong> — answer demographic and media-use questions.</li>
+        <li class="mb-2"><strong>Deepfake Awareness & Political Trust</strong> — answer questions based on your existing knowledge and opinions.</li>
+        <li class="mb-2"><strong>Political Deepfake Video Assessment</strong> — watch several clips and decide whether they appear real or AI-generated.</li>
+        <li class="mb-2"><strong>Awareness & Verification Module</strong> — learn how political deepfakes and misleading media can be evaluated more carefully.</li>
+        <li class="mb-2"><strong>Warning / Label Experiment</strong> — respond to labelled media and report how believable, realistic and trustworthy it feels.</li>
+        <li><strong>Results & Reflection</strong> — review your quiz performance and educational feedback.</li>
+      </ol>
+    </div>
+    <div class="alert alert-info"><strong>⏱ Estimated completion time:</strong> approximately 10–15 minutes.</div>
+    <p class="mb-0">Please answer based on your own judgement. The study is interested in genuine reactions, not in getting every answer correct.</p>
+  </div>
+
+  <div data-lang-block="my" style="display:none">
+    <div class="text-center mb-4">
+      <div class="display-5 mb-2">🎭</div>
+      <h1 class="display-6 fw-bold text-primary">AI ဖြင့် ဖန်တီးထားသော နိုင်ငံရေး Deepfake သုတေသန</h1>
+      <p class="fs-5 text-secondary mb-1"><strong>သုတေသနခေါင်းစဉ်:</strong> နိုင်ငံရေးသတင်းမှားနှင့် သတင်းအချက်အလက်စစ်ပွဲတွင် AI-Generated Deepfake များ၏ အသုံးပြုမှု</p>
+    </div>
+    <p class="fs-5">ကြိုဆိုပါသည်။ ဤပညာရေးသုတေသနသည် AI ဖြင့် ဖန်တီးထားသော နိုင်ငံရေးနှင့် သတင်းဆိုင်ရာ ဗီဒီယိုများက ပရိသတ်၏ အမြင်၊ ဆုံးဖြတ်ချက်နှင့် နိုင်ငံရေးယုံကြည်မှုအပေါ် မည်သို့ သက်ရောက်နိုင်သည်ကို လေ့လာပါသည်။</p>
+    <div class="bg-body-tertiary rounded p-4 my-4">
+      <h4 class="fw-bold">သင် ဘာတွေ လုပ်ရမလဲ?</h4>
+      <ol class="mb-0">
+        <li class="mb-2"><strong>အခြေခံအချက်အလက်</strong> — လူဦးရေဆိုင်ရာနှင့် မီဒီယာအသုံးပြုမှုမေးခွန်းများ ဖြေဆိုပါမည်။</li>
+        <li class="mb-2"><strong>Deepfake အသိပညာနှင့် နိုင်ငံရေးယုံကြည်မှု</strong> — လက်ရှိသိရှိထားသည့်အရာနှင့် ကိုယ်ပိုင်အမြင်အပေါ် အခြေခံ၍ ဖြေဆိုပါမည်။</li>
+        <li class="mb-2"><strong>နိုင်ငံရေး Deepfake ဗီဒီယိုစမ်းသပ်မှု</strong> — ဗီဒီယိုများကို ကြည့်ပြီး အစစ် သို့မဟုတ် AI ဖြင့် ဖန်တီးထားခြင်း ဖြစ်နိုင်မဖြစ်နိုင် ဆုံးဖြတ်ပါမည်။</li>
+        <li class="mb-2"><strong>အသိပညာနှင့် စစ်ဆေးခြင်း အပိုင်း</strong> — နိုင်ငံရေး Deepfake နှင့် လွဲမှားစေနိုင်သော မီဒီယာများကို ပိုမိုဂရုတစိုက် စစ်ဆေးနည်းကို လေ့လာပါမည်။</li>
+        <li class="mb-2"><strong>သတိပေးတံဆိပ် စမ်းသပ်မှု</strong> — AI/Deepfake တံဆိပ်ပါသော မီဒီယာအပေါ် ယုံကြည်ဖွယ်မှု၊ အစစ်ပုံပေါက်မှုနှင့် ယုံကြည်မှုကို ဖြေဆိုပါမည်။</li>
+        <li><strong>ရလဒ်နှင့် ပြန်လည်သုံးသပ်မှု</strong> — Quiz ရလဒ်နှင့် ပညာပေးအချက်အလက်များကို ကြည့်ရှုပါမည်။</li>
+      </ol>
+    </div>
+    <div class="alert alert-info"><strong>⏱ ခန့်မှန်းဖြေဆိုချိန်:</strong> ၁၀–၁၅ မိနစ်ခန့်။</div>
+    <p class="mb-0">မိမိ၏ ကိုယ်ပိုင်ဆုံးဖြတ်ချက်အတိုင်း ဖြေဆိုပါ။ အဖြေအားလုံးမှန်ရန်ထက် သင့်ရဲ့ အမှန်တကယ်တုံ့ပြန်မှုကို ဤသုတေသနက ပိုမိုအရေးထားပါသည်။</p>
+  </div>
+
+  <div class="d-flex justify-content-center mt-4">
+    <a class="btn btn-primary btn-lg px-5" href="/consent">
+      <span data-lang-block="en">Continue to Consent →</span><span data-lang-block="my" style="display:none">သဘောတူညီချက်သို့ ဆက်ရန် →</span>
+    </a>
+  </div>
+  <div class="text-center mt-4"><a class="small text-muted text-decoration-none" href="/admin-login">🔒 Researcher Login</a></div>
+</div>
+{% endblock %}
