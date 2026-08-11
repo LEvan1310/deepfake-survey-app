@@ -44,7 +44,7 @@ VIDEO_QUIZ = {
     5: {**MEDIA_SOURCES[5], 'answer': 'AI-Generated',
         'reason_en': 'The configured answer is AI-generated. Pay attention to synchronization, facial consistency and whether the claim can be verified elsewhere.',
         'reason_my': 'သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ အသံနှင့် ရုပ်ပုံချိန်ညှိမှု၊ မျက်နှာပုံစံတည်ငြိမ်မှုနှင့် အခြားရင်းမြစ်များတွင် သတင်းကို အတည်ပြုနိုင်ခြင်းရှိမရှိ စစ်ဆေးပါ။'},
-    6: {**MEDIA_SOURCES[5], 'answer': 'Real',
+    6: {**MEDIA_SOURCES[3], 'answer': 'Real',
         'reason_en': 'The study answer key classifies this research clip as real. Correct verification depends on evidence and provenance, not on finding a single artifact.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေမှာ အစစ်အမှန်ဗီဒီယို ဖြစ်သည်။ မှန်ကန်စွာ စစ်ဆေးရန် အထောက်အထားနှင့် ဗီဒီယိုရင်းမြစ်ကို အဓိကထားသင့်ပြီး မူမမှန်ချက်တစ်ခုတည်းကိုသာ မမှီခိုသင့်ပါ။'},
     7: {**MEDIA_SOURCES[7], 'answer': 'AI-Generated',
