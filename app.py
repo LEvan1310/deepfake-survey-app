@@ -38,13 +38,13 @@ VIDEO_QUIZ = {
     3: {**MEDIA_SOURCES[3], 'answer': 'AI-Generated',
         'reason_en': 'The configured answer is AI-generated. A reliable judgement should combine visual, audio and source/context verification.',
         'reason_my': 'သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ ယုံကြည်စိတ်ချရသော ခွဲခြားမှုအတွက် ရုပ်ပုံ၊ အသံနှင့် သတင်းရင်းမြစ်/အကြောင်းအရာကို ပေါင်းစပ်စစ်ဆေးသင့်သည်။'},
-    4: {**MEDIA_SOURCES[4], 'answer': 'Real',
+    4: {**MEDIA_SOURCES[3], 'answer': 'Real',
         'reason_en': 'The study answer key classifies this research clip as real. Natural-looking video alone is not proof; source and context verification remain important.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေတွင် ဤကလစ်ကို အစစ်အမှန်ဗီဒီယိုအဖြစ် သတ်မှတ်ထားသည်။ သဘာဝကျသလိုမြင်ရခြင်းတစ်ခုတည်းဖြင့် အစစ်ဟု မဆိုနိုင်သဖြင့် ရင်းမြစ်နှင့် အကြောင်းအရာကို ထပ်မံစစ်ဆေးရန် အရေးကြီးသည်။'},
-    5: {**MEDIA_SOURCES[5], 'answer': 'AI-Generated',
+    5: {**MEDIA_SOURCES[4], 'answer': 'AI-Generated',
         'reason_en': 'The configured answer is AI-generated. Pay attention to synchronization, facial consistency and whether the claim can be verified elsewhere.',
         'reason_my': 'သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ အသံနှင့် ရုပ်ပုံချိန်ညှိမှု၊ မျက်နှာပုံစံတည်ငြိမ်မှုနှင့် အခြားရင်းမြစ်များတွင် သတင်းကို အတည်ပြုနိုင်ခြင်းရှိမရှိ စစ်ဆေးပါ။'},
-    6: {**MEDIA_SOURCES[3], 'answer': 'Real',
+    6: {**MEDIA_SOURCES[5], 'answer': 'Real',
         'reason_en': 'The study answer key classifies this research clip as real. Correct verification depends on evidence and provenance, not on finding a single artifact.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေမှာ အစစ်အမှန်ဗီဒီယို ဖြစ်သည်။ မှန်ကန်စွာ စစ်ဆေးရန် အထောက်အထားနှင့် ဗီဒီယိုရင်းမြစ်ကို အဓိကထားသင့်ပြီး မူမမှန်ချက်တစ်ခုတည်းကိုသာ မမှီခိုသင့်ပါ။'},
     7: {**MEDIA_SOURCES[7], 'answer': 'AI-Generated',
@@ -66,9 +66,9 @@ VIDEO_QUIZ = {
 WARNING_EXPERIMENT = {
     1: {
         **MEDIA_SOURCES[6],
-        'condition': 'reveal',
-        'title_en': 'Condition 1 - Before vs After AI Label',
-        'title_my': 'စမ်းသပ်အခြေအနေ ၁ - AI တံဆိပ် မပြမီနှင့် ပြပြီးနောက်',
+        'condition': 'labelled',
+        'title_en': 'Condition 1 - AI Label Visible',
+        'title_my': 'စမ်းသပ်အခြေအနေ ၁ - AI တံဆိပ်ကို အစကတည်းက မြင်ရခြင်း',
     },
     2: {
         **MEDIA_SOURCES[7],
@@ -342,16 +342,23 @@ def warning_summary(data):
             return None
 
     return {
+        # Condition 1 now uses the same label-visible questions as Conditions 2 and 3.
+        # Keep the old keys for compatibility with older stored responses/results.
         'before_belief': before_belief,
         'after_belief': after_belief,
         'belief_delta': delta(before_belief, after_belief),
         'before_trust': before_trust,
         'after_trust': after_trust,
         'trust_delta': delta(before_trust, after_trust),
+        'labelled_1_belief': data.get('w1_belief_after', ''),
+        'labelled_1_realism': data.get('w1_realism', ''),
+        'labelled_1_trust': data.get('w1_trust_after', ''),
         'labelled_2_belief': data.get('w2_belief_after', ''),
         'labelled_2_realism': data.get('w2_realism', ''),
+        'labelled_2_trust': data.get('w2_trust_after', ''),
         'labelled_3_belief': data.get('w3_belief_after', ''),
         'labelled_3_realism': data.get('w3_realism', ''),
+        'labelled_3_trust': data.get('w3_trust_after', ''),
     }
 
 
@@ -453,11 +460,9 @@ def save_survey_response():
 
 
 def validate_section_f(form):
-    required = [
-        'w1_belief_before', 'w1_trust_before',
-        'w1_belief_after', 'w1_realism', 'w1_trust_after', 'w1_influence_removed', 'w1_could_be_true', 'w1_realism_influence', 'w1_reaction', 'w1_reason'
-    ]
-    for i in (2, 3):
+    # All three label-video conditions now use the same 8 required questions.
+    required = []
+    for i in (1, 2, 3):
         required.extend([
             f'w{i}_belief_after', f'w{i}_realism', f'w{i}_trust_after', f'w{i}_influence_removed',
             f'w{i}_could_be_true', f'w{i}_realism_influence', f'w{i}_reaction', f'w{i}_reason'
