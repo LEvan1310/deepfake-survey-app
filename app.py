@@ -228,37 +228,6 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/consent')
-def consent():
-    return render_template('consent.html')
-
-
-@app.route('/quiz-introduction')
-def quiz_intro():
-    return render_template('quiz_intro.html', skipped=session.get('skipped_pre_video_sections', False))
-
-
-@app.route('/awareness-training/1')
-def awareness_training_1():
-    if 'reflection' not in session:
-        return redirect(url_for('survey_reflection'))
-    return render_template('awareness_training_1.html')
-
-
-@app.route('/awareness-training/2')
-def awareness_training_2():
-    if 'reflection' not in session:
-        return redirect(url_for('survey_reflection'))
-    return render_template('awareness_training_2.html')
-
-
-@app.route('/awareness-training/3')
-def awareness_training_3():
-    if 'reflection' not in session:
-        return redirect(url_for('survey_reflection'))
-    return render_template('awareness_training_3.html')
-
-
 @app.route('/survey/page1', methods=['GET', 'POST'])
 def survey_page1():
     if request.method == 'POST':
@@ -284,7 +253,7 @@ def survey_page2():
         session['page2'] = form_data
         if watched == 'No':
             session['skipped_pre_video_sections'] = True
-            return redirect(url_for('quiz_intro'))
+            return redirect(url_for('survey_page5'))
         session['skipped_pre_video_sections'] = False
         return redirect(url_for('survey_page3'))
     return render_template('survey_page2.html')
@@ -302,7 +271,7 @@ def survey_page3():
 def survey_page4():
     if request.method == 'POST':
         session['page4'] = request.form.to_dict()
-        return redirect(url_for('quiz_intro'))
+        return redirect(url_for('survey_page5'))
     return render_template('survey_page4.html')
 
 
@@ -355,7 +324,7 @@ def survey_reflection():
 
     if request.method == 'POST':
         session['reflection'] = request.form.to_dict()
-        return redirect(url_for('awareness_training_1'))
+        return redirect(url_for('survey_page8'))
 
     return render_template('survey_reflection.html', previous=session.get('reflection', {}))
 
