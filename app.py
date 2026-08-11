@@ -242,9 +242,7 @@ def quiz_intro():
 def awareness_training_1():
     phase = session.get('awareness_phase')
     if phase == 'pre_quiz':
-        # Both paths receive the same 3-page awareness module before the quiz.
-        # No  -> comes here directly from Section B.
-        # Yes -> completes Sections C and D first, then comes here.
+        # Both Yes and No paths can use the same awareness module BEFORE the quiz.
         watched = session.get('page2', {}).get('watched_deepfake_before')
         back_url = url_for('survey_page2') if watched == 'No' else url_for('survey_page4')
     else:
@@ -326,8 +324,7 @@ def survey_page4():
     if request.method == 'POST':
         session['page4'] = request.form.to_dict()
 
-        # After Sections C and D, show the same 3 awareness pages BEFORE
-        # the Deepfake Video Assessment.
+        # Yes path: after Sections C and D, show awareness ONCE before the quiz.
         session['awareness_phase'] = 'pre_quiz'
         return redirect(url_for('awareness_training_1'))
 
@@ -383,13 +380,11 @@ def survey_reflection():
 
     if request.method == 'POST':
         session['reflection'] = request.form.to_dict()
-        if session.get('skipped_pre_video_sections', False):
-            # This participant already completed awareness training before
-            # the quiz because they answered No to previous deepfake exposure.
-            session.pop('awareness_phase', None)
-            return redirect(url_for('survey_page8'))
-        session['awareness_phase'] = 'post_quiz'
-        return redirect(url_for('awareness_training_1'))
+
+        # The 3-page awareness module is now completed BEFORE the quiz
+        # for both Yes and No participants, so never show it again here.
+        session.pop('awareness_phase', None)
+        return redirect(url_for('survey_page8'))
 
     return render_template('survey_reflection.html', previous=session.get('reflection', {}))
 
