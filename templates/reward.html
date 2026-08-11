@@ -1,56 +1,57 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-.reward-wrap{max-width:760px;margin:auto}
-.wheel-shell{position:relative;width:min(82vw,460px);aspect-ratio:1;margin:28px auto 18px}
-.wheel{width:100%;height:100%;border-radius:50%;border:10px solid var(--bs-body-color);background:conic-gradient(#f7c948 0deg 72deg,#77c66e 72deg 144deg,#6cb6ff 144deg 216deg,#ff8a80 216deg 288deg,#b39ddb 288deg 360deg);position:relative;transition:transform 4.5s cubic-bezier(.12,.72,.08,1)}
-.wheel:after{content:"";position:absolute;inset:43%;border-radius:50%;background:var(--bs-body-bg);border:5px solid var(--bs-body-color)}
-.wheel-label{position:absolute;left:50%;top:50%;width:42%;transform-origin:0 0;text-align:right;font-weight:800;font-size:.9rem;padding-right:12px}
-.wheel-pointer{position:absolute;left:50%;top:-15px;transform:translateX(-50%);z-index:5;font-size:2.5rem;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
-.reward-result{font-size:1.35rem}
-.spin-note{font-size:.92rem}
-#resultArea[hidden],#resultLink[hidden],#spinningMessage[hidden]{display:none!important}
+  .reward-wrap{max-width:820px;margin:auto;border-radius:20px}
+  .reward-title{font-weight:800;letter-spacing:-.02em}
+  .reward-subtitle{max-width:650px;margin:0 auto;color:var(--bs-secondary-color)}
+  .wheel-area{position:relative;width:min(86vw,520px);aspect-ratio:1;margin:30px auto 22px}
+  .wheel-rotator{position:absolute;inset:0;border-radius:50%;transition:transform 5.2s cubic-bezier(.12,.72,.08,1);filter:drop-shadow(0 16px 26px rgba(0,0,0,.16))}
+  #wheelCanvas{width:100%;height:100%;display:block;border-radius:50%}
+  .wheel-pointer{position:absolute;left:50%;top:-7px;transform:translateX(-50%);z-index:10;width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:38px solid #212529;filter:drop-shadow(0 3px 2px rgba(0,0,0,.25))}
+  .wheel-pointer::after{content:"";position:absolute;left:-7px;top:-36px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid #212529}
+  .center-cap{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:86px;height:86px;border-radius:50%;background:var(--bs-body-bg);border:7px solid #212529;display:grid;place-items:center;z-index:6;font-weight:800;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+  .spin-btn{min-width:230px;border-radius:999px;font-weight:800;padding:.8rem 1.3rem}
+  .probability-box{background:var(--bs-tertiary-bg);border:1px solid var(--bs-border-color);border-radius:16px;padding:14px 16px;margin:18px auto 0;max-width:660px}
+  .prob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:10px}
+  .prob-chip{background:var(--bs-body-bg);border:1px solid var(--bs-border-color);border-radius:12px;padding:8px;font-size:.88rem;font-weight:700}
+  .reward-result{font-size:1.3rem;border-radius:16px}
+  #resultArea[hidden],#resultLink[hidden],#spinningMessage[hidden]{display:none!important}
+  @media (max-width:520px){.center-cap{width:70px;height:70px;font-size:.8rem}.wheel-pointer{border-left-width:15px;border-right-width:15px;border-top-width:32px}}
 </style>
 
-<div class="card shadow border-0 p-4 reward-wrap text-center">
-  <h2 class="text-primary fw-bold">
+<div class="card shadow border-0 p-4 p-md-5 reward-wrap text-center">
+  <h2 class="text-primary reward-title mb-2">
     <span data-lang-block="en">🎁 Thank You Gift Wheel</span>
     <span data-lang-block="my" style="display:none">🎁 ကျေးဇူးတင် Gift Wheel</span>
   </h2>
 
-  <p class="text-muted">
-    <span data-lang-block="en">You completed optional Section F, so you have unlocked one spin. The reward is the segment that stops directly under the arrow.</span>
-    <span data-lang-block="my" style="display:none">Section F ကို ပြီးဆုံးခဲ့သောကြောင့် Gift Wheel တစ်ကြိမ် လှည့်ခွင့်ရပါပြီ။ မြှားအောက်တွင် တိတိကျကျ ရပ်သည့် အပိုင်းသည် သင့်ဆုဖြစ်ပါသည်။</span>
+  <p class="reward-subtitle">
+    <span data-lang-block="en">You unlocked one spin. The reward is the segment that finishes directly under the arrow.</span>
+    <span data-lang-block="my" style="display:none">တစ်ကြိမ် လှည့်ခွင့် ရရှိပါပြီ။ မြှားအောက်တွင် နောက်ဆုံးရပ်သည့် အပိုင်းသည် သင့်ဆုဖြစ်ပါသည်။</span>
   </p>
 
-  <div class="wheel-shell">
-    <div class="wheel-pointer" aria-hidden="true">▼</div>
-    <div class="wheel" id="giftWheel">
-      {% for r in rewards %}
-      <div class="wheel-label" style="transform:rotate({{ 36 + loop.index0*72 }}deg)">
-        {{ r.emoji }}
-        <span data-lang-block="en">{{ r.label_en }}</span>
-        <span data-lang-block="my" style="display:none">{{ r.label_my }}</span>
-      </div>
-      {% endfor %}
+  <div class="wheel-area" aria-label="Gift wheel">
+    <div class="wheel-pointer" aria-hidden="true"></div>
+    <div class="wheel-rotator" id="wheelRotator">
+      <canvas id="wheelCanvas" width="1000" height="1000"></canvas>
+    </div>
+    <div class="center-cap">
+      <span data-lang-block="en">SPIN</span>
+      <span data-lang-block="my" style="display:none">လှည့်</span>
     </div>
   </div>
 
   {% if not prize %}
     <form method="POST" id="spinForm">
-      <button class="btn btn-success btn-lg px-5" id="spinButton" type="submit">
+      <button class="btn btn-success btn-lg spin-btn" id="spinButton" type="submit">
         <span data-lang-block="en">Spin the Wheel 🎡</span>
         <span data-lang-block="my" style="display:none">Wheel လှည့်ရန် 🎡</span>
       </button>
     </form>
-    <p class="spin-note text-muted mt-3">
-      <span data-lang-block="en">Only one spin is available for this completed response.</span>
-      <span data-lang-block="my" style="display:none">ဤဖြေဆိုမှုအတွက် တစ်ကြိမ်သာ လှည့်နိုင်ပါသည်။</span>
-    </p>
   {% else %}
-    <div id="spinningMessage" class="alert alert-info mt-3">
-      <span data-lang-block="en">🎡 Spinning... your result will appear when the wheel stops.</span>
-      <span data-lang-block="my" style="display:none">🎡 Wheel လှည့်နေပါသည်... ရပ်သွားသည့်အခါ သင့်ဆုကို ပြပါမည်။</span>
+    <div id="spinningMessage" class="alert alert-info mt-3 rounded-4">
+      <span data-lang-block="en">🎡 Spinning... the reward will appear after the arrow settles.</span>
+      <span data-lang-block="my" style="display:none">🎡 Wheel လှည့်နေပါသည်... မြှားအောက်တွင် ရပ်ပြီးမှ ဆုကို ပြပါမည်။</span>
     </div>
 
     <div id="resultArea" class="alert alert-success reward-result mt-3" hidden>
@@ -63,53 +64,158 @@
       <span data-lang-block="my" style="display:none">{{ prize.emoji }} {{ prize.label_my }}</span>
     </div>
 
-    <a id="resultLink" href="/results" class="btn btn-primary btn-lg" hidden>
+    <a id="resultLink" href="/results" class="btn btn-primary btn-lg rounded-pill px-4" hidden>
       <span data-lang-block="en">View Survey & Quiz Results →</span>
       <span data-lang-block="my" style="display:none">စစ်တမ်းနှင့် Quiz ရလဒ်များ ကြည့်ရန် →</span>
     </a>
   {% endif %}
+
+  <div class="probability-box text-start">
+    <div class="fw-bold text-center">
+      <span data-lang-block="en">Chance distribution</span>
+      <span data-lang-block="my" style="display:none">ဆုရနိုင်ခြေ အချိုး</span>
+    </div>
+    <div class="small text-muted text-center mt-1">
+      <span data-lang-block="en">Cash prizes intentionally have smaller segments and lower probability.</span>
+      <span data-lang-block="my" style="display:none">ငွေသားဆုများကို အပိုင်းသေးသေးနှင့် ရနိုင်ခြေနည်းအောင် သတ်မှတ်ထားပါသည်။</span>
+    </div>
+    <div class="prob-grid">
+      {% for r in rewards %}
+      <div class="prob-chip text-center">
+        {{ r.emoji }}
+        <span data-lang-block="en">{{ r.label_en }}</span>
+        <span data-lang-block="my" style="display:none">{{ r.label_my }}</span>
+        <div class="text-primary">{{ ((r.weight / reward_total_weight) * 100)|round|int }}%</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 </div>
 
-{% if prize_index is not none %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const wheel = document.getElementById('giftWheel');
+  const rewards = {{ rewards|tojson }};
+  const totalWeight = rewards.reduce((sum, item) => sum + Number(item.weight || 1), 0);
+  const canvas = document.getElementById('wheelCanvas');
+  const ctx = canvas.getContext('2d');
+  const rotator = document.getElementById('wheelRotator');
+  const colors = ['#F4C95D','#5FB7F2','#FF8A80','#A78BFA','#72C472'];
+
+  const W = canvas.width;
+  const H = canvas.height;
+  const cx = W / 2;
+  const cy = H / 2;
+  const radius = W * 0.47;
+  const TWO_PI = Math.PI * 2;
+
+  function wrapText(text, maxChars) {
+    const words = String(text).split(/\s+/);
+    const lines = [];
+    let line = '';
+    for (const word of words) {
+      const next = line ? line + ' ' + word : word;
+      if (next.length > maxChars && line) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = next;
+      }
+    }
+    if (line) lines.push(line);
+    return lines.slice(0, 3);
+  }
+
+  function drawWheel() {
+    ctx.clearRect(0,0,W,H);
+    let current = -Math.PI / 2; // pointer/top is the start reference
+
+    rewards.forEach((item, index) => {
+      const span = (Number(item.weight || 1) / totalWeight) * TWO_PI;
+      const end = current + span;
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, radius, current, end);
+      ctx.closePath();
+      ctx.fillStyle = colors[index % colors.length];
+      ctx.fill();
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = '#ffffff';
+      ctx.stroke();
+
+      const mid = current + span / 2;
+      const textRadius = radius * 0.64;
+      const tx = cx + Math.cos(mid) * textRadius;
+      const ty = cy + Math.sin(mid) * textRadius;
+
+      ctx.save();
+      ctx.translate(tx, ty);
+      let rotation = mid + Math.PI / 2;
+      if (rotation > Math.PI / 2 && rotation < Math.PI * 1.5) rotation += Math.PI;
+      ctx.rotate(rotation);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#17202a';
+
+      const percent = Math.round((Number(item.weight || 1) / totalWeight) * 100);
+      const label = `${item.emoji} ${item.label_en}`;
+      const narrow = percent <= 10;
+      ctx.font = narrow ? '800 32px system-ui, sans-serif' : '800 36px system-ui, sans-serif';
+      const lines = narrow ? [label] : wrapText(label, 20);
+      const lineHeight = 42;
+      const offset = -((lines.length - 1) * lineHeight) / 2;
+      lines.forEach((line, i) => ctx.fillText(line, 0, offset + i * lineHeight));
+      ctx.font = '700 27px system-ui, sans-serif';
+      ctx.fillText(`${percent}%`, 0, offset + lines.length * lineHeight + 9);
+      ctx.restore();
+
+      current = end;
+    });
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, TWO_PI);
+    ctx.lineWidth = 20;
+    ctx.strokeStyle = '#212529';
+    ctx.stroke();
+  }
+
+  drawWheel();
+
+  {% if prize_index is not none %}
+  const selectedIndex = {{ prize_index|int }};
+  let beforeWeight = 0;
+  for (let i = 0; i < selectedIndex; i++) beforeWeight += Number(rewards[i].weight || 1);
+  const selectedWeight = Number(rewards[selectedIndex].weight || 1);
+  const centerOffsetDegrees = ((beforeWeight + selectedWeight / 2) / totalWeight) * 360;
+
+  // Canvas starts at the top (-90°), exactly where the pointer is.
+  // Rotating by -segmentCenter puts the selected segment's CENTER under the arrow.
+  const extraTurns = 7 * 360;
+  const finalRotation = extraTurns - centerOffsetDegrees;
+
   const spinningMessage = document.getElementById('spinningMessage');
   const resultArea = document.getElementById('resultArea');
   const resultLink = document.getElementById('resultLink');
-
-  // Five equal segments = 72° each.
-  // The fixed arrow is at the top (0°). Rotate the selected segment's CENTER
-  // to 0° so the visible arrow and the saved reward always match exactly.
-  const idx = {{ prize_index|int }};
-  const segmentSize = 72;
-  const segmentCenter = (idx * segmentSize) + (segmentSize / 2);
-  const extraTurns = 6 * 360;
-  const finalRotation = extraTurns + (360 - segmentCenter);
-
   let revealed = false;
-  const revealResult = () => {
+
+  function revealResult(){
     if (revealed) return;
     revealed = true;
     if (spinningMessage) spinningMessage.hidden = true;
     if (resultArea) resultArea.hidden = false;
     if (resultLink) resultLink.hidden = false;
-  };
+  }
 
-  // Show the reward ONLY after the wheel animation has actually finished.
-  wheel.addEventListener('transitionend', (event) => {
+  rotator.addEventListener('transitionend', (event) => {
     if (event.propertyName === 'transform') revealResult();
-  }, { once: true });
+  }, { once:true });
 
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      wheel.style.transform = `rotate(${finalRotation}deg)`;
-    });
-  });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    rotator.style.transform = `rotate(${finalRotation}deg)`;
+  }));
 
-  // Safe fallback in case a browser suppresses transitionend.
-  setTimeout(revealResult, 5000);
+  setTimeout(revealResult, 5700);
+  {% endif %}
 });
 </script>
-{% endif %}
 {% endblock %}
