@@ -8,9 +8,17 @@
 <div class="col-md-6"><div class="border rounded p-3 h-100"><h4>✅ 4. Verify</h4><p>Use reliable fact-checking or primary evidence when available before deciding whether a claim is trustworthy.</p></div></div>
 </div>
 <div class="alert alert-primary mt-4"><strong>Remember:</strong> visual or audio oddities can be clues, but they are not definitive proof. Strong verification combines media cues with source, context and independent evidence.</div>
-<p class="fw-semibold">Next, you will enter the warning-label section. Use what you have learned, but continue to answer according to your genuine reaction.</p></div>
+{% if next_url == url_for('quiz_intro') %}
+<p class="fw-semibold">Next, you will begin the Deepfake Video Assessment. Use the awareness information you have just reviewed, while answering according to your own judgement.</p>
+{% else %}
+<p class="fw-semibold">Next, you will enter the warning-label section. Use what you have learned, but continue to answer according to your genuine reaction.</p>
+{% endif %}</div>
 <div data-lang-block="my" style="display:none"><h2 class="fw-bold text-primary">နိုင်ငံရေး Deepfake အသိပညာနှင့် စစ်ဆေးခြင်း</h2><p class="text-muted">စာမျက်နှာ ၃ / ၃ — ရပ်ပါ၊ စစ်ပါ၊ နှိုင်းယှဉ်ပါ၊ အတည်ပြုပါ</p><div class="progress mb-4"><div class="progress-bar" style="width:100%"></div></div>
 <div class="row g-3"><div class="col-md-6"><div class="border rounded p-3 h-100"><h4>⏸ ၁။ ရပ်ပါ</h4><p>စိတ်လှုပ်ရှားမှုမြင့်မားသော နိုင်ငံရေးအကြောင်းအရာကို ချက်ချင်း မယုံကြည်/မမျှဝေပါနှင့်။</p></div></div><div class="col-md-6"><div class="border rounded p-3 h-100"><h4>🔎 ၂။ စစ်ပါ</h4><p>မူရင်း account၊ publisher၊ ရက်စွဲနှင့် context အပြည့်အစုံကို စစ်ဆေးပါ။</p></div></div><div class="col-md-6"><div class="border rounded p-3 h-100"><h4>📰 ၃။ နှိုင်းယှဉ်ပါ</h4><p>ယုံကြည်စိတ်ချရသော သတင်းရင်းမြစ်များစွာတွင် အတူတူဖြစ်ရပ်ကို ရှာဖွေ နှိုင်းယှဉ်ပါ။</p></div></div><div class="col-md-6"><div class="border rounded p-3 h-100"><h4>✅ ၄။ အတည်ပြုပါ</h4><p>ဆုံးဖြတ်မီ fact-checking နှင့် မူလအထောက်အထား ရရှိပါက အသုံးပြုပါ။</p></div></div></div>
-<div class="alert alert-primary mt-4"><strong>မှတ်ထားရန်:</strong> ရုပ်ပုံ/အသံ မူမမှန်မှုများသည် သဲလွန်စဖြစ်နိုင်သော်လည်း အပြီးသတ်သက်သေမဟုတ်ပါ။ အကောင်းဆုံးစစ်ဆေးမှုတွင် media cue၊ source၊ context နှင့် သီးခြားအထောက်အထားကို ပေါင်းစပ်ပါ။</div><p class="fw-semibold">နောက်တစ်ဆင့်တွင် သတိပေးတံဆိပ်စမ်းသပ်မှုကို စတင်ပါမည်။ လေ့လာထားသည့်အရာကို အသုံးပြုနိုင်သော်လည်း မိမိ၏ အမှန်တကယ်တုံ့ပြန်မှုအတိုင်း ဖြေဆိုပါ။</p></div>
+<div class="alert alert-primary mt-4"><strong>မှတ်ထားရန်:</strong> ရုပ်ပုံ/အသံ မူမမှန်မှုများသည် သဲလွန်စဖြစ်နိုင်သော်လည်း အပြီးသတ်သက်သေမဟုတ်ပါ။ အကောင်းဆုံးစစ်ဆေးမှုတွင် media cue၊ source၊ context နှင့် သီးခြားအထောက်အထားကို ပေါင်းစပ်ပါ။</div>{% if next_url == url_for('quiz_intro') %}
+<p class="fw-semibold">နောက်တစ်ဆင့်တွင် Deepfake ဗီဒီယို စမ်းသပ်မှုကို စတင်ပါမည်။ ယခုဖတ်ရှုထားသော အသိပညာကို အသုံးပြုနိုင်ပြီး မိမိ၏ ကိုယ်ပိုင်ဆုံးဖြတ်ချက်အတိုင်း ဖြေဆိုပါ။</p>
+{% else %}
+<p class="fw-semibold">နောက်တစ်ဆင့်တွင် သတိပေးတံဆိပ်စမ်းသပ်မှုကို စတင်ပါမည်။ လေ့လာထားသည့်အရာကို အသုံးပြုနိုင်သော်လည်း မိမိ၏ အမှန်တကယ်တုံ့ပြန်မှုအတိုင်း ဖြေဆိုပါ။</p>
+{% endif %}</div>
 <div class="d-flex justify-content-between mt-4"><a href="/awareness-training/2" class="btn btn-secondary">← Back</a><a href="{{ next_url }}" class="btn btn-success btn-lg"><span data-lang-block="en">{{ next_en }}</span><span data-lang-block="my" style="display:none">{{ next_my }}</span></a></div>
 </div>{% endblock %}
