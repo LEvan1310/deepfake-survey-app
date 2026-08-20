@@ -17,15 +17,17 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 # Set ADMIN_PASSWORD in your hosting environment for production.
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Evan')
 
+GOOGLE_DRIVE_VIDEO_ID = '1Kcxeng_XUCDwVpBxNZ7KeF1nU_XRN5nT'
+GOOGLE_DRIVE_VIDEO_URL = f'https://drive.google.com/file/d/{GOOGLE_DRIVE_VIDEO_ID}/view?usp=sharing'
+
 MEDIA_SOURCES = {
-    1: {'source_type': 'x', 'source_url': 'https://x.com/RajaFaisalPK/status/2033543923101319627?s=20', 'x_post_id': '2033543923101319627'},
-    2: {'source_type': 'x', 'source_url': 'https://x.com/tvir_X/status/2083951574401908838?s=20', 'x_post_id': '2083951574401908838'},
-    3: {'source_type': 'x', 'source_url': 'https://x.com/GarudEyeIntel/status/2057702492738310186?s=20', 'x_post_id': '2057702492738310186'},
-    4: {'source_type': 'x', 'source_url': 'https://x.com/TheRubberDuck79/status/2033211923286708284?s=20', 'x_post_id': '2033211923286708284'},
-    5: {'source_type': 'x', 'source_url': 'https://x.com/tvir_X/status/2083951478746620388?s=20', 'x_post_id': '2083951478746620388'},
-    6: {'source_type': 'youtube', 'youtube_id': 'vui5TFU3DCM'},
-    7: {'source_type': 'youtube', 'youtube_id': 'cQ54GDm1eL0'},
-    8: {'source_type': 'external', 'source_url': 'https://www.bbc.com/reel/video/p0hkflt4/watch', 'source_name': 'BBC Reel'},
+    i: {
+        'source_type': 'google_drive',
+        'drive_id': GOOGLE_DRIVE_VIDEO_ID,
+        'source_url': GOOGLE_DRIVE_VIDEO_URL,
+        'source_name': 'Research Video'
+    }
+    for i in range(1, 10)
 }
 
 VIDEO_QUIZ = {
@@ -87,12 +89,22 @@ WARNING_EXPERIMENT = {
 # Educational videos are shown only after experimental responses are submitted,
 # so they do not teach detection cues before measurement.
 EDUCATIONAL_VIDEOS = [
-    {'youtube_id': 'TqNXqbTUpQ8', 'source': 'The Guardian',
-     'title_en': 'How AI deepfake propaganda is created and used',
-     'title_my': 'AI Deepfake propaganda ကို ဖန်တီးပြီး အသုံးပြုပုံ'},
-    {'youtube_id': '-kDtt0QBNRU', 'source': 'Linus Tech Tips',
-     'title_en': 'How to recognize deepfakes and AI-generated video',
-     'title_my': 'Deepfake နှင့် AI-generated video ကို ခွဲခြားစစ်ဆေးနည်း'},
+    {
+        'source_type': 'google_drive',
+        'drive_id': GOOGLE_DRIVE_VIDEO_ID,
+        'source_url': GOOGLE_DRIVE_VIDEO_URL,
+        'source': 'Research Video',
+        'title_en': 'Research Video',
+        'title_my': 'သုတေသနဗီဒီယို'
+    },
+    {
+        'source_type': 'google_drive',
+        'drive_id': GOOGLE_DRIVE_VIDEO_ID,
+        'source_url': GOOGLE_DRIVE_VIDEO_URL,
+        'source': 'Research Video',
+        'title_en': 'Research Video',
+        'title_my': 'သုတေသနဗီဒီယို'
+    },
 ]
 
 REWARD_OPTIONS = [
