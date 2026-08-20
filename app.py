@@ -17,18 +17,62 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 # Set ADMIN_PASSWORD in your hosting environment for production.
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Evan')
 
-# Nine separate Google Drive videos used for the main Deepfake Video Quiz.
-# The same video number is used in the quiz, result page, and admin dashboard.
-QUIZ_DRIVE_IDS = {
-    1: '1ZSJa6MhzvghxAJrGg0NUwdME-Y7UDHNn',
-    2: '15igHy-RAP_M1wqJ-fYvBOCil9PzI6D5R',
-    3: '1B98b2FuRr_Uf8mPbisjKuqEq4Iugstrx',
-    4: '1SIozzMnIBB8vqHFTJIewkEawUsUkRFBk',
-    5: '1rjaJGQAOyezeTjUib_MhH6X5AbttvLs-',
-    6: '1ndoYEAOc4XhdGJG_nGVF0eiLpgPdWB4u',
-    7: '1WPjhWQ7FZ0VzewKnIjIaq7-mbcCpI2ot',
-    8: '1BIFCYw-d_LZwXoGqEuEiy1osGEFWzvsD',
-    9: '1w2w7tIwoPsuYhTmCG-Yhl2Cu7L9O2pkk',
+# Nine main quiz clips. The quiz and result page use this exact same mapping.
+# Clip 2 is the Deepfake Label Video Test 1; Clips 5 and 9 use the supplied links.
+QUIZ_MEDIA = {
+    1: {
+        'source_type': 'google_drive',
+        'drive_id': '1ZSJa6MhzvghxAJrGg0NUwdME-Y7UDHNn',
+        'source_url': 'https://drive.google.com/file/d/1ZSJa6MhzvghxAJrGg0NUwdME-Y7UDHNn/view?usp=drive_link',
+        'source_name': 'Research Video 1',
+    },
+    2: {
+        'source_type': 'youtube',
+        'youtube_id': 'vui5TFU3DCM',
+        'source_url': 'https://www.youtube.com/watch?v=vui5TFU3DCM',
+        'source_name': 'Deepfake Label Video Test 1',
+    },
+    3: {
+        'source_type': 'google_drive',
+        'drive_id': '1B98b2FuRr_Uf8mPbisjKuqEq4Iugstrx',
+        'source_url': 'https://drive.google.com/file/d/1B98b2FuRr_Uf8mPbisjKuqEq4Iugstrx/view?usp=drive_link',
+        'source_name': 'Research Video 3',
+    },
+    4: {
+        'source_type': 'google_drive',
+        'drive_id': '1SIozzMnIBB8vqHFTJIewkEawUsUkRFBk',
+        'source_url': 'https://drive.google.com/file/d/1SIozzMnIBB8vqHFTJIewkEawUsUkRFBk/view?usp=drive_link',
+        'source_name': 'Research Video 4',
+    },
+    5: {
+        'source_type': 'google_video',
+        'source_url': 'https://docs.google.com/videos/d/1DYJ1NbquuQMpDSrjlewXx5knuVbytXQOFmuolbgECZ4/play?usp=sharing',
+        'source_name': 'Research Video 5',
+    },
+    6: {
+        'source_type': 'google_drive',
+        'drive_id': '1ndoYEAOc4XhdGJG_nGVF0eiLpgPdWB4u',
+        'source_url': 'https://drive.google.com/file/d/1ndoYEAOc4XhdGJG_nGVF0eiLpgPdWB4u/view?usp=drive_link',
+        'source_name': 'Research Video 6',
+    },
+    7: {
+        'source_type': 'google_drive',
+        'drive_id': '1WPjhWQ7FZ0VzewKnIjIaq7-mbcCpI2ot',
+        'source_url': 'https://drive.google.com/file/d/1WPjhWQ7FZ0VzewKnIjIaq7-mbcCpI2ot/view?usp=sharing',
+        'source_name': 'Research Video 7',
+    },
+    8: {
+        'source_type': 'google_drive',
+        'drive_id': '1BIFCYw-d_LZwXoGqEuEiy1osGEFWzvsD',
+        'source_url': 'https://drive.google.com/file/d/1BIFCYw-d_LZwXoGqEuEiy1osGEFWzvsD/view?usp=drive_link',
+        'source_name': 'Research Video 8',
+    },
+    9: {
+        'source_type': 'google_drive',
+        'drive_id': '182dif0WszgHb6Icla3MzJsIc6TX3VvIV',
+        'source_url': 'https://drive.google.com/file/d/182dif0WszgHb6Icla3MzJsIc6TX3VvIV/view?usp=drive_link',
+        'source_name': 'Research Video 9',
+    },
 }
 
 def drive_media(drive_id, source_name='Research Video'):
@@ -39,37 +83,32 @@ def drive_media(drive_id, source_name='Research Video'):
         'source_name': source_name,
     }
 
-MEDIA_SOURCES = {
-    i: drive_media(QUIZ_DRIVE_IDS[i])
-    for i in range(1, 10)
-}
-
 VIDEO_QUIZ = {
-    1: {**MEDIA_SOURCES[1], 'answer': 'AI-Generated',
+    1: {**QUIZ_MEDIA[1], 'answer': 'AI-Generated',
         'reason_en': 'The study answer key classifies this clip as AI-generated. Look for inconsistencies across face movement, voice, lighting and context rather than relying on one visual clue.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေတွင် ဤကလစ်ကို AI ဖြင့် ဖန်တီးထားသော ဗီဒီယိုအဖြစ် သတ်မှတ်ထားသည်။ တစ်ချက်တည်းကို မယုံဘဲ မျက်နှာလှုပ်ရှားမှု၊ အသံ၊ အလင်းရောင်နှင့် အကြောင်းအရာကို ပေါင်းစပ်စစ်ဆေးပါ။'},
-    2: {**MEDIA_SOURCES[2], 'answer': 'AI-Generated',
+    2: {**QUIZ_MEDIA[2], 'answer': 'AI-Generated',
         'reason_en': 'The study answer key classifies this clip as AI-generated. Compare facial movement, audio synchronization, lighting, frame consistency and source/context evidence.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ မျက်နှာလှုပ်ရှားမှု၊ အသံနှင့်ရုပ်ပုံ ချိန်ညှိမှု၊ အလင်းရောင်၊ frame များ၏ တည်ငြိမ်မှုနှင့် ရင်းမြစ်/အကြောင်းအရာကို ပေါင်းစပ်စစ်ဆေးပါ။'},
-    3: {**MEDIA_SOURCES[3], 'answer': 'AI-Generated',
+    3: {**QUIZ_MEDIA[3], 'answer': 'AI-Generated',
         'reason_en': 'The configured answer is AI-generated. A reliable judgement should combine visual, audio and source/context verification.',
         'reason_my': 'သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ ယုံကြည်စိတ်ချရသော ခွဲခြားမှုအတွက် ရုပ်ပုံ၊ အသံနှင့် သတင်းရင်းမြစ်/အကြောင်းအရာကို ပေါင်းစပ်စစ်ဆေးသင့်သည်။'},
-    4: {**MEDIA_SOURCES[4], 'answer': 'Real',
+    4: {**QUIZ_MEDIA[4], 'answer': 'Real',
         'reason_en': 'The study answer key classifies this clip as real. Natural-looking video alone is not proof; source and context verification remain important.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေတွင် ဤကလစ်ကို အစစ်အမှန်ဗီဒီယိုအဖြစ် သတ်မှတ်ထားသည်။ သဘာဝကျသလိုမြင်ရခြင်းတစ်ခုတည်းဖြင့် အစစ်ဟု မဆိုနိုင်သဖြင့် ရင်းမြစ်နှင့် အကြောင်းအရာကို ထပ်မံစစ်ဆေးရန် အရေးကြီးသည်။'},
-    5: {**MEDIA_SOURCES[5], 'answer': 'AI-Generated',
+    5: {**QUIZ_MEDIA[5], 'answer': 'AI-Generated',
         'reason_en': 'The configured answer is AI-generated. Pay attention to synchronization, facial consistency and whether the claim can be verified elsewhere.',
         'reason_my': 'သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ အသံနှင့် ရုပ်ပုံချိန်ညှိမှု၊ မျက်နှာပုံစံတည်ငြိမ်မှုနှင့် အခြားရင်းမြစ်များတွင် သတင်းကို အတည်ပြုနိုင်ခြင်းရှိမရှိ စစ်ဆေးပါ။'},
-    6: {**MEDIA_SOURCES[6], 'answer': 'Real',
+    6: {**QUIZ_MEDIA[6], 'answer': 'Real',
         'reason_en': 'The study answer key classifies this clip as real. Correct verification depends on evidence and provenance, not on finding a single artifact.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေမှာ အစစ်အမှန်ဗီဒီယို ဖြစ်သည်။ မှန်ကန်စွာ စစ်ဆေးရန် အထောက်အထားနှင့် ဗီဒီယိုရင်းမြစ်ကို အဓိကထားသင့်ပြီး မူမမှန်ချက်တစ်ခုတည်းကိုသာ မမှီခိုသင့်ပါ။'},
-    7: {**MEDIA_SOURCES[7], 'answer': 'AI-Generated',
+    7: {**QUIZ_MEDIA[7], 'answer': 'AI-Generated',
         'reason_en': 'The configured answer is AI-generated. Check temporal consistency across frames as well as audio and source credibility.',
         'reason_my': 'သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ Frame များကြား တည်ငြိမ်မှု၊ အသံနှင့် ရင်းမြစ်၏ ယုံကြည်စိတ်ချရမှုကို စစ်ဆေးပါ။'},
-    8: {**MEDIA_SOURCES[8], 'answer': 'Real',
+    8: {**QUIZ_MEDIA[8], 'answer': 'Real',
         'reason_en': 'The study answer key classifies this clip as real. Real clips can still be misleading when removed from context, so authenticity and context should be checked separately.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေမှာ အစစ်အမှန်ဗီဒီယို ဖြစ်သည်။ အစစ်အမှန်ဗီဒီယိုတစ်ခုလည်း အကြောင်းအရာမှ ဖြတ်ထုတ်ထားပါက လွဲမှားစေနိုင်သောကြောင့် စစ်မှန်မှုနှင့် အကြောင်းအရာကို သီးခြားစစ်ဆေးသင့်သည်။'},
-    9: {**MEDIA_SOURCES[9], 'answer': 'AI-Generated',
+    9: {**QUIZ_MEDIA[9], 'answer': 'AI-Generated',
         'reason_en': 'The configured answer is AI-generated. The strongest verification combines media cues with trusted-source cross-checking.',
         'reason_my': 'သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ အကောင်းဆုံးစစ်ဆေးနည်းမှာ မီဒီယာလက္ခဏာများနှင့် ယုံကြည်စိတ်ချရသော ရင်းမြစ်များကို နှိုင်းယှဉ်စစ်ဆေးခြင်း ဖြစ်သည်။'}
 }
@@ -241,8 +280,11 @@ def calculate_quiz():
             'correct': is_correct,
             'reason_en': stimulus.get('reason_en', ''),
             'reason_my': stimulus.get('reason_my', ''),
+            # Preserve the exact media identifiers so the result page embeds
+            # the same clip that the participant saw in the quiz.
             'source_type': stimulus.get('source_type', 'youtube'),
             'source_url': stimulus.get('source_url', ''),
+            'drive_id': stimulus.get('drive_id', ''),
             'x_post_id': stimulus.get('x_post_id', ''),
             'youtube_id': stimulus.get('youtube_id', ''),
             'source_name': stimulus.get('source_name', '')
@@ -374,8 +416,7 @@ def survey_page6():
         session['page6'] = request.form.to_dict()
         return redirect(url_for('survey_page7'))
 
-    # Clips 4–6 are explicitly the same three X sources used by the score page.
-    # Keeping this explicit prevents an older YouTube mapping from appearing here.
+    # Clips 4–6 come directly from VIDEO_QUIZ, so the quiz and result page always match.
     videos = {
         4: VIDEO_QUIZ[4],
         5: VIDEO_QUIZ[5],
