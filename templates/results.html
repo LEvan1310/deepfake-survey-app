@@ -33,6 +33,5 @@
 {% for v in educational_videos %}
 <div class="card mb-4"><div class="card-body"><h6 class="fw-bold"><span data-lang-block="en">{{ v.title_en }}</span><span data-lang-block="my" style="display:none">{{ v.title_my }}</span></h6><p class="small text-muted"><span data-translate="source_label">Source</span>: {{ v.source }}</p>{% set yt_origin = request.url_root.rstrip('/') %}<div class="ratio ratio-16x9 mb-2"><iframe src="https://www.youtube.com/embed/{{ v.youtube_id }}?enablejsapi=1&playsinline=1&rel=0&origin={{ yt_origin|urlencode }}&widget_referrer={{ request.url|urlencode }}" title="{{ v.title_en }}" frameborder="0" loading="eager" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe></div><div class="text-center"><a class="btn btn-outline-danger btn-sm" href="https://www.youtube.com/watch?v={{ v.youtube_id }}" target="_blank" rel="noopener"><span data-lang-block="en">▶ Watch on YouTube ↗</span><span data-lang-block="my" style="display:none">▶ YouTube တွင် ကြည့်ရန် ↗</span></a></div></div></div>
 {% endfor %}
-
 <div class="text-center mt-4"><a href="/" class="btn btn-primary" data-translate="home_btn">Return to Home</a></div>
 </div>{% endblock %}
