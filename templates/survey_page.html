@@ -1,3 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card shadow border-0 p-4 mx-auto" style="max-width: 700px;">
+    <h3 class="text-primary fw-bold mb-4" data-translate="sec_b_title">Section B - Deepfake Awareness</h3>
+    
+    <form method="POST">
+        <!-- Question 1 -->
+        <div class="mb-3">
+            <label class="fw-bold mb-1" data-translate="q_heard">Have you heard about deepfakes prior to this study?</label>
+            <select class="form-select" name="q_heard" required>
+                <option value="" disabled selected data-translate="select_option">Select option...</option>
+                <option value="Yes" data-translate="opt_yes">Yes</option>
+                <option value="No" data-translate="opt_no">No</option>
+            </select>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="mb-3">
+            <label class="fw-bold mb-1" data-translate="q_desc">In your own words, describe what a deepfake is:</label>
+            <textarea class="form-control" name="q_desc" rows="3" required></textarea>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="mb-3">
+            <label class="fw-bold mb-1" data-translate="q_suspected">Have you ever suspected seeing a deepfake online?</label>
+            <select class="form-select" name="q_suspected" required>
+                <option value="" disabled selected data-translate="select_option">Select option...</option>
+                <option value="Yes" data-translate="opt_yes">Yes</option>
+                <option value="No" data-translate="opt_no">No</option>
+            </select>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="mb-3">
+            <label class="fw-bold mb-1" data-translate="q_confidence">How confident are you in identifying deepfakes?</label>
+            <select class="form-select" name="q_confidence" required>
+                <option value="" disabled selected data-translate="select_option">Select option...</option>
+                <option value="High" data-translate="opt_high">High</option>
+                <option value="Moderate" data-translate="opt_moderate">Moderate</option>
+                <option value="Low" data-translate="opt_low">Low</option>
+            </select>
+        </div>
+
+        <!-- Checkbox Group -->
+        <div class="mb-4">
+            <label class="fw-bold mb-2" data-translate="q_signs">Select suspicious signs (check all that apply):</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="signs" value="sign_1" id="sign1">
+                <label class="form-check-label" for="sign1" data-translate="sign_1">Unnatural lighting</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="signs" value="sign_2" id="sign2">
+                <label class="form-check-label" for="sign2" data-translate="sign_2">Audio sync issues</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="signs" value="sign_3" id="sign3">
+                <label class="form-check-label" for="sign3" data-translate="sign_3">Weird blinking</label>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="d-flex justify-content-between">
+            <a href="/survey/prev" class="btn btn-secondary px-4" data-translate="back_btn">← Back</a>
+            <button type="submit" class="btn btn-primary px-4" data-translate="next_btn">Next Page →</button>
+        </div>
+    </form>
 {% extends "base.html" %}{% block content %}
 <div class="card shadow border-0 p-4 survey-card">
 <h3 class="text-primary fw-bold mb-3" data-translate="sec_a_title">Section A - Demographic Information</h3>
@@ -5,6 +71,7 @@
   <div data-lang-block="en"><strong>⏱ Estimated time for Sections A–E:</strong> about 1–2 minutes.</div>
   <div data-lang-block="my" style="display:none"><strong>⏱ Section A–E အတွက် ခန့်မှန်းဖြေဆိုချိန်:</strong> ခန့်မှန်းအားဖြင့် ၁–၂ မိနစ်ခန့်။</div>
 </div>
+{% endblock %}
 <form method="POST">
 <div class="mb-3"><label class="fw-bold" data-translate="name_label">Name:</label><input class="form-control" name="name" required maxlength="100" data-translate="name_placeholder" data-translate-target="placeholder" placeholder="Enter your name"></div>
 <div class="mb-3"><label class="fw-bold" data-translate="age_group">Age Group:</label><select class="form-select" name="age_group" required><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Under 18" data-translate="under_18">Under 18</option><option value="18-24">18 - 24</option><option value="25-34">25 - 34</option><option value="35-44">35 - 44</option><option value="45+">45+</option></select></div>
