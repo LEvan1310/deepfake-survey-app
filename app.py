@@ -18,7 +18,7 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Evan')
 
 # Nine main quiz clips. The quiz and result page use this exact same mapping.
-# Clip 2 is the Deepfake Label Video Test 1; Clips 5 and 9 use the supplied links.
+# Clips 2 and 5 are the two Deepfake Label Video Tests. The quiz and result page use this exact same mapping.
 QUIZ_MEDIA = {
     1: {
         'source_type': 'google_drive',
@@ -27,9 +27,9 @@ QUIZ_MEDIA = {
         'source_name': 'Research Video 1',
     },
     2: {
-        'source_type': 'youtube',
-        'youtube_id': 'vui5TFU3DCM',
-        'source_url': 'https://www.youtube.com/watch?v=vui5TFU3DCM',
+        'source_type': 'google_drive',
+        'drive_id': '1yjAF6BDHo3jIaqfPVemMQQrkhqfd15v2',
+        'source_url': 'https://drive.google.com/file/d/1yjAF6BDHo3jIaqfPVemMQQrkhqfd15v2/view?usp=drive_link',
         'source_name': 'Deepfake Label Video Test 1',
     },
     3: {
@@ -45,9 +45,10 @@ QUIZ_MEDIA = {
         'source_name': 'Research Video 4',
     },
     5: {
-        'source_type': 'google_video',
-        'source_url': 'https://docs.google.com/videos/d/1DYJ1NbquuQMpDSrjlewXx5knuVbytXQOFmuolbgECZ4/play?usp=sharing',
-        'source_name': 'Research Video 5',
+        'source_type': 'google_drive',
+        'drive_id': '1-aB2OSfdTGI32NSh2H3YSkaM8O3oIdn1',
+        'source_url': 'https://drive.google.com/file/d/1-aB2OSfdTGI32NSh2H3YSkaM8O3oIdn1/view?usp=drive_link',
+        'source_name': 'Deepfake Label Video Test 2',
     },
     6: {
         'source_type': 'google_drive',
