@@ -135,12 +135,13 @@ WARNING_EXPERIMENT = {
         'title_my': 'စမ်းသပ်အခြေအနေ ၂ - အစကတည်းက AI တံဆိပ်မြင်ရခြင်း',
     },
     3: {
-        'source_type': 'external',
-        'source_url': 'https://www.bbc.com/reel/video/p0hkflt4/watch',
-        'source_name': 'BBC Reel',
+        'source_type': 'youtube',
+        'youtube_id': 'WFc6t-c892A',
+        'source_url': 'https://youtu.be/WFc6t-c892A',
+        'source_name': 'Video Quiz',
         'condition': 'labelled',
-        'title_en': 'Condition 3 - Realism Challenge With AI Label',
-        'title_my': 'စမ်းသပ်အခြေအနေ ၃ - AI တံဆိပ်ရှိသည့် Realism Challenge',
+        'title_en': 'Video Quiz',
+        'title_my': 'ဗီဒီယို စမ်းမေးခွန်း',
     },
 }
 
@@ -584,15 +585,10 @@ def save_survey_response():
 
 
 def validate_section_f(form):
-    # All three labelled clips now use the same five visible questions (original questions 1, 2, 5, 6 and 7).
-    # The legacy before-label fields are hidden/blank for database compatibility
-    # and must NOT be required, otherwise the form loops back forever.
-    required = []
-    for i in (1, 2, 3):
-        required.extend([
-            f'w{i}_belief_after', f'w{i}_realism',
-            f'w{i}_could_be_true', f'w{i}_realism_influence', f'w{i}_reaction'
-        ])
+    # Section F now has one question per labelled clip:
+    # perceived realism (the original question 2).
+    # The legacy fields remain optional/blank for database compatibility.
+    required = [f'w{i}_realism' for i in (1, 2, 3)]
     return [field for field in required if not str(form.get(field, '')).strip()]
 
 
