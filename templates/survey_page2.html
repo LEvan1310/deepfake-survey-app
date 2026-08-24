@@ -1,5 +1,9 @@
 {% extends "base.html" %}{% block content %}
 <div class="card shadow border-0 p-4 survey-card"><h3 class="text-primary fw-bold" data-translate="sec_b_title">Section B - Previous Deepfake Experience</h3>
+<div class="alert alert-info mb-3">
+  <div data-lang-block="en"><strong>⏱ Estimated time:</strong> about 2–3 minutes if you have watched a deepfake before; less if you select “No”.</div>
+  <div data-lang-block="my" style="display:none"><strong>⏱ ခန့်မှန်းဖြေဆိုချိန်:</strong> Deepfake ကို ယခင်က ကြည့်ဖူးပါက ၂–၃ မိနစ်ခန့်၊ “No” ရွေးပါက ထိုထက် ပိုတိုနိုင်ပါသည်။</div>
+</div>
 <form method="POST" id="awarenessForm">
 <div class="mb-2"><label class="fw-bold" data-translate="q_watched_before">Have you watched or knowingly seen a deepfake video before?</label><select class="form-select" name="watched_deepfake_before" id="watchedBefore" required><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Yes" data-translate="opt_yes">Yes</option><option value="No" data-translate="opt_no">No</option></select></div>
 <p class="small text-muted" data-translate="gate_help">If you select “No”, experience-based questions will be skipped and you will go directly to the educational deepfake video section.</p>
