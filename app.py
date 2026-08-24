@@ -168,7 +168,7 @@ REWARD_OPTIONS = [
     {'key': '3000 KS', 'label_en': '3000 KS', 'label_my': '3000 ကျပ်', 'emoji': '💵'},
     {'key': 'Fool Emoji', 'label_en': 'Fool Emoji', 'label_my': 'Fool Emoji', 'emoji': '🤡'},
     {'key': 'Good Luck Wish', 'label_en': 'A wish for good luck from the heart', 'label_my': 'စိတ်ထဲကနေ ကံကောင်းပါစေလို့ ဆုတောင်းပေးပါတယ်', 'emoji': '💫'},
-    {'key': '5000 KS', 'label_en': '5000 KS', 'label_my': '5000 ကျပ်', 'emoji': '💰'},
+    {'key': '1000 KS', 'label_en': '1000 KS', 'label_my': '1000 ကျပ်', 'emoji': '💰'},
     {'key': 'Beautiful Thank You', 'label_en': 'Thank you for answering — with a beautiful smile!', 'label_my': 'ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ် — လှပတဲ့အပြုံးလေးနဲ့!', 'emoji': '😊'},
 ]
 
@@ -584,14 +584,14 @@ def save_survey_response():
 
 
 def validate_section_f(form):
-    # All three labelled clips now use the same eight visible questions.
+    # All three labelled clips now use the same five visible questions (original questions 1, 2, 5, 6 and 7).
     # The legacy before-label fields are hidden/blank for database compatibility
     # and must NOT be required, otherwise the form loops back forever.
     required = []
     for i in (1, 2, 3):
         required.extend([
-            f'w{i}_belief_after', f'w{i}_realism', f'w{i}_trust_after', f'w{i}_influence_removed',
-            f'w{i}_could_be_true', f'w{i}_realism_influence', f'w{i}_reaction', f'w{i}_reason'
+            f'w{i}_belief_after', f'w{i}_realism',
+            f'w{i}_could_be_true', f'w{i}_realism_influence', f'w{i}_reaction'
         ])
     return [field for field in required if not str(form.get(field, '')).strip()]
 
