@@ -135,9 +135,10 @@ WARNING_EXPERIMENT = {
         'title_my': 'စမ်းသပ်အခြေအနေ ၂ - အစကတည်းက AI တံဆိပ်မြင်ရခြင်း',
     },
     3: {
-        'source_type': 'external',
-        'source_url': 'https://www.bbc.com/reel/video/p0hkflt4/watch',
-        'source_name': 'BBC Reel',
+        'source_type': 'youtube',
+        'youtube_id': 'WFc6t-c892A',
+        'source_url': 'https://www.youtube.com/watch?v=WFc6t-c892A',
+        'source_name': 'YouTube',
         'condition': 'labelled',
         'title_en': 'Condition 3 - Realism Challenge With AI Label',
         'title_my': 'စမ်းသပ်အခြေအနေ ၃ - AI တံဆိပ်ရှိသည့် Realism Challenge',
@@ -177,11 +178,11 @@ HEADERS = [
     'Watched_Deepfake_Before', 'Heard_Deepfake', 'Deepfake_Description', 'Suspected_Deepfake_Before',
     'Confidence_Identifying', 'Suspicious_Signs',
     'Political_Video_Authenticity', 'Media_Authenticity_Confidence', 'Deepfake_Believability',
-    'Physical_Realism', 'Political_Leader_Trust', 'Opinion_Change', 'Voting_Influence',
+    'Physical_Realism', 'Voting_Influence',
     'Social_Media_Trust', 'Election_Fairness_Concern', 'Election_Trust_Reduction', 'War_News_Believability',
-    'Post_Warning_Belief', 'Post_Warning_Believability', 'Post_Warning_Trustworthiness',
+    'Post_Warning_Belief', 'Post_Warning_Trustworthiness',
     'Warning_Effectiveness', 'Action_After_Warning',
-    'Qual_Real_Or_Fake_Features', 'Qual_Opinion_Effect', 'Qual_Warning_Impact', 'Qual_Recommended_Actions',
+    'Qual_Real_Or_Fake_Features', 'Qual_Warning_Impact', 'Qual_Recommended_Actions',
     'Section_F_Participation'
 ]
 for i in range(1, 10):
@@ -394,7 +395,10 @@ def survey_page3():
 @app.route('/survey/page4', methods=['GET', 'POST'])
 def survey_page4():
     if request.method == 'POST':
-        session['page4'] = request.form.to_dict()
+        form_data = request.form.to_dict()
+        # Section D action is a multi-select checkbox question.
+        form_data['action_after_warning'] = ', '.join(request.form.getlist('action_after_warning'))
+        session['page4'] = form_data
 
         # Yes path: after Sections C and D, show awareness ONCE before the quiz.
         session['awareness_phase'] = 'pre_quiz'
@@ -528,14 +532,13 @@ def save_survey_response():
         'Confidence_Identifying': p2.get('confidence_identifying', ''), 'Suspicious_Signs': p2.get('suspicious_signs', ''),
         'Political_Video_Authenticity': p3.get('video_real_immediate', ''), 'Media_Authenticity_Confidence': p3.get('confidence_immediate', ''),
         'Deepfake_Believability': p3.get('believability', ''), 'Physical_Realism': p3.get('realism', ''),
-        'Political_Leader_Trust': p3.get('figure_trustworthiness', ''), 'Opinion_Change': p3.get('opinion_change', ''),
-        'Voting_Influence': p3.get('voting_influence', ''), 'Social_Media_Trust': p3.get('social_media_trust', ''),
+        'Voting_Influence': p3.get('voting_influence', ''),
         'Election_Fairness_Concern': p3.get('election_fairness_concern', ''), 'Election_Trust_Reduction': p3.get('election_trust_reduction', ''),
         'War_News_Believability': p3.get('war_believability', ''),
-        'Post_Warning_Belief': p4.get('post_warning_belief', ''), 'Post_Warning_Believability': p4.get('post_warning_believability', ''),
+        'Post_Warning_Belief': p4.get('post_warning_belief', ''),
         'Post_Warning_Trustworthiness': p4.get('post_warning_trustworthiness', ''), 'Warning_Effectiveness': p4.get('warning_effectiveness', ''),
         'Action_After_Warning': p4.get('action_after_warning', ''),
-        'Qual_Real_Or_Fake_Features': reflection.get('q27', ''), 'Qual_Opinion_Effect': reflection.get('q28', ''),
+        'Qual_Real_Or_Fake_Features': reflection.get('q27', ''),
         'Qual_Warning_Impact': reflection.get('q29', ''), 'Qual_Recommended_Actions': reflection.get('q30', ''),
         'Section_F_Participation': p8.get('section_f_choice', 'Skip'),
         'Video_Score_Correct': str(correct), 'Video_Score_Total': str(total), 'Video_Score_Percent': str(percent)
