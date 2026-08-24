@@ -1,10 +1,10 @@
 {% extends "base.html" %}{% block content %}
 <div class="card shadow border-0 p-4 survey-card">
 <h3 class="text-success fw-bold" data-translate="qual_title">After the Deepfake Video Quiz - Short Reflection Questions</h3>
+<div class="alert alert-info mb-3"><div data-lang-block="en"><strong>⏱ Estimated time:</strong> about 1–2 minutes.</div><div data-lang-block="my" style="display:none"><strong>⏱ ခန့်မှန်းဖြေဆိုချိန်:</strong> ၁–၂ မိနစ်ခန့်။</div></div>
 <p class="text-muted">You have completed all 9 deepfake-video quiz clips. Please answer these short reflection questions before continuing to Section F.</p>
 <form method="POST">
 <div class="mb-3"><label class="fw-bold" data-translate="q27">What features made any of the videos appear real or fake to you?</label><textarea class="form-control" name="q27" rows="3" required>{{ previous.get('q27','') if previous else '' }}</textarea></div>
-<div class="mb-3"><label class="fw-bold" data-translate="q28">Did any clip change your opinion or trust toward the person/event shown? Explain briefly.</label><textarea class="form-control" name="q28" rows="3" required>{{ previous.get('q28','') if previous else '' }}</textarea></div>
 <div class="mb-3"><label class="fw-bold" data-translate="q29">How would a fact-checking warning affect your judgement of these clips?</label><textarea class="form-control" name="q29" rows="3" required>{{ previous.get('q29','') if previous else '' }}</textarea></div>
 <div class="mb-4"><label class="fw-bold" data-translate="q30">What should platforms, media organizations or governments do to reduce harmful political deepfakes?</label><textarea class="form-control" name="q30" rows="3" required>{{ previous.get('q30','') if previous else '' }}</textarea></div>
 <div class="d-flex justify-content-between"><a href="/survey/page7" class="btn btn-secondary">← Back to Videos 7–9</a><button class="btn btn-primary btn-lg">Continue to Section F →</button></div>
