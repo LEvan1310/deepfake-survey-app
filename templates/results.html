@@ -6,21 +6,6 @@
 <h4 class="fw-bold mt-4 mb-3" data-translate="score_explain">Video-by-Video Answers</h4>
 {% for d in details %}<div class="card mb-3 border-{{ 'success' if d.correct else 'danger' }}"><div class="card-body"><div class="d-flex justify-content-between align-items-center"><h5 class="mb-2"><span data-translate="clip_word">Video Clip</span> {{ d.number }}</h5><span class="badge bg-{{ 'success' if d.correct else 'danger' }}" data-translate="{{ 'result_correct' if d.correct else 'result_incorrect' }}">{{ 'Correct' if d.correct else 'Incorrect' }}</span></div><div class="my-3">{{ render_media(d, 'Video Clip ' ~ d.number) }}</div><p class="mb-1"><strong data-translate="your_answer">Your answer:</strong> <span data-answer="{{ d.selected }}">{{ d.selected or '—' }}</span></p><p class="mb-1"><strong data-translate="correct_answer">Study answer:</strong> <span data-answer="{{ d.expected }}">{{ d.expected }}</span></p><p class="mb-0"><strong data-translate="why_label">Why / verification note:</strong> <span data-lang-block="en">{{ d.reason_en }}</span><span data-lang-block="my" style="display:none">{{ d.reason_my }}</span></p></div></div>{% endfor %}
 
-{% if warning %}
-<hr class="my-5">
-<h4 class="fw-bold text-primary" data-translate="warning_results_title">Warning-Label / Continued-Belief Result</h4>
-<p class="text-muted" data-translate="warning_results_intro">This section compares your response before and after an AI label. It is not a pass/fail score.</p>
-<div class="row g-3 mb-3">
-  <div class="col-md-6"><div class="card h-100"><div class="card-body"><h6 data-translate="before_label_belief">Believability before label</h6><div class="fs-3 fw-bold">{{ warning.before_belief or '—' }}/5</div></div></div></div>
-  <div class="col-md-6"><div class="card h-100"><div class="card-body"><h6 data-translate="after_label_belief">Believability after label</h6><div class="fs-3 fw-bold">{{ warning.after_belief or '—' }}/5</div>{% if warning.belief_delta is not none %}<small><span data-translate="change_label">Change</span>: <span data-translate="{{ 'change_decreased' if warning.belief_delta < 0 else ('change_increased' if warning.belief_delta > 0 else 'change_same') }}">{{ 'Decreased' if warning.belief_delta < 0 else ('Increased' if warning.belief_delta > 0 else 'No change') }}</span></small>{% endif %}</div></div></div>
-  <div class="col-md-6"><div class="card h-100"><div class="card-body"><h6 data-translate="before_label_trust">Trust before label</h6><div class="fs-3 fw-bold">{{ warning.before_trust or '—' }}/5</div></div></div></div>
-  <div class="col-md-6"><div class="card h-100"><div class="card-body"><h6 data-translate="after_label_trust">Trust after label</h6><div class="fs-3 fw-bold">{{ warning.after_trust or '—' }}/5</div>{% if warning.trust_delta is not none %}<small><span data-translate="change_label">Change</span>: <span data-translate="{{ 'change_decreased' if warning.trust_delta < 0 else ('change_increased' if warning.trust_delta > 0 else 'change_same') }}">{{ 'Decreased' if warning.trust_delta < 0 else ('Increased' if warning.trust_delta > 0 else 'No change') }}</span></small>{% endif %}</div></div></div>
-</div>
-<div class="card mb-3"><div class="card-body"><strong data-translate="labelled_condition_2">Label-visible condition: believability / realism</strong><div class="fs-5">{{ warning.labelled_2_belief or '—' }}/5 &nbsp; / &nbsp; {{ warning.labelled_2_realism or '—' }}/5</div></div></div>
-<div class="card mb-3"><div class="card-body"><strong data-translate="labelled_condition_3">Realism challenge: believability / realism</strong><div class="fs-5">{{ warning.labelled_3_belief or '—' }}/5 &nbsp; / &nbsp; {{ warning.labelled_3_realism or '—' }}/5</div></div></div>
-<div class="alert alert-warning" data-translate="neutral_interpretation">A rating above 1 after seeing an AI label means that awareness of synthetic media and perceived believability are not necessarily the same thing. It does not show that the claim is factually true; claims still require verification.</div>
-{% endif %}
-
 <hr class="my-5">
 <h4 class="fw-bold text-primary" data-translate="education_debrief_title">Educational Debrief: What to Learn From This Experiment</h4>
 <ul>
