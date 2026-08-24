@@ -53,8 +53,8 @@
 
     <div id="sectionFContent" style="display:none">
       <div class="alert alert-warning">
-        <div data-lang-block="en"><strong>Purpose:</strong> All three clips below are shown with an AI/deepfake label. For each clip, answer the same eight questions. This measures whether a clearly visible warning fully removes believability, trust or influence.</div>
-        <div data-lang-block="my" style="display:none"><strong>ရည်ရွယ်ချက်:</strong> အောက်ပါ ဗီဒီယို ၃ ခုလုံးတွင် AI/Deepfake တံဆိပ်ကို အစကတည်းက ပြထားပါသည်။ ဗီဒီယိုတစ်ခုစီအတွက် တူညီသော မေးခွန်း ၈ ခုကို ဖြေပါ။ သတိပေးတံဆိပ်မြင်ရသော်လည်း ယုံကြည်ဖွယ်မှု၊ ယုံကြည်မှု သို့မဟုတ် သက်ရောက်မှု ဆက်ရှိမရှိကို လေ့လာခြင်းဖြစ်သည်။</div>
+        <div data-lang-block="en"><strong>Purpose:</strong> All three clips below are shown with an AI/deepfake label. For each clip, answer the same five questions. This measures whether a clearly visible warning fully removes believability, trust or influence.</div>
+        <div data-lang-block="my" style="display:none"><strong>ရည်ရွယ်ချက်:</strong> အောက်ပါ ဗီဒီယို ၃ ခုလုံးတွင် AI/Deepfake တံဆိပ်ကို အစကတည်းက ပြထားပါသည်။ ဗီဒီယိုတစ်ခုစီအတွက် တူညီသော မေးခွန်း ၅ ခုကို ဖြေပါ။ သတိပေးတံဆိပ်မြင်ရသော်လည်း ယုံကြည်ဖွယ်မှု၊ ယုံကြည်မှု သို့မဟုတ် သက်ရောက်မှု ဆက်ရှိမရှိကို လေ့လာခြင်းဖြစ်သည်။</div>
       </div>
 
       <div class="bg-body-tertiary rounded p-3 mb-4 edu-box">
@@ -95,23 +95,17 @@
         <label class="fw-bold"><span data-lang-block="en">2. Even knowing it is AI-generated, how realistic does the video appear?</span><span data-lang-block="my" style="display:none">၂။ AI-generated ဖြစ်ကြောင်း သိသော်လည်း ဗီဒီယိုက မည်မျှ အစစ်ပုံပေါက်သနည်း။</span></label>
         <select class="form-select mb-3 section-f-field" name="w{{ i }}_realism" required disabled><option value="" disabled selected data-translate="select_short">Select...</option>{% for n in range(1,6) %}<option value="{{ n }}" data-translate="realism_scale_{{ n }}">{{ n }}</option>{% endfor %}</select>
 
-        <label class="fw-bold"><span data-lang-block="en">3. Knowing this video is AI-generated, how much would you trust the information or claim presented?</span><span data-lang-block="my" style="display:none">၃။ ဤဗီဒီယိုသည် AI-generated ဖြစ်ကြောင်း သိပြီးနောက် အတွင်းရှိ သတင်းအချက်အလက် သို့မဟုတ် အဆိုကို မည်မျှ ယုံကြည်မည်နည်း။</span></label>
-        <select class="form-select mb-3 section-f-field" name="w{{ i }}_trust_after" required disabled><option value="" disabled selected data-translate="select_short">Select...</option>{% for n in range(1,6) %}<option value="{{ n }}" data-translate="trust_scale_{{ n }}">{{ n }}</option>{% endfor %}</select>
 
-        <label class="fw-bold"><span data-lang-block="en">4. Did knowing that the video was AI-generated completely remove its influence on your opinion?</span><span data-lang-block="my" style="display:none">၄။ AI-generated ဖြစ်ကြောင်း သိခြင်းက သင့်အမြင်အပေါ် ဗီဒီယို၏ သက်ရောက်မှုကို လုံးဝဖယ်ရှားပေးခဲ့သလား။</span></label>
-        <select class="form-select mb-3 section-f-field" name="w{{ i }}_influence_removed" required disabled><option value="" disabled selected data-translate="select_short">Select...</option><option value="Completely" data-translate="influence_completely">Yes, completely</option><option value="Mostly" data-translate="influence_mostly">Mostly</option><option value="Partly" data-translate="influence_partly">Partly</option><option value="Very little" data-translate="influence_little">Very little</option><option value="Still influenced" data-translate="influence_still">No, it still influenced my opinion</option></select>
 
-        <label class="fw-bold"><span data-lang-block="en">5. Even with the AI-generated warning, how likely are you to think some part of the message could still be true?</span><span data-lang-block="my" style="display:none">၅။ AI-generated သတိပေးတံဆိပ်ရှိနေသော်လည်း အကြောင်းအရာ၏ တစ်စိတ်တစ်ပိုင်းက မှန်နိုင်သည်ဟု မည်မျှ ယူဆမိသနည်း။</span></label>
+        <label class="fw-bold"><span data-lang-block="en">3. Even with the AI-generated warning, how likely are you to think some part of the message could still be true?</span><span data-lang-block="my" style="display:none">၃။ AI-generated သတိပေးတံဆိပ်ရှိနေသော်လည်း အကြောင်းအရာ၏ တစ်စိတ်တစ်ပိုင်းက မှန်နိုင်သည်ဟု မည်မျှ ယူဆမိသနည်း။</span></label>
         <select class="form-select mb-3 section-f-field" name="w{{ i }}_could_be_true" required disabled><option value="" disabled selected data-translate="select_short">Select...</option>{% for n in range(1,6) %}<option value="{{ n }}" data-translate="likelihood_scale_{{ n }}">{{ n }}</option>{% endfor %}</select>
 
-        <label class="fw-bold"><span data-lang-block="en">6. How strongly did the realism of the video affect your judgement even though you knew it was AI-generated?</span><span data-lang-block="my" style="display:none">၆။ AI-generated ဖြစ်ကြောင်း သိထားသော်လည်း ဗီဒီယို၏ အစစ်ပုံပေါက်မှုက သင့်ဆုံးဖြတ်ချက်ကို မည်မျှ သက်ရောက်စေသနည်း။</span></label>
+        <label class="fw-bold"><span data-lang-block="en">4. How strongly did the realism of the video affect your judgement even though you knew it was AI-generated?</span><span data-lang-block="my" style="display:none">၄။ AI-generated ဖြစ်ကြောင်း သိထားသော်လည်း ဗီဒီယို၏ အစစ်ပုံပေါက်မှုက သင့်ဆုံးဖြတ်ချက်ကို မည်မျှ သက်ရောက်စေသနည်း။</span></label>
         <select class="form-select mb-3 section-f-field" name="w{{ i }}_realism_influence" required disabled><option value="" disabled selected data-translate="select_short">Select...</option>{% for n in range(1,6) %}<option value="{{ n }}" data-translate="strength_scale_{{ n }}">{{ n }}</option>{% endfor %}</select>
 
-        <label class="fw-bold"><span data-lang-block="en">7. Which best describes your reaction?</span><span data-lang-block="my" style="display:none">၇။ သင့်တုံ့ပြန်မှုကို အကောင်းဆုံးဖော်ပြသော အဖြေကို ရွေးပါ။</span></label>
+        <label class="fw-bold"><span data-lang-block="en">5. Which best describes your reaction?</span><span data-lang-block="my" style="display:none">၅။ သင့်တုံ့ပြန်မှုကို အကောင်းဆုံးဖော်ပြသော အဖြေကို ရွေးပါ။</span></label>
         <select class="form-select mb-3 section-f-field" name="w{{ i }}_reaction" required disabled><option value="" disabled selected data-translate="select_short">Select...</option><option value="Knew fake and did not believe" data-translate="reaction_1">I knew it was fake and did not believe its message.</option><option value="Some parts believable" data-translate="reaction_2">I knew it was fake, but some parts still seemed believable.</option><option value="Realism caused uncertainty" data-translate="reaction_3">I knew it was fake, but the realism made me uncertain.</option><option value="Still affected opinion" data-translate="reaction_4">I knew it was fake, but it still affected my opinion.</option><option value="Would verify claims" data-translate="reaction_5">I knew it was fake, but I would still verify the claims before deciding.</option></select>
 
-        <label class="fw-bold"><span data-lang-block="en">8. Why did you believe or disbelieve the message after seeing the AI-generated warning?</span><span data-lang-block="my" style="display:none">၈။ AI-generated သတိပေးတံဆိပ် မြင်ပြီးနောက် အဆိုကို ယုံကြည်ခြင်း သို့မဟုတ် မယုံကြည်ခြင်း၏ အကြောင်းရင်းကို ရှင်းပြပါ။</span></label>
-        <textarea class="form-control section-f-field" name="w{{ i }}_reason" rows="2" required disabled></textarea>
       </div>
       {% endfor %}
 
