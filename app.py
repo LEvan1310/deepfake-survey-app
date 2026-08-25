@@ -4,7 +4,6 @@ import datetime
 import shutil
 import json
 import secrets
-import random
 import psycopg
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session
@@ -178,12 +177,10 @@ REWARD_OPTIONS = [
 # to add up to 100, they just need to be in proportion to each other.
  
  
-# Randomized 5-prize bag.
-# Every completed group of 5 spins contains each category exactly once.
-reward_bag = []
-
 def weighted_reward_index():
+    """Choose one of the five reward categories with equal 20% probability."""
     return secrets.randbelow(len(REWARD_OPTIONS))
+
 
 HEADERS = [
     'Timestamp', 'Participant_ID', 'Name', 'Age_Group', 'Gender', 'Education_Level', 'News_Frequency', 'News_Source',
@@ -668,24 +665,35 @@ def save_reward(prize):
 def reward_page():
     if not session.get('section_f_completed'):
         return redirect(url_for('results_page'))
- 
+
     prize = None
     prize_index = None
-    if session.get('reward_key'):
+
+    if request.method == 'POST':
+        # Every POST is a NEW spin.
+        # 5 categories = 20% probability for each category.
+        prize_index = secrets.randbelow(len(REWARD_OPTIONS))
+        prize = REWARD_OPTIONS[prize_index]
+
+        session['reward_key'] = prize['key']
+        save_reward(prize)
+
+    elif session.get('reward_key'):
+        # Refreshing the page shows the latest result.
         for idx, item in enumerate(REWARD_OPTIONS):
             if item['key'] == session['reward_key']:
                 prize = item
                 prize_index = idx
                 break
-    elif request.method == 'POST':
-        prize_index = weighted_reward_index()
-        prize = REWARD_OPTIONS[prize_index]
-        session['reward_key'] = prize['key']
-        save_reward(prize)
- 
-    return render_template('reward.html', rewards=REWARD_OPTIONS, prize=prize, prize_index=prize_index)
- 
- 
+
+    return render_template(
+        'reward.html',
+        rewards=REWARD_OPTIONS,
+        prize=prize,
+        prize_index=prize_index
+    )
+
+
 @app.route('/results')
 def results_page():
     if 'quiz_details' not in session:
