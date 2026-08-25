@@ -16,7 +16,6 @@
     filter: drop-shadow(0 18px 28px rgba(0,0,0,.18));
     transition: transform 5.5s cubic-bezier(.12,.72,.08,1);
     will-change: transform;
-    will-change: transform; 
   }
   #wheelCanvas { width: 100%; height: 100%; display: block; border-radius: 50%; }
   .wheel-label {
@@ -70,8 +69,8 @@
   </h2>
 
   <p class="reward-subtitle">
-    <span data-lang-block="en">Spin once. The segment that stops under the arrow is your result.</span>
-    <span data-lang-block="my" style="display:none">တစ်ကြိမ်သာ လှည့်နိုင်ပါသည်။ မြှားအောက်တွင် ရပ်သည့် အပိုင်းသည် သင့်ရလဒ်ဖြစ်ပါသည်။</span>
+    <span data-lang-block="en">You have one spin. Press the button below to spin the wheel and reveal your result.</span>
+    <span data-lang-block="my" style="display:none">သင့်အတွက် တစ်ကြိမ်သာ လှည့်ခွင့်ရှိပါသည်။ အောက်ပါခလုတ်ကိုနှိပ်ပြီး Wheel ကိုလှည့်ကာ သင့်ရလဒ်ကို ကြည့်ပါ။</span>
   </p>
 
   <div class="wheel-stage">
@@ -116,14 +115,26 @@
   {% endif %}
 
   <div class="chance-note mt-4 mx-auto">
-    <span data-lang-block="en">🎯 The Deepfake Lucky Spin has 5 possible outcomes, and each one has an equal 20% chance.</span>
-    <span data-lang-block="my" style="display:none">🎯 Deepfake Lucky Spin တွင် ရလဒ် ၅ မျိုးရှိပြီး ရလဒ်တစ်မျိုးစီ ရနိုင်ခြေ 20% တူညီပါသည်။</span>
+    <span data-lang-block="en">🎯 There are exactly 5 possible outcomes. Each outcome has an equal 20% chance.</span>
+    <span data-lang-block="my" style="display:none">🎯 ရလဒ် ၅ မျိုးသာရှိပြီး ရလဒ်တစ်မျိုးစီ ရနိုင်ခြေ 20% တူညီပါသည်။</span>
+    <span data-lang-block="en">🎯 Cash prizes have a 10% total chance: 5% for 3,000 kyats and 5% for 1,000 kyats. The three other results have 30% each.</span>
+    <span data-lang-block="my" style="display:none">🎯 ငွေသားဆုရနိုင်ခြေ စုစုပေါင်း 10% ဖြစ်ပါသည် — 3,000 ကျပ်အတွက် 5% နှင့် 1,000 ကျပ်အတွက် 5% ဖြစ်ပြီး အခြားရလဒ် ၃ မျိုးမှာ တစ်မျိုးလျှင် 30% ဖြစ်ပါသည်။</span>
   </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const rewards = {{ rewards|tojson }};
+
+  const spinForm = document.getElementById('spinForm');
+  const spinButton = document.getElementById('spinButton');
+  if (spinForm && spinButton) {
+    spinForm.addEventListener('submit', () => {
+      spinButton.disabled = true;
+      spinButton.innerHTML = '<span data-lang-block="en">Spinning… 🎡</span><span data-lang-block="my" style="display:none">လှည့်နေပါသည်… 🎡</span>';
+      // The form is intentionally allowed to submit normally.
+    });
+  }
   const wheelShell = document.getElementById('wheelShell');
   const canvas = document.getElementById('wheelCanvas');
   const labelsHost = document.getElementById('wheelLabels');
@@ -133,25 +144,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const segmentCount = rewards.length;
   const segmentDeg = 360 / segmentCount;
   const segmentRad = (Math.PI * 2) / segmentCount;
+  // The visual wheel uses the same probabilities as the backend:
+  // 5%, 5%, 30%, 30%, 30%.
+  const probabilities = rewards.map(item => Number(item.probability || 0));
+  const totalProbability = probabilities.reduce((a, b) => a + b, 0);
+  const segmentAngles = probabilities.map(p => (p / totalProbability) * Math.PI * 2);
   const cx = canvas.width / 2;
   const cy = canvas.height / 2;
   const radius = canvas.width * 0.47;
   const startAngle = -Math.PI / 2 - segmentRad / 2;
 
+  // Use the currently selected site language for the wheel labels too.
+  // The full exact English/Burmese message is shown after the spin.
+  const currentLang = localStorage.getItem('lang') || 'en';
+
   function shortLabel(item) {
-    if (item.key === '3000 KS') return '3,000 KS';
-    if (item.key === '1000 KS') return '1,000 KS';
-    if (item.key === 'No Cash Prize - Next Time') return 'Next time';
-    if (item.key === 'No Cash Prize - Thank You') return 'Thank you';
-    if (item.key === 'No Prize - Thanks for Spinning') return 'Thanks!';
-    return item.label_en || item.key;
+    return currentLang === 'my'
+      ? (item.wheel_my || item.label_my || item.key)
+      : (item.wheel_en || item.label_en || item.key);
   }
 
   function drawWheel() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let cumulative = 0;
     for (let i = 0; i < segmentCount; i++) {
       const a0 = startAngle + i * segmentRad;
       const a1 = a0 + segmentRad;
+      const a0 = startAngle + cumulative;
+      const a1 = a0 + segmentAngles[i];
+      cumulative += segmentAngles[i];
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.arc(cx, cy, radius, a0, a1);
