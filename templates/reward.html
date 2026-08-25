@@ -9,113 +9,56 @@
     overflow: hidden;
   }
   .reward-heading { font-weight: 800; letter-spacing: -.02em; }
-  .reward-subtitle {
-    max-width: 620px;
-    margin: 0 auto;
-    color: var(--bs-secondary-color);
-  }
-  .wheel-stage {
-    position: relative;
-    width: min(82vw, 470px);
-    aspect-ratio: 1;
-    margin: 30px auto 24px;
-  }
+  .reward-subtitle { max-width: 620px; margin: 0 auto; color: var(--bs-secondary-color); }
+  .wheel-stage { position: relative; width: min(82vw, 470px); aspect-ratio: 1; margin: 30px auto 24px; }
   .wheel-shell {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
+    position: absolute; inset: 0; border-radius: 50%;
     filter: drop-shadow(0 18px 28px rgba(0,0,0,.18));
     transition: transform 5.5s cubic-bezier(.12,.72,.08,1);
     will-change: transform;
   }
-  #wheelCanvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-    border-radius: 50%;
-  }
+  #wheelCanvas { width: 100%; height: 100%; display: block; border-radius: 50%; }
   .wheel-label {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 118px;
-    transform-origin: center center;
-    text-align: center;
-    font-weight: 800;
-    color: #15202b;
-    line-height: 1.12;
-    pointer-events: none;
-    text-shadow: 0 1px 0 rgba(255,255,255,.35);
+    position: absolute; left: 50%; top: 50%; width: 115px;
+    transform-origin: center center; text-align: center;
+    font-weight: 800; color: #15202b; line-height: 1.12;
+    pointer-events: none; text-shadow: 0 1px 0 rgba(255,255,255,.35);
   }
-  .wheel-label .emoji {
-    display: block;
-    font-size: 1.45rem;
-    margin-bottom: 4px;
-  }
-  .wheel-label .small-label {
-    display: block;
-    font-size: .80rem;
-  }
+  .wheel-label .emoji { display:block; font-size:1.45rem; margin-bottom:4px; }
+  .wheel-label .small-label { display:block; font-size:.86rem; }
   .pointer {
-    position: absolute;
-    z-index: 20;
-    left: 50%;
-    top: -12px;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 19px solid transparent;
-    border-right: 19px solid transparent;
-    border-top: 42px solid #212529;
-    filter: drop-shadow(0 4px 3px rgba(0,0,0,.28));
+    position:absolute; z-index:20; left:50%; top:-12px;
+    transform:translateX(-50%); width:0; height:0;
+    border-left:19px solid transparent; border-right:19px solid transparent;
+    border-top:42px solid #212529; filter:drop-shadow(0 4px 3px rgba(0,0,0,.28));
   }
   .pointer::after {
-    content: "";
-    position: absolute;
-    left: -7px;
-    top: -39px;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #fff;
-    border: 3px solid #212529;
+    content:""; position:absolute; left:-7px; top:-39px; width:14px; height:14px;
+    border-radius:50%; background:#fff; border:3px solid #212529;
   }
   .center-cap {
-    position: absolute;
-    z-index: 15;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 84px;
-    height: 84px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    background: var(--bs-body-bg);
-    border: 7px solid #212529;
-    box-shadow: 0 6px 16px rgba(0,0,0,.2);
-    font-weight: 900;
+    position:absolute; z-index:15; left:50%; top:50%;
+    transform:translate(-50%,-50%); width:84px; height:84px; border-radius:50%;
+    display:grid; place-items:center; background:var(--bs-body-bg);
+    border:7px solid #212529; box-shadow:0 6px 16px rgba(0,0,0,.2); font-weight:900;
   }
-  .spin-button {
-    min-width: 235px;
-    border-radius: 999px;
-    padding: .85rem 1.4rem;
-    font-weight: 800;
+  .spin-button { min-width:235px; border-radius:999px; padding:.85rem 1.4rem; font-weight:800; }
+  .result-box { border-radius:16px; font-size:1.2rem; }
+  .chance-note {
+    max-width: 590px;
+    padding: 12px 16px;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 14px;
+    background: var(--bs-tertiary-bg);
+    color: var(--bs-secondary-color);
+    font-size: .9rem;
   }
-  .result-box {
-    border-radius: 16px;
-    font-size: 1.15rem;
-  }
-  #resultArea[hidden],
-  #resultLink[hidden],
-  #spinningMessage[hidden] {
-    display: none !important;
-  }
-  @media (max-width: 520px) {
-    .wheel-label { width: 92px; }
-    .wheel-label .small-label { font-size: .68rem; }
-    .wheel-label .emoji { font-size: 1.2rem; }
-    .center-cap { width: 68px; height: 68px; font-size: .82rem; }
+  #resultArea[hidden], #resultLink[hidden], #spinningMessage[hidden] { display:none !important; }
+  @media (max-width:520px) {
+    .wheel-label { width:92px; }
+    .wheel-label .small-label { font-size:.72rem; }
+    .wheel-label .emoji { font-size:1.2rem; }
+    .center-cap { width:68px; height:68px; font-size:.82rem; }
   }
 </style>
 
@@ -125,26 +68,17 @@
     <span data-lang-block="my" style="display:none">🎡 Deepfake Lucky Spin</span>
   </h2>
 
-  {% if test_mode %}
-  <div class="alert alert-warning py-2 px-3 rounded-4 mb-3">
-    <span data-lang-block="en">🧪 TEST MODE — no cash prize can be awarded.</span>
-    <span data-lang-block="my" style="display:none">🧪 စမ်းသပ်မုဒ် — ငွေသားဆု မရရှိနိုင်ပါ။</span>
-  </div>
-  {% endif %}
-
   <p class="reward-subtitle">
-    <span data-lang-block="en">Spin once and see where your wheel stops. Good luck!</span>
-    <span data-lang-block="my" style="display:none">တစ်ကြိမ်လှည့်ပြီး ဘယ်နေရာမှာ ရပ်မလဲ ကြည့်ကြရအောင်။ ကံကောင်းပါစေ!</span>
+    <span data-lang-block="en">You have one spin. Press the button below to spin the wheel and reveal your result.</span>
+    <span data-lang-block="my" style="display:none">သင့်အတွက် တစ်ကြိမ်သာ လှည့်ခွင့်ရှိပါသည်။ အောက်ပါခလုတ်ကိုနှိပ်ပြီး Wheel ကိုလှည့်ကာ သင့်ရလဒ်ကို ကြည့်ပါ။</span>
   </p>
 
   <div class="wheel-stage">
     <div class="pointer" aria-hidden="true"></div>
-
     <div class="wheel-shell" id="wheelShell">
       <canvas id="wheelCanvas" width="1000" height="1000"></canvas>
       <div id="wheelLabels"></div>
     </div>
-
     <div class="center-cap">
       <span data-lang-block="en">SPIN</span>
       <span data-lang-block="my" style="display:none">လှည့်</span>
@@ -153,9 +87,6 @@
 
   {% if not prize %}
     <form method="POST" id="spinForm">
-      {% if test_mode %}
-        <input type="hidden" name="test_mode" value="1">
-      {% endif %}
       <button class="btn btn-success btn-lg spin-button" type="submit" id="spinButton">
         <span data-lang-block="en">Spin the Wheel 🎡</span>
         <span data-lang-block="my" style="display:none">Wheel လှည့်ရန် 🎡</span>
@@ -164,7 +95,7 @@
   {% else %}
     <div id="spinningMessage" class="alert alert-info mt-3 rounded-4">
       <span data-lang-block="en">🎡 Spinning… your reward will appear when the wheel stops.</span>
-      <span data-lang-block="my" style="display:none">🎡 Wheel လှည့်နေပါသည်… ရပ်ပြီးမှ သင့်ဆုကို ပြပါမည်။</span>
+      <span data-lang-block="my" style="display:none">🎡 Wheel လှည့်နေပါသည်… ရပ်ပြီးမှ ဆုကို ပြပါမည်။</span>
     </div>
 
     <div id="resultArea" class="alert alert-success result-box mt-3" hidden>
@@ -183,17 +114,25 @@
     </a>
   {% endif %}
 
-  {% if test_mode %}
-  <div class="alert alert-secondary mt-3 mb-0 rounded-4 small">
-    <span data-lang-block="en">Testing mode: this spin will not award a cash prize.</span>
-    <span data-lang-block="my" style="display:none">စမ်းသပ်မုဒ်ဖြစ်သောကြောင့် ဤလှည့်မှုတွင် ငွေသားဆု မရရှိပါ။</span>
+  <div class="chance-note mt-4 mx-auto">
+    <span data-lang-block="en">🎯 There are exactly 5 possible outcomes. Each outcome has an equal 20% chance.</span>
+    <span data-lang-block="my" style="display:none">🎯 ရလဒ် ၅ မျိုးသာရှိပြီး ရလဒ်တစ်မျိုးစီ ရနိုင်ခြေ 20% တူညီပါသည်။</span>
   </div>
-  {% endif %}
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const rewards = {{ rewards|tojson }};
+
+  const spinForm = document.getElementById('spinForm');
+  const spinButton = document.getElementById('spinButton');
+  if (spinForm && spinButton) {
+    spinForm.addEventListener('submit', () => {
+      spinButton.disabled = true;
+      spinButton.innerHTML = '<span data-lang-block="en">Spinning… 🎡</span><span data-lang-block="my" style="display:none">လှည့်နေပါသည်… 🎡</span>';
+      // The form is intentionally allowed to submit normally.
+    });
+  }
   const wheelShell = document.getElementById('wheelShell');
   const canvas = document.getElementById('wheelCanvas');
   const labelsHost = document.getElementById('wheelLabels');
@@ -208,44 +147,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const radius = canvas.width * 0.47;
   const startAngle = -Math.PI / 2 - segmentRad / 2;
 
-  function currentLanguage() {
-    const myBlocks = document.querySelectorAll('[data-lang-block="my"]');
-    for (const el of myBlocks) {
-      if (getComputedStyle(el).display !== 'none') return 'my';
-    }
-    return 'en';
-  }
+  // Use the currently selected site language for the wheel labels too.
+  // The full exact English/Burmese message is shown after the spin.
+  const currentLang = localStorage.getItem('lang') || 'en';
 
   function shortLabel(item) {
-    const lang = currentLanguage();
-
-    if (item.key === '3000 KS') {
-      return lang === 'my' ? '3,000 ကျပ်' : '3,000 KS';
-    }
-    if (item.key === '1000 KS') {
-      return lang === 'my' ? '1,000 ကျပ်' : '1,000 KS';
-    }
-    if (item.key === 'No Cash Good Luck') {
-      return lang === 'my' ? 'နောက်တစ်ကြိမ် ကံကောင်းပါစေ!' : 'Good luck next time!';
-    }
-    if (item.key === 'No Cash Thank You') {
-      return lang === 'my' ? 'ပါဝင်ဖြေဆိုပေးသည့်အတွက် ကျေးဇူးတင်ပါတယ်!' : 'Thank you for participating!';
-    }
-    if (item.key === 'No Prize Thanks') {
-      return lang === 'my' ? 'လှည့်ပေးသည့်အတွက် ကျေးဇူးတင်ပါတယ်!' : 'Thanks for spinning!';
-    }
-
-    return lang === 'my' ? (item.wheel_my || item.label_my || item.key)
-                          : (item.wheel_en || item.label_en || item.key);
+    return currentLang === 'my'
+      ? (item.wheel_my || item.label_my || item.key)
+      : (item.wheel_en || item.label_en || item.key);
   }
 
   function drawWheel() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     for (let i = 0; i < segmentCount; i++) {
       const a0 = startAngle + i * segmentRad;
       const a1 = a0 + segmentRad;
-
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.arc(cx, cy, radius, a0, a1);
@@ -256,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.strokeStyle = '#ffffff';
       ctx.stroke();
     }
-
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.lineWidth = 20;
@@ -267,7 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function placeLabels() {
     labelsHost.innerHTML = '';
     const labelRadiusPercent = 31;
-
     rewards.forEach((item, i) => {
       const angleDeg = -90 + i * segmentDeg;
       const angleRad = angleDeg * Math.PI / 180;
@@ -279,12 +193,10 @@ document.addEventListener('DOMContentLoaded', () => {
       label.style.left = `${x}%`;
       label.style.top = `${y}%`;
       label.style.transform = 'translate(-50%, -50%)';
-
       label.innerHTML = `
         <span class="emoji">${item.emoji || ''}</span>
         <span class="small-label">${shortLabel(item)}</span>
       `;
-
       labelsHost.appendChild(label);
     });
   }
