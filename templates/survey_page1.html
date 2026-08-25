@@ -9,7 +9,36 @@
 <div class="mb-3"><label class="fw-bold" data-translate="name_label">Name:</label><input class="form-control" name="name" required maxlength="100" data-translate="name_placeholder" data-translate-target="placeholder" placeholder="Enter your name"></div>
 <div class="mb-3"><label class="fw-bold" data-translate="age_group">Age Group:</label><select class="form-select" name="age_group" required><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Under 18" data-translate="under_18">Under 18</option><option value="18-24">18 - 24</option><option value="25-34">25 - 34</option><option value="35-44">35 - 44</option><option value="45+">45+</option></select></div>
 <div class="mb-3"><label class="fw-bold" data-translate="gender">Gender:</label><select class="form-select" name="gender" required><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Male" data-translate="male">Male</option><option value="Female" data-translate="female">Female</option><option value="Other" data-translate="other">Other / Prefer another description</option><option value="Prefer not to say" data-translate="prefer_not">Prefer not to say</option></select></div>
-<div class="mb-3"><label class="fw-bold" data-translate="education_level">Education Level:</label><select class="form-select" name="education_level" required><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Secondary/High School" data-translate="secondary">Secondary / High School</option><option value="Diploma/HND" data-translate="diploma">Diploma / HND</option><option value="Bachelor's" data-translate="bachelors">Bachelor's Degree</option><option value="Master's/Higher" data-translate="masters">Master’s / Higher</option></select></div>
+<div class="mb-3">
+<label class="fw-bold">
+  <span data-lang-block="en">Education Level:</span>
+  <span data-lang-block="my" style="display:none">ပညာအရည်အချင်း:</span>
+</label>
+<select class="form-select" name="education_level" required>
+  <option value="" disabled selected>Select option...</option>
+  <option value="Secondary/High School">Secondary / High School</option>
+  <option value="Diploma/HND">Diploma / HND</option>
+  <option value="Bachelor's">Bachelor's Degree</option>
+  <option value="Master's/Higher">Master’s / Higher</option>
+  <option value="Doctorate">Doctorate / PhD</option>
+</select>
+</div>
+<div class="mb-3">
+<label class="fw-bold">
+  <span data-lang-block="en">Current Role:</span>
+  <span data-lang-block="my" style="display:none">လက်ရှိအလုပ်အကိုင် / တာဝန်:</span>
+</label>
+<select class="form-select" name="current_role" required>
+  <option value="" disabled selected>Select option...</option>
+  <option value="Student">Student / ကျောင်းသား၊ကျောင်းသူ</option>
+  <option value="Worker/Employee">Worker / Employee / ဝန်ထမ်း</option>
+  <option value="Academic Staff">Academic Staff / Lecturer / ဆရာ၊ဆရာမ / တက္ကသိုလ်ဝန်ထမ်း</option>
+  <option value="Government Staff">Government Staff / အစိုးရဝန်ထမ်း</option>
+  <option value="Self-employed">Self-employed / ကိုယ်ပိုင်လုပ်ငန်း</option>
+  <option value="Other">Other / အခြား</option>
+  <option value="Prefer not to say">Prefer not to say / မဖြေလိုပါ</option>
+</select>
+</div>
 <div class="mb-3"><label class="fw-bold" data-translate="news_frequency">How often do you follow political or current-affairs news?</label><select class="form-select" name="news_frequency" required><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Daily" data-translate="daily">Daily</option><option value="Several times a week" data-translate="several_week">Several times a week</option><option value="Weekly" data-translate="weekly">About once a week</option><option value="Rarely/Never" data-translate="rarely">Rarely / Never</option></select></div>
 <div class="mb-3"><label class="fw-bold" data-translate="news_source">Your main source of political or current-affairs news:</label><select class="form-select" name="news_source" required><option value="" disabled selected data-translate="select_option">Select option...</option><option value="Social Media" data-translate="social_media">Social Media</option><option value="News Websites/Apps" data-translate="news_websites">News Websites / Apps</option><option value="Television/Radio" data-translate="television">Television / Radio</option><option value="Friends/Family/Messaging" data-translate="friends_family">Friends / Family / Messaging groups</option><option value="Other" data-translate="other_source">Other</option></select></div>
 <button class="btn btn-primary w-100 mt-2" data-translate="next_btn">Next Page →</button>
