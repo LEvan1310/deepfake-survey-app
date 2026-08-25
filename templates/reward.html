@@ -146,6 +146,9 @@
 
   {% if not prize %}
     <form method="POST" id="spinForm">
+      {% if test_mode %}
+        <input type="hidden" name="test_mode" value="1">
+      {% endif %}
       <button class="btn btn-success btn-lg spin-button" type="submit" id="spinButton">
         <span data-lang-block="en">Spin the Wheel 🎡</span>
         <span data-lang-block="my" style="display:none">Wheel လှည့်ရန် 🎡</span>
@@ -171,6 +174,13 @@
       <span data-lang-block="en">View Survey & Quiz Results →</span>
       <span data-lang-block="my" style="display:none">စစ်တမ်းနှင့် Quiz ရလဒ်များ ကြည့်ရန် →</span>
     </a>
+  {% endif %}
+
+  {% if test_mode %}
+  <div class="alert alert-secondary mt-3 mb-0 rounded-4 small">
+    <span data-lang-block="en">Testing mode: this spin will not award a cash prize.</span>
+    <span data-lang-block="my" style="display:none">စမ်းသပ်မုဒ်ဖြစ်သောကြောင့် ဤလှည့်မှုတွင် ငွေသားဆု မရရှိပါ။</span>
+  </div>
   {% endif %}
 </div>
 
