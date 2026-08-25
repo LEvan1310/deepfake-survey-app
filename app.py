@@ -385,7 +385,9 @@ def survey_page1():
 def survey_page2():
     if request.method == 'POST':
         form_data = request.form.to_dict()
-        form_data['suspicious_signs'] = ', '.join(request.form.getlist('suspicious_signs'))
+        selected_signs = request.form.getlist('suspicious_signs')
+        if selected_signs:
+            form_data['suspicious_signs'] = ' | '.join(selected_signs)
         watched = form_data.get('watched_deepfake_before', '')
         # The first gate question must be answered before any later logic can run.
         if watched not in {'Yes', 'No'}:
@@ -577,8 +579,43 @@ def save_survey_response():
         row_map[f'Warning_{i}_Reaction'] = p8.get(f'w{i}_reaction', '')
         row_map[f'Warning_{i}_Reason'] = p8.get(f'w{i}_reason', '')
  
+    # COMPLETE RAW RESPONSE EXPORT:
+    # Preserve every submitted field in addition to the normalized analysis
+    # columns. This includes open-ended qualitative answers such as the
+    # respondent's own definition of "deepfake".
+    raw_sections = {
+        'Section_A': p1,
+        'Section_B': p2,
+        'Section_C': p3,
+        'Section_D': p4,
+        'Quiz_Videos_1_3': p5,
+        'Quiz_Videos_4_6': p6,
+        'Quiz_Videos_7_9': p7,
+        'Reflection': reflection,
+        'Section_F': p8,
+    }
+
+    for section_name, section_data in raw_sections.items():
+        if not isinstance(section_data, dict):
+            continue
+        for field_name, value in section_data.items():
+            column_name = f'Raw_{section_name}__{field_name}'
+            if isinstance(value, (list, tuple, dict)):
+                row_map[column_name] = json.dumps(
+                    value, ensure_ascii=False
+                )
+            elif value is None:
+                row_map[column_name] = ''
+            else:
+                row_map[column_name] = value
+
+    # Complete machine-readable backup of every raw answer.
+    row_map['All_Raw_Answers_JSON'] = json.dumps(
+        raw_sections, ensure_ascii=False
+    )
+
     participant_id = get_participant_id()
- 
+
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -594,7 +631,7 @@ def save_survey_response():
                 """,
                 (
                     participant_id,
-                    json.dumps(row_map)
+                    json.dumps(row_map, ensure_ascii=False)
                 )
             )
  
@@ -1138,45 +1175,115 @@ def admin():
 @app.route('/admin/export.csv')
 @admin_required
 def admin_export_csv():
-    """Export all participant-level survey fields for statistical analysis."""
+    """Export every stored respondent answer for research analysis.
+
+    Includes normalized dashboard fields AND every raw survey field,
+    including qualitative/open-ended answers and multi-select answers.
+    """
     responses = get_all_responses()
     rows = []
     all_columns = set()
 
     for response in responses:
         data = response.get('data') or {}
+
         row = {
             'Participant_ID': response.get('participant_id', ''),
-            'Submitted_At': response.get('submitted_at').isoformat() if response.get('submitted_at') else '',
+            'Submitted_At': (
+                response.get('submitted_at').isoformat()
+                if response.get('submitted_at') else ''
+            ),
             'Reward': response.get('prize', '') or '',
         }
+
+        # Every stored data field.
         for key, value in data.items():
-            if isinstance(value, (dict, list)):
+            if isinstance(value, (dict, list, tuple)):
                 row[key] = json.dumps(value, ensure_ascii=False)
+            elif value is None:
+                row[key] = ''
             else:
                 row[key] = value
+
+        # Backward/forward compatibility if Raw_Answers is ever stored as
+        # a nested object.
+        raw_answers = data.get('Raw_Answers')
+        if isinstance(raw_answers, dict):
+            for section_name, section_data in raw_answers.items():
+                if not isinstance(section_data, dict):
+                    continue
+                for field_name, value in section_data.items():
+                    column = f'Raw_{section_name}__{field_name}'
+                    row[column] = (
+                        json.dumps(value, ensure_ascii=False)
+                        if isinstance(value, (dict, list, tuple))
+                        else ('' if value is None else value)
+                    )
+            row['All_Raw_Answers_JSON'] = json.dumps(
+                raw_answers, ensure_ascii=False
+            )
+
         rows.append(row)
         all_columns.update(row.keys())
 
     preferred = [
-        'Participant_ID', 'Submitted_At', 'Name', 'Age_Group', 'Gender',
-        'Education_Level', 'News_Frequency', 'News_Source',
-        'Watched_Deepfake_Before', 'Heard_Deepfake', 'Suspected_Deepfake_Before',
-        'Video_Score_Correct', 'Video_Score_Total', 'Video_Score_Percent',
-        'Section_F_Participation', 'Reward'
+        'Participant_ID', 'Submitted_At',
+        'Name', 'Age_Group', 'Gender', 'Education_Level',
+        'News_Frequency', 'News_Source',
+
+        # Section B
+        'Watched_Deepfake_Before', 'Heard_Deepfake',
+        'Deepfake_Description', 'Suspected_Deepfake_Before',
+        'Confidence_Identifying', 'Suspicious_Signs',
+
+        # Section C
+        'Political_Video_Authenticity',
+        'Media_Authenticity_Confidence',
+        'Deepfake_Believability', 'Physical_Realism',
+        'Political_Leader_Trust', 'Opinion_Change',
+        'Voting_Influence', 'Social_Media_Trust',
+        'Election_Fairness_Concern', 'Election_Trust_Reduction',
+        'War_News_Believability',
+
+        # Section D
+        'Post_Warning_Belief', 'Post_Warning_Believability',
+        'Post_Warning_Trustworthiness', 'Warning_Effectiveness',
+        'Action_After_Warning',
+
+        # Qualitative questions
+        'Qual_Real_Or_Fake_Features', 'Qual_Opinion_Effect',
+        'Qual_Warning_Impact', 'Qual_Recommended_Actions',
+
+        # Quiz
+        'Video_Score_Correct', 'Video_Score_Total',
+        'Video_Score_Percent',
+
+        # Section F + reward
+        'Section_F_Participation', 'Reward',
+
+        # Complete backup
+        'All_Raw_Answers_JSON',
     ]
+
     columns = [c for c in preferred if c in all_columns]
     columns += sorted(all_columns - set(columns))
 
     output = io.StringIO()
-    writer = csv.DictWriter(output, fieldnames=columns, extrasaction='ignore')
+    writer = csv.DictWriter(
+        output,
+        fieldnames=columns,
+        extrasaction='ignore'
+    )
     writer.writeheader()
     writer.writerows(rows)
 
     return Response(
         output.getvalue(),
         mimetype='text/csv; charset=utf-8',
-        headers={'Content-Disposition': 'attachment; filename=deepfake_research_analysis.csv'}
+        headers={
+            'Content-Disposition':
+                'attachment; filename=deepfake_research_all_questions.csv'
+        }
     )
 
 
