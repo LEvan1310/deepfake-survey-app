@@ -135,9 +135,10 @@ WARNING_EXPERIMENT = {
         'title_my': 'စမ်းသပ်အခြေအနေ ၂ - အစကတည်းက AI တံဆိပ်မြင်ရခြင်း',
     },
     3: {
-        'source_type': 'external',
-        'source_url': 'https://www.bbc.com/reel/video/p0hkflt4/watch',
-        'source_name': 'BBC Reel',
+        'source_type': 'youtube',
+        'youtube_id': 'WFc6t-c892A',
+        'source_url': 'https://www.youtube.com/watch?v=WFc6t-c892A',
+        'source_name': 'YouTube',
         'condition': 'labelled',
         'title_en': 'Condition 3 - Realism Challenge With AI Label',
         'title_my': 'စမ်းသပ်အခြေအနေ ၃ - AI တံဆိပ်ရှိသည့် Realism Challenge',
@@ -165,11 +166,36 @@ EDUCATIONAL_VIDEOS = [
 ]
  
 REWARD_OPTIONS = [
-    {'key': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။', 'label_en': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။', 'label_my': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။!', 'emoji': ''},
-    {'key': '1000 KS', 'label_en': '1,000 KS', 'label_my': '1,000 ကျပ် ဆုရပါပြီ!', 'emoji': '💰'},
-    {'key': '3000 KS', 'label_en': '🙏 ကျေးဇူးတင်ပါတယ်! စစ်တမ်းမှာ ပါဝင်ပေးတဲ့အတွက် ဝမ်းမြောက်ပါတယ်။', 'label_my': '🙏 ကျေးဇူးတင်ပါတယ်! စစ်တမ်းမှာ ပါဝင်ပေးတဲ့အတွက် ဝမ်းမြောက်ပါတယ်။', 'emoji': '🙏'},
-    {'key': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'label_en': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'label_my': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'emoji': '😊'},
-    {'key': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'label_en': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'label_my': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'emoji': '✨'},
+    {
+        'key': 'Thank You 1',
+        'label_en': '🙏 Thank you for taking part in the survey!',
+        'label_my': '🙏 စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!',
+        'emoji': '🙏'
+    },
+    {
+        'key': '1000 KS',
+        'label_en': '1,000 KS',
+        'label_my': '1,000 ကျပ် ဆုရပါပြီ!',
+        'emoji': '💰'
+    },
+    {
+        'key': 'Thank You 2',
+        'label_en': '😊 Thank you for participating!',
+        'label_my': '😊 ပါဝင်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!',
+        'emoji': '😊'
+    },
+    {
+        'key': 'Thank You 3',
+        'label_en': '✨ Thank you! Better luck next time!',
+        'label_my': '✨ ကျေးဇူးတင်ပါတယ်! နောက်တစ်ကြိမ် ကံကောင်းပါစေ!',
+        'emoji': '✨'
+    },
+    {
+        'key': 'Thank You 4',
+        'label_en': '🎊 Thank you for completing the survey!',
+        'label_my': '🎊 စစ်တမ်းကို ဖြေဆိုပြီးစီးပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!',
+        'emoji': '🎊'
+    },
 ]
 # 'weight' = relative odds, not a percent. With the values above, 3,000 KS is
 # picked about 2 times out of 100 spins on average. Raise or lower any single
@@ -178,7 +204,7 @@ REWARD_OPTIONS = [
  
  
 def weighted_reward_index():
-    """Choose one of the five reward categories with equal 20% probability."""
+    """Select one of the five reward categories with equal 20% probability."""
     return secrets.randbelow(len(REWARD_OPTIONS))
 
 
@@ -670,9 +696,9 @@ def reward_page():
     prize_index = None
 
     if request.method == 'POST':
-        # Every POST is a NEW spin.
-        # 5 categories = 20% probability for each category.
-        prize_index = secrets.randbelow(len(REWARD_OPTIONS))
+        # Every spin is a fresh random selection.
+        # There are 5 categories, so each has a 20% probability.
+        prize_index = weighted_reward_index()
         prize = REWARD_OPTIONS[prize_index]
 
         session['reward_key'] = prize['key']
