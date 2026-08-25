@@ -44,15 +44,6 @@
   }
   .spin-button { min-width:235px; border-radius:999px; padding:.85rem 1.4rem; font-weight:800; }
   .result-box { border-radius:16px; font-size:1.2rem; }
-  .chance-note {
-    max-width: 590px;
-    padding: 12px 16px;
-    border: 1px solid var(--bs-border-color);
-    border-radius: 14px;
-    background: var(--bs-tertiary-bg);
-    color: var(--bs-secondary-color);
-    font-size: .9rem;
-  }
   #resultArea[hidden], #resultLink[hidden], #spinningMessage[hidden] { display:none !important; }
   @media (max-width:520px) {
     .wheel-label { width:92px; }
@@ -69,8 +60,8 @@
   </h2>
 
   <p class="reward-subtitle">
-    <span data-lang-block="en">You have one spin. Press the button below to spin the wheel and reveal your result.</span>
-    <span data-lang-block="my" style="display:none">သင့်အတွက် တစ်ကြိမ်သာ လှည့်ခွင့်ရှိပါသည်။ အောက်ပါခလုတ်ကိုနှိပ်ပြီး Wheel ကိုလှည့်ကာ သင့်ရလဒ်ကို ကြည့်ပါ။</span>
+    <span data-lang-block="en">Spin once. Your reward is the segment that stops directly under the arrow.</span>
+    <span data-lang-block="my" style="display:none">တစ်ကြိမ်သာ လှည့်နိုင်ပါသည်။ မြှားအောက်တွင် ရပ်သည့် အပိုင်းသည် သင့်ဆုဖြစ်ပါသည်။</span>
   </p>
 
   <div class="wheel-stage">
@@ -113,26 +104,11 @@
       <span data-lang-block="my" style="display:none">စစ်တမ်းနှင့် Quiz ရလဒ်များ ကြည့်ရန် →</span>
     </a>
   {% endif %}
-
-  <div class="chance-note mt-4 mx-auto">
-    <span data-lang-block="en">🎯 There are exactly 5 possible outcomes. Each outcome has an equal 20% chance.</span>
-    <span data-lang-block="my" style="display:none">🎯 ရလဒ် ၅ မျိုးသာရှိပြီး ရလဒ်တစ်မျိုးစီ ရနိုင်ခြေ 20% တူညီပါသည်။</span>
-  </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const rewards = {{ rewards|tojson }};
-
-  const spinForm = document.getElementById('spinForm');
-  const spinButton = document.getElementById('spinButton');
-  if (spinForm && spinButton) {
-    spinForm.addEventListener('submit', () => {
-      spinButton.disabled = true;
-      spinButton.innerHTML = '<span data-lang-block="en">Spinning… 🎡</span><span data-lang-block="my" style="display:none">လှည့်နေပါသည်… 🎡</span>';
-      // The form is intentionally allowed to submit normally.
-    });
-  }
   const wheelShell = document.getElementById('wheelShell');
   const canvas = document.getElementById('wheelCanvas');
   const labelsHost = document.getElementById('wheelLabels');
@@ -147,14 +123,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const radius = canvas.width * 0.47;
   const startAngle = -Math.PI / 2 - segmentRad / 2;
 
-  // Use the currently selected site language for the wheel labels too.
-  // The full exact English/Burmese message is shown after the spin.
-  const currentLang = localStorage.getItem('lang') || 'en';
-
   function shortLabel(item) {
-    return currentLang === 'my'
-      ? (item.wheel_my || item.label_my || item.key)
-      : (item.wheel_en || item.label_en || item.key);
+    if (item.key === '3000 KS') return '3,000 KS';
+    if (item.key === '1000 KS') return '1,000 KS';
+    if (item.key === 'No Cash Prize - Next Time') return 'Next time';
+    if (item.key === 'No Cash Prize - Thank You') return 'Thank you';
+    if (item.key === 'No Prize - Thanks for Spinning') return 'Thanks!';
+    return item.label_en || item.key;
   }
 
   function drawWheel() {
