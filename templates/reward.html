@@ -117,18 +117,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const colors = ['#72C472', '#66B8F0', '#FF8A80', '#AA91D8', '#F4C95D'];
   const segmentCount = rewards.length;
   const segmentDeg = 360 / segmentCount;
-  const segmentRad = (Math.PI * 2) / segmentCount;
+  const segmentRad = (Math.PI * 3) / segmentCount;
   const cx = canvas.width / 2;
   const cy = canvas.height / 2;
   const radius = canvas.width * 0.47;
   const startAngle = -Math.PI / 2 - segmentRad / 2;
 
   function shortLabel(item) {
-    if (item.key === '3000 KS') return '3,000 KS';
+    if (item.key === '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။') return '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။';
     if (item.key === '1000 KS') return '1,000 KS';
-    if (item.key === 'No Cash Prize - Next Time') return 'Next time';
-    if (item.key === 'No Cash Prize - Thank You') return 'Thank you';
-    if (item.key === 'No Prize - Thanks for Spinning') return 'Thanks!';
+    if (item.key === '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!') return '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!';
+    if (item.key === '3000 KS') return '💵 3,000 ကျပ် ဆုရပါပြီ!';
+    if (item.key === '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!') return '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!';
     return item.label_en || item.key;
   }
 
