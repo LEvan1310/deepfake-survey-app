@@ -83,6 +83,13 @@
         <span data-lang-block="my" style="display:none">Wheel လှည့်ရန် 🎡</span>
       </button>
     </form>
+  {% if spin_error == 'already_spun' %}
+    <div class="alert alert-warning mt-3 rounded-4">
+      <span data-lang-block="en">⚠️ You have already spun the wheel. You cannot spin again.</span>
+      <span data-lang-block="my" style="display:none">⚠️ Wheel ကို လှည့်ပြီးသားဖြစ်သောကြောင့် ထပ်မံလှည့်၍ မရပါ။</span>
+    </div>
+  {% endif %}
+
   {% else %}
     <div id="spinningMessage" class="alert alert-info mt-3 rounded-4">
       <span data-lang-block="en">🎡 Spinning… your reward will appear when the wheel stops.</span>
@@ -104,12 +111,10 @@
       <span data-lang-block="my" style="display:none">စစ်တမ်းနှင့် Quiz ရလဒ်များ ကြည့်ရန် →</span>
     </a>
 
-    <form method="POST" id="spinAgainForm" class="mt-3">
-      <button class="btn btn-success btn-lg spin-button" type="submit" id="spinAgainButton">
-        <span data-lang-block="en">Spin Again 🎡</span>
-        <span data-lang-block="my" style="display:none">ထပ်မံလှည့်ရန် 🎡</span>
-      </button>
-    </form>
+    <div class="alert alert-info mt-3 rounded-4">
+      <span data-lang-block="en">🎉 Your spin has been recorded. You can spin the wheel only once.</span>
+      <span data-lang-block="my" style="display:none">🎉 သင့်ရဲ့ Wheel Spin ကို မှတ်တမ်းတင်ပြီးပါပြီ။ Wheel ကို တစ်ကြိမ်သာ လှည့်နိုင်ပါတယ်။</span>
+    </div>
   {% endif %}
 </div>
  
