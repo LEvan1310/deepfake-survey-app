@@ -402,8 +402,7 @@ def survey_page1():
 @app.route('/survey/page2', methods=['GET', 'POST'])
 def survey_page2():
     if request.method == 'POST':
-        form_data = request.form.to_dict()
-        form_data['suspicious_signs'] = ', '.join(request.form.getlist('suspicious_signs'))
+        form_data = form_snapshot(request.form)
         watched = form_data.get('watched_deepfake_before', '')
         # The first gate question must be answered before any later logic can run.
         if watched not in {'Yes', 'No'}:
@@ -435,7 +434,6 @@ def survey_page3():
 def survey_page4():
     if request.method == 'POST':
         session['page4'] = form_snapshot(request.form)
-        session['page4']['action_after_warning'] = request.form.getlist('action_after_warning')
         save_progress_snapshot()
  
         # Yes path: after Sections C and D, show awareness ONCE before the quiz.
@@ -562,14 +560,27 @@ def answer_count(snapshot):
     return total
 
 
+def _json_safe(value):
+    """Convert session/form values into JSON-safe Python values."""
+    if isinstance(value, dict):
+        return {str(k): _json_safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(v) for v in value]
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return value
+    return str(value)
+
+
 def save_progress_snapshot(status="in_progress"):
-    """Save all answers collected so far, not only the final normalized fields."""
+    """Persist every answer collected so far without dropping repeated fields."""
     if not DATABASE_URL:
         return
+
     participant_id = get_participant_id()
-    raw = session_answer_snapshot()
+    raw = _json_safe(session_answer_snapshot())
+
     payload = {
-        "Data_Version": 2,
+        "Data_Version": 3,
         "Participant_ID": participant_id,
         "Progress_Status": status,
         "Answer_Count": answer_count(raw),
@@ -577,11 +588,18 @@ def save_progress_snapshot(status="in_progress"):
         "Last_Saved_At": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "Reward": session.get("reward_key", ""),
     }
+
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO survey_responses (participant_id, data) VALUES (%s, %s::jsonb) "
-                "ON CONFLICT (participant_id) DO UPDATE SET data=EXCLUDED.data, submitted_at=CURRENT_TIMESTAMP",
+                """
+                INSERT INTO survey_responses (participant_id, data)
+                VALUES (%s, %s::jsonb)
+                ON CONFLICT (participant_id)
+                DO UPDATE SET
+                    data = EXCLUDED.data,
+                    submitted_at = CURRENT_TIMESTAMP
+                """,
                 (participant_id, json.dumps(payload, ensure_ascii=False))
             )
         conn.commit()
@@ -690,7 +708,7 @@ def save_survey_response():
                 """,
                 (
                     participant_id,
-                    json.dumps(row_map)
+                    json.dumps(_json_safe(row_map), ensure_ascii=False)
                 )
             )
  
@@ -857,6 +875,26 @@ def get_all_responses():
                     'prize': prize or ''
                 })
     return responses
+
+
+@app.route('/admin/clear-test-data', methods=['POST'])
+@admin_required
+def admin_clear_test_data():
+    """Delete response/reward rows only; database tables remain intact."""
+    if not DATABASE_URL:
+        return redirect(url_for('admin'))
+
+    if request.form.get('confirmation') != 'DELETE TEST DATA':
+        return redirect(url_for('admin'))
+
+    with psycopg.connect(DATABASE_URL) as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "TRUNCATE TABLE reward_results, survey_responses RESTART IDENTITY"
+            )
+        conn.commit()
+
+    return redirect(url_for('admin'))
 
 
 @app.route('/admin/export.csv')
