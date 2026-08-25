@@ -376,7 +376,7 @@ def survey_page1():
         # respondent's quiz, warning-label and demographic answers without
         # relying on their name as the primary identifier.
         session['participant_id'] = 'DF-' + secrets.token_hex(4).upper()
-        session['page1'] = request.form.to_dict()
+        session['page1'] = form_snapshot(request.form)
         return redirect(url_for('survey_page2'))
     return render_template('survey_page1.html')
  
@@ -384,10 +384,7 @@ def survey_page1():
 @app.route('/survey/page2', methods=['GET', 'POST'])
 def survey_page2():
     if request.method == 'POST':
-        form_data = request.form.to_dict()
-        selected_signs = request.form.getlist('suspicious_signs')
-        if selected_signs:
-            form_data['suspicious_signs'] = ' | '.join(selected_signs)
+        form_data = form_snapshot(request.form)
         watched = form_data.get('watched_deepfake_before', '')
         # The first gate question must be answered before any later logic can run.
         if watched not in {'Yes', 'No'}:
@@ -408,7 +405,7 @@ def survey_page2():
 @app.route('/survey/page3', methods=['GET', 'POST'])
 def survey_page3():
     if request.method == 'POST':
-        session['page3'] = request.form.to_dict()
+        session['page3'] = form_snapshot(request.form)
         return redirect(url_for('survey_page4'))
     return render_template('survey_page3.html')
  
@@ -416,7 +413,7 @@ def survey_page3():
 @app.route('/survey/page4', methods=['GET', 'POST'])
 def survey_page4():
     if request.method == 'POST':
-        session['page4'] = request.form.to_dict()
+        session['page4'] = form_snapshot(request.form)
  
         # Yes path: after Sections C and D, show awareness ONCE before the quiz.
         session['awareness_phase'] = 'pre_quiz'
@@ -428,7 +425,7 @@ def survey_page4():
 @app.route('/survey/page5', methods=['GET', 'POST'])
 def survey_page5():
     if request.method == 'POST':
-        session['page5'] = request.form.to_dict()
+        session['page5'] = form_snapshot(request.form)
         return redirect(url_for('survey_page6'))
     return render_template('survey_page5.html', videos=video_page_context(1, 3), skipped=session.get('skipped_pre_video_sections', False))
  
@@ -436,7 +433,7 @@ def survey_page5():
 @app.route('/survey/page6', methods=['GET', 'POST'])
 def survey_page6():
     if request.method == 'POST':
-        session['page6'] = request.form.to_dict()
+        session['page6'] = form_snapshot(request.form)
         return redirect(url_for('survey_page7'))
  
     # Clips 4–6 come directly from VIDEO_QUIZ, so the quiz and result page always match.
@@ -451,7 +448,7 @@ def survey_page6():
 @app.route('/survey/page7', methods=['GET', 'POST'])
 def survey_page7():
     if request.method == 'POST':
-        session['page7'] = request.form.to_dict()
+        session['page7'] = form_snapshot(request.form)
  
         # Freeze the quiz result immediately after all 9 clips are answered.
         # calculate_quiz() uses the exact media snapshot shown during the quiz,
@@ -472,7 +469,7 @@ def survey_reflection():
         return redirect(url_for('survey_page7'))
  
     if request.method == 'POST':
-        session['reflection'] = request.form.to_dict()
+        session['reflection'] = form_snapshot(request.form)
  
         # The 3-page awareness module is now completed BEFORE the quiz
         # for both Yes and No participants, so never show it again here.
@@ -544,7 +541,7 @@ def save_survey_response():
         'Timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         'Participant_ID': session.get('participant_id', ''),
         'Name': p1.get('name', ''), 'Age_Group': p1.get('age_group', ''), 'Gender': p1.get('gender', ''),
-        'Education_Level': p1.get('education_level', ''), 'News_Frequency': p1.get('news_frequency', ''), 'News_Source': p1.get('news_source', ''),
+        'Education_Level': p1.get('education_level', ''), 'Current_Role': p1.get('current_role', ''), 'News_Frequency': p1.get('news_frequency', ''), 'News_Source': p1.get('news_source', ''),
         'Watched_Deepfake_Before': p2.get('watched_deepfake_before', ''), 'Heard_Deepfake': p2.get('heard_deepfake', ''),
         'Deepfake_Description': p2.get('deepfake_description', ''), 'Suspected_Deepfake_Before': p2.get('suspected_deepfake_before', ''),
         'Confidence_Identifying': p2.get('confidence_identifying', ''), 'Suspicious_Signs': p2.get('suspicious_signs', ''),
@@ -554,6 +551,10 @@ def save_survey_response():
         'Voting_Influence': p3.get('voting_influence', ''), 'Social_Media_Trust': p3.get('social_media_trust', ''),
         'Election_Fairness_Concern': p3.get('election_fairness_concern', ''), 'Election_Trust_Reduction': p3.get('election_trust_reduction', ''),
         'War_News_Believability': p3.get('war_believability', ''),
+        'Fact_Check_Frequency': p3.get('fact_check_frequency', ''),
+        'Suspicion_Trigger': p3.get('suspicion_trigger', ''),
+        'Realism_Belief_Risk': p3.get('realism_belief_risk', ''),
+        'Source_Check_Importance': p3.get('source_check_importance', ''),
         'Post_Warning_Belief': p4.get('post_warning_belief', ''), 'Post_Warning_Believability': p4.get('post_warning_believability', ''),
         'Post_Warning_Trustworthiness': p4.get('post_warning_trustworthiness', ''), 'Warning_Effectiveness': p4.get('warning_effectiveness', ''),
         'Action_After_Warning': p4.get('action_after_warning', ''),
@@ -579,40 +580,15 @@ def save_survey_response():
         row_map[f'Warning_{i}_Reaction'] = p8.get(f'w{i}_reaction', '')
         row_map[f'Warning_{i}_Reason'] = p8.get(f'w{i}_reason', '')
  
-    # COMPLETE RAW RESPONSE EXPORT:
-    # Preserve every submitted field in addition to the normalized analysis
-    # columns. This includes open-ended qualitative answers such as the
-    # respondent's own definition of "deepfake".
-    raw_sections = {
-        'Section_A': p1,
-        'Section_B': p2,
-        'Section_C': p3,
-        'Section_D': p4,
-        'Quiz_Videos_1_3': p5,
-        'Quiz_Videos_4_6': p6,
-        'Quiz_Videos_7_9': p7,
-        'Reflection': reflection,
-        'Section_F': p8,
+    # Preserve every submitted field so the CSV can contain one column per question.
+    raw_pages = {
+        'A': p1, 'B': p2, 'C': p3, 'D': p4,
+        'Quiz_1_3': p5, 'Quiz_4_6': p6, 'Quiz_7_9': p7,
+        'Reflection': reflection, 'Section_F': p8,
     }
-
-    for section_name, section_data in raw_sections.items():
-        if not isinstance(section_data, dict):
-            continue
-        for field_name, value in section_data.items():
-            column_name = f'Raw_{section_name}__{field_name}'
-            if isinstance(value, (list, tuple, dict)):
-                row_map[column_name] = json.dumps(
-                    value, ensure_ascii=False
-                )
-            elif value is None:
-                row_map[column_name] = ''
-            else:
-                row_map[column_name] = value
-
-    # Complete machine-readable backup of every raw answer.
-    row_map['All_Raw_Answers_JSON'] = json.dumps(
-        raw_sections, ensure_ascii=False
-    )
+    for page_name, page_data in raw_pages.items():
+        for field_name, field_value in page_data.items():
+            row_map[f'Raw_{page_name}_{field_name}'] = field_value
 
     participant_id = get_participant_id()
 
@@ -631,7 +607,7 @@ def save_survey_response():
                 """,
                 (
                     participant_id,
-                    json.dumps(row_map, ensure_ascii=False)
+                    json.dumps(row_map)
                 )
             )
  
@@ -1175,116 +1151,120 @@ def admin():
 @app.route('/admin/export.csv')
 @admin_required
 def admin_export_csv():
-    """Export every stored respondent answer for research analysis.
-
-    Includes normalized dashboard fields AND every raw survey field,
-    including qualitative/open-ended answers and multi-select answers.
-    """
+    """Export a clean research master CSV: one respondent per row, one question per column."""
     responses = get_all_responses()
-    rows = []
-    all_columns = set()
 
-    for response in responses:
-        data = response.get('data') or {}
+    def clean(value):
+        if isinstance(value, list):
+            return '; '.join(str(v) for v in value)
+        if isinstance(value, dict):
+            return json.dumps(value, ensure_ascii=False)
+        return '' if value is None else str(value)
 
-        row = {
-            'Participant_ID': response.get('participant_id', ''),
-            'Submitted_At': (
-                response.get('submitted_at').isoformat()
-                if response.get('submitted_at') else ''
-            ),
-            'Reward': response.get('prize', '') or '',
-        }
+    columns = [
+        ('A1 - Name', 'Name'),
+        ('A2 - Age Group', 'Age_Group'),
+        ('A3 - Gender', 'Gender'),
+        ('A4 - Education Level', 'Education_Level'),
+        ('A5 - Current Role', 'Current_Role'),
+        ('A6 - How often do you follow political or current-affairs news?', 'News_Frequency'),
+        ('A7 - What is your main source of political or current-affairs news?', 'News_Source'),
 
-        # Every stored data field.
-        for key, value in data.items():
-            if isinstance(value, (dict, list, tuple)):
-                row[key] = json.dumps(value, ensure_ascii=False)
-            elif value is None:
-                row[key] = ''
-            else:
-                row[key] = value
+        ('B1 - Have you watched or knowingly seen a deepfake video before?', 'Watched_Deepfake_Before'),
+        ('B2 - Before today, had you heard the term “deepfake”?', 'Heard_Deepfake'),
+        ('B3 - In your own words, what do you think a deepfake is?', 'Deepfake_Description'),
+        ('B4 - Have you ever suspected that an online political or news video might be AI-generated or manipulated?', 'Suspected_Deepfake_Before'),
+        ('B5 - Before this study, how confident were you that you could identify a deepfake?', 'Confidence_Identifying'),
+        ('B6 - Which clues would make you question whether a video is authentic? (Select all that apply)', 'Suspicious_Signs'),
 
-        # Backward/forward compatibility if Raw_Answers is ever stored as
-        # a nested object.
-        raw_answers = data.get('Raw_Answers')
-        if isinstance(raw_answers, dict):
-            for section_name, section_data in raw_answers.items():
-                if not isinstance(section_data, dict):
-                    continue
-                for field_name, value in section_data.items():
-                    column = f'Raw_{section_name}__{field_name}'
-                    row[column] = (
-                        json.dumps(value, ensure_ascii=False)
-                        if isinstance(value, (dict, list, tuple))
-                        else ('' if value is None else value)
-                    )
-            row['All_Raw_Answers_JSON'] = json.dumps(
-                raw_answers, ensure_ascii=False
-            )
+        ('C1 - Before seeing the study clips, how often do you think political videos online are authentic?', 'Political_Video_Authenticity'),
+        ('C2 - How believable do you think a well-made political deepfake can be?', 'Deepfake_Believability'),
+        ('C3 - How realistic do you expect modern AI-generated political videos to look?', 'Physical_Realism'),
+        ('C4 - How likely could a convincing deepfake influence voters’ decisions?', 'Voting_Influence'),
+        ('C5 - How much do you trust political videos shared on social media before checking another source?', 'Social_Media_Trust'),
+        ('C6 - How concerned are you that political deepfakes could reduce confidence in election fairness?', 'Election_Fairness_Concern'),
+        ('C7 - Repeated exposure to political deepfakes could make me trust election information less, even when some information is genuine.', 'Election_Trust_Reduction'),
+        ('C8 - How much would you trust a dramatic warfare video before it is verified by reliable sources?', 'War_News_Believability'),
+        ('C9 - Before believing a political video online, how often do you check another reliable source?', 'Fact_Check_Frequency'),
+        ('C10 - Which part of a political video would make you most suspicious that it was AI-generated?', 'Suspicion_Trigger'),
+        ('C11 - If a political video looks very realistic, how likely are you to believe it before checking the source?', 'Realism_Belief_Risk'),
+        ('C12 - How important is checking the original source before sharing a political video?', 'Source_Check_Importance'),
 
-        rows.append(row)
-        all_columns.update(row.keys())
+        ('D1 - After seeing a deepfake warning, how likely would you be to believe the video?', 'Post_Warning_Belief'),
+        ('D2 - How would the warning affect your trust in the person or event shown?', 'Post_Warning_Trustworthiness'),
+        ('D3 - How effective do you think warning labels are at reducing deepfake misinformation?', 'Warning_Effectiveness'),
+        ('D4 - What would you most likely do after seeing a deepfake warning? (Select all that apply)', 'Action_After_Warning'),
 
-    preferred = [
-        'Participant_ID', 'Submitted_At',
-        'Name', 'Age_Group', 'Gender', 'Education_Level',
-        'News_Frequency', 'News_Source',
+        ('R1 - What made you think the study videos were real or AI-generated?', 'Qual_Real_Or_Fake_Features'),
+        ('R2 - Did any video change or affect your opinion? Explain.', 'Qual_Opinion_Effect'),
+        ('R3 - How did the AI-generated warning affect your judgement?', 'Qual_Warning_Impact'),
+        ('R4 - What should people do to avoid being misled by deepfake videos?', 'Qual_Recommended_Actions'),
 
-        # Section B
-        'Watched_Deepfake_Before', 'Heard_Deepfake',
-        'Deepfake_Description', 'Suspected_Deepfake_Before',
-        'Confidence_Identifying', 'Suspicious_Signs',
-
-        # Section C
-        'Political_Video_Authenticity',
-        'Media_Authenticity_Confidence',
-        'Deepfake_Believability', 'Physical_Realism',
-        'Political_Leader_Trust', 'Opinion_Change',
-        'Voting_Influence', 'Social_Media_Trust',
-        'Election_Fairness_Concern', 'Election_Trust_Reduction',
-        'War_News_Believability',
-
-        # Section D
-        'Post_Warning_Belief', 'Post_Warning_Believability',
-        'Post_Warning_Trustworthiness', 'Warning_Effectiveness',
-        'Action_After_Warning',
-
-        # Qualitative questions
-        'Qual_Real_Or_Fake_Features', 'Qual_Opinion_Effect',
-        'Qual_Warning_Impact', 'Qual_Recommended_Actions',
-
-        # Quiz
-        'Video_Score_Correct', 'Video_Score_Total',
-        'Video_Score_Percent',
-
-        # Section F + reward
-        'Section_F_Participation', 'Reward',
-
-        # Complete backup
-        'All_Raw_Answers_JSON',
+        ('Quiz - Total Correct', 'Video_Score_Correct'),
+        ('Quiz - Total Videos Answered', 'Video_Score_Total'),
+        ('Quiz - Overall Score (%)', 'Video_Score_Percent'),
     ]
 
-    columns = [c for c in preferred if c in all_columns]
-    columns += sorted(all_columns - set(columns))
+    for i in range(1, 10):
+        columns.extend([
+            (f'Quiz Video {i} - Is this clip real, AI-generated, or not sure?', f'Video_{i}_Classification'),
+            (f'Quiz Video {i} - Confidence in judgement (1–5)', f'Video_{i}_Confidence'),
+            (f'Quiz Video {i} - What most influenced the judgement?', f'Video_{i}_Cue'),
+        ])
+
+    for i in range(1, 4):
+        columns.extend([
+            (f'Section F - Labelled Clip {i} - Believability despite AI label (1–5)', f'Warning_{i}_Belief_After'),
+            (f'Section F - Labelled Clip {i} - Realism despite knowing it is AI-generated (1–5)', f'Warning_{i}_Realism'),
+            (f'Section F - Labelled Clip {i} - Likelihood that some part could still be true (1–5)', f'Warning_{i}_Could_Be_True'),
+            (f'Section F - Labelled Clip {i} - How strongly realism affected judgement (1–5)', f'Warning_{i}_Realism_Influence'),
+            (f'Section F - Labelled Clip {i} - Reaction', f'Warning_{i}_Reaction'),
+        ])
+
+    columns.extend([
+        ('Section F - Participation', 'Section_F_Participation'),
+        ('Reward - One-time wheel result', 'Reward'),
+    ])
+
+    # If a future question exists in raw storage but is not yet mapped above,
+    # append it as a clearly named extra column instead of losing it.
+    extra = set()
+    for response in responses:
+        data = response.get('data') or {}
+        for key in data:
+            if key.startswith('Raw_'):
+                extra.add(key)
+    extra = sorted(extra)
+
+    headers = ['Participant ID', 'Submitted At'] + [label for label, _ in columns]
+    headers += [f'Additional raw field - {key}' for key in extra]
+
+    rows = []
+    for response in responses:
+        data = response.get('data') or {}
+        row = {
+            'Participant ID': response.get('participant_id', ''),
+            'Submitted At': response.get('submitted_at').isoformat()
+                if response.get('submitted_at') else ''
+        }
+        for label, key in columns:
+            value = (response.get('prize', '') or data.get('Reward', '')) if key == 'Reward' else data.get(key, '')
+            row[label] = clean(value)
+        for key in extra:
+            row[f'Additional raw field - {key}'] = clean(data.get(key, ''))
+        rows.append(row)
 
     output = io.StringIO()
-    writer = csv.DictWriter(
-        output,
-        fieldnames=columns,
-        extrasaction='ignore'
-    )
+    writer = csv.DictWriter(output, fieldnames=headers, extrasaction='ignore')
     writer.writeheader()
     writer.writerows(rows)
 
     return Response(
-        output.getvalue(),
+        '\ufeff' + output.getvalue(),
         mimetype='text/csv; charset=utf-8',
-        headers={
-            'Content-Disposition':
-                'attachment; filename=deepfake_research_all_questions.csv'
-        }
+        headers={'Content-Disposition': 'attachment; filename=deepfake_research_ALL_questions.csv'}
     )
+
 
 
 def init_database():
@@ -1314,6 +1294,15 @@ def init_database():
         conn.commit()
  
  
+def form_snapshot(form):
+    """Capture every submitted field and preserve multiple selected values."""
+    data = {}
+    for key in form.keys():
+        values = form.getlist(key)
+        data[key] = values if len(values) > 1 else (values[0] if values else "")
+    return data
+
+
 def get_participant_id():
     if 'participant_id' not in session:
         session['participant_id'] = 'DF-' + secrets.token_hex(4).upper()
