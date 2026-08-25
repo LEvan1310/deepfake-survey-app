@@ -19,4 +19,99 @@
 <div class="card mb-4"><div class="card-body"><h6 class="fw-bold"><span data-lang-block="en">{{ v.title_en }}</span><span data-lang-block="my" style="display:none">{{ v.title_my }}</span></h6><p class="small text-muted"><span data-translate="source_label">Source</span>: {{ v.source }}</p>{% set yt_origin = request.url_root.rstrip('/') %}<div class="ratio ratio-16x9 mb-2"><iframe src="https://www.youtube.com/embed/{{ v.youtube_id }}?enablejsapi=1&playsinline=1&rel=0&origin={{ yt_origin|urlencode }}&widget_referrer={{ request.url|urlencode }}" title="{{ v.title_en }}" frameborder="0" loading="eager" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe></div><div class="text-center"><a class="btn btn-outline-danger btn-sm" href="https://www.youtube.com/watch?v={{ v.youtube_id }}" target="_blank" rel="noopener"><span data-lang-block="en">▶ Watch on YouTube ↗</span><span data-lang-block="my" style="display:none">▶ YouTube တွင် ကြည့်ရန် ↗</span></a></div></div></div>
 {% endfor %}
 <div class="text-center mt-4"><a href="/" class="btn btn-primary" data-translate="home_btn">Return to Home</a></div>
-</div>{% endblock %}
+</div>
+
+<!-- Added only: congratulations confetti animation on results-page entry. -->
+<style>
+  #results-confetti-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+  }
+</style>
+<canvas id="results-confetti-canvas" aria-hidden="true"></canvas>
+<script>
+(function () {
+  function startConfetti() {
+    var canvas = document.getElementById('results-confetti-canvas');
+    if (!canvas) return;
+
+    var ctx = canvas.getContext('2d');
+    var pieces = [];
+    var colors = ['#28a745', '#0d6efd', '#ffc107', '#dc3545', '#6f42c1', '#20c997'];
+
+    function resize() {
+      var dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(window.innerWidth * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    var count = 150;
+    for (var i = 0; i < count; i++) {
+      pieces.push({
+        x: Math.random() * window.innerWidth,
+        y: -Math.random() * window.innerHeight * 0.6,
+        w: 5 + Math.random() * 7,
+        h: 8 + Math.random() * 10,
+        speed: 2 + Math.random() * 3,
+        drift: (Math.random() - 0.5) * 1.8,
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.18,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        opacity: 1
+      });
+    }
+
+    var start = performance.now();
+    var duration = 5000;
+
+    function frame(now) {
+      var elapsed = now - start;
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      pieces.forEach(function (p) {
+        p.y += p.speed;
+        p.x += p.drift;
+        p.rotation += p.rotationSpeed;
+
+        if (elapsed > duration - 1200) {
+          p.opacity = Math.max(0, 1 - (elapsed - (duration - 1200)) / 1200);
+        }
+
+        ctx.save();
+        ctx.globalAlpha = p.opacity;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+
+      if (elapsed < duration) {
+        requestAnimationFrame(frame);
+      } else {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        canvas.remove();
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startConfetti, { once: true });
+  } else {
+    startConfetti();
+  }
+})();
+</script>
+{% endblock %}
