@@ -20,7 +20,7 @@ ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Evan')
  
 # Nine main quiz clips. The quiz and result page use this exact same mapping.
 # Clips 2 and 5 are the two Deepfake Label Video Tests. The quiz and result page use this exact same mapping.
-QUIZ_MEDIA = {
+QUIZ_MEDIA = { 
     1: {
         'source_type': 'google_drive',
         'drive_id': '1ZSJa6MhzvghxAJrGg0NUwdME-Y7UDHNn',
