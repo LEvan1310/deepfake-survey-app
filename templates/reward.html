@@ -125,6 +125,13 @@
     <span data-lang-block="my" style="display:none">🎡 Deepfake Lucky Spin</span>
   </h2>
 
+  {% if test_mode %}
+  <div class="alert alert-warning py-2 px-3 rounded-4 mb-3">
+    <span data-lang-block="en">🧪 TEST MODE — no cash prize can be awarded.</span>
+    <span data-lang-block="my" style="display:none">🧪 စမ်းသပ်မုဒ် — ငွေသားဆု မရရှိနိုင်ပါ။</span>
+  </div>
+  {% endif %}
+
   <p class="reward-subtitle">
     <span data-lang-block="en">Spin once and see where your wheel stops. Good luck!</span>
     <span data-lang-block="my" style="display:none">တစ်ကြိမ်လှည့်ပြီး ဘယ်နေရာမှာ ရပ်မလဲ ကြည့်ကြရအောင်။ ကံကောင်းပါစေ!</span>
