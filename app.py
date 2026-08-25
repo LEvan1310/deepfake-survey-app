@@ -1187,7 +1187,10 @@ def init_database():
                     submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
-        cur.execute("CREATE INDEX IF NOT EXISTS idx_survey_responses_submitted_at ON survey_responses (submitted_at)")
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_survey_responses_submitted_at "
+                "ON survey_responses (submitted_at)"
+            )
         conn.commit()
  
  
