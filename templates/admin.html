@@ -8,6 +8,7 @@
     </div>
     <div>
       <a href="/" class="btn btn-outline-primary me-2">← Return to Home</a>
+      <a href="/admin/export.csv" class="btn btn-success me-2">⬇ Export All Answers CSV</a>
       <a href="/admin-logout" class="btn btn-outline-danger">Logout</a>
     </div>
   </div>
@@ -110,7 +111,7 @@
       <table class="table table-hover align-middle" id="participantTable">
         <thead class="table-dark">
           <tr>
-            <th>Participant ID</th><th>Name</th><th>Prior deepfake</th><th>Quiz</th><th>Avg confidence</th><th>Section F</th><th>Belief before → after</th><th>Trust before → after</th><th>Details</th>
+            <th>Participant ID</th><th>Name</th><th>Prior deepfake</th><th>Quiz</th><th>Avg confidence</th><th>Section F</th><th>Status</th><th>Answers</th><th>Reward</th><th>Belief before → after</th><th>Trust before → after</th><th>Details</th>
           </tr>
         </thead>
         <tbody>
@@ -122,12 +123,15 @@
             <td><strong>{{ p.score_correct }}/{{ p.score_total }}</strong> <span class="text-muted">({{ p.score_percent }}%)</span></td>
             <td>{{ p.avg_confidence }}/5</td>
             <td>{% if p.section_f == 'Participate' %}<span class="badge text-bg-success">Completed</span>{% else %}<span class="badge text-bg-secondary">Skipped</span>{% endif %}</td>
+            <td>{% if p.progress_status == 'completed' %}<span class="badge text-bg-success">Complete</span>{% else %}<span class="badge text-bg-warning">In progress</span>{% endif %}</td>
+            <td>{{ p.answer_count }}</td>
+            <td>{{ p.reward or '—' }}</td>
             <td>{{ p.belief_before }} → {{ p.belief_after }} {% if p.belief_change != '—' %}<small class="text-muted">({{ p.belief_change }})</small>{% endif %}</td>
             <td>{{ p.trust_before }} → {{ p.trust_after }} {% if p.trust_change != '—' %}<small class="text-muted">({{ p.trust_change }})</small>{% endif %}</td>
             <td><button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#detail-{{ loop.index }}">View</button></td>
           </tr>
           <tr class="collapse" id="detail-{{ loop.index }}">
-            <td colspan="9" class="bg-body-tertiary">
+            <td colspan="12" class="bg-body-tertiary">
               <div class="p-3">
                 <div class="row g-4">
                   <div class="col-xl-7">
@@ -152,10 +156,32 @@
                   </div>
                 </div>
               </div>
+
+              <hr class="my-4">
+              <h6 class="fw-bold">Complete Raw Answers</h6>
+              <p class="text-muted small">All submitted fields captured from the survey pages. Repeated checkbox values are preserved.</p>
+              {% for page_name, fields in p.raw_answers.items() %}
+                <details class="mb-2">
+                  <summary class="fw-semibold">{{ page_name }}</summary>
+                  <div class="table-responsive mt-2">
+                    <table class="table table-sm table-bordered">
+                      <tbody>
+                      {% for field, value in fields.items() %}
+                        <tr>
+                          <th style="width:30%">{{ field }}</th>
+                          <td>{{ value }}</td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </details>
+              {% endfor %}
+            </div>
             </td>
           </tr>
           {% else %}
-          <tr><td colspan="9" class="text-center text-muted py-4">No survey responses recorded yet.</td></tr>
+          <tr><td colspan="12" class="text-center text-muted py-4">No survey responses recorded yet.</td></tr>
           {% endfor %}
         </tbody>
       </table>
