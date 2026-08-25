@@ -166,11 +166,11 @@ EDUCATIONAL_VIDEOS = [
 ]
 
 REWARD_OPTIONS = [
-    {'key': '3000 KS', 'label_en': '3000 KS', 'label_my': '3000 ကျပ်', 'emoji': '💵'},
-    {'key': 'Fool Emoji', 'label_en': 'Fool Emoji', 'label_my': 'Fool Emoji', 'emoji': '🤡'},
-    {'key': 'Good Luck Wish', 'label_en': 'A wish for good luck from the heart', 'label_my': 'စိတ်ထဲကနေ ကံကောင်းပါစေလို့ ဆုတောင်းပေးပါတယ်', 'emoji': '💫'},
-    {'key': '1000 KS', 'label_en': '1000 KS', 'label_my': '1000 ကျပ်', 'emoji': '💰'},
-    {'key': 'Beautiful Thank You', 'label_en': 'Thank you for answering — with a beautiful smile!', 'label_my': 'ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ် — လှပတဲ့အပြုံးလေးနဲ့!', 'emoji': '😊'},
+    {'key': '3000 KS', 'label_en': '3,000 KS', 'label_my': '3,000 ကျပ် ဆုရပါပြီ!', 'emoji': '💵'},
+    {'key': '1000 KS', 'label_en': '1,000 KS', 'label_my': '1,000 ကျပ် ဆုရပါပြီ!', 'emoji': '💰'},
+    {'key': 'No Cash Prize - Next Time', 'label_en': 'No cash prize this time — good luck next time!', 'label_my': 'ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'emoji': '🎊'},
+    {'key': 'No Cash Prize - Thank You', 'label_en': 'No cash prize this time — thank you for taking part!', 'label_my': 'ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။', 'emoji': '😊'},
+    {'key': 'No Prize - Thanks for Spinning', 'label_en': 'No prize this time — thanks for giving it a spin!', 'label_my': 'ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'emoji': '✨'},
 ]
 
 HEADERS = [
