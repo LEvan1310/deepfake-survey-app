@@ -7,16 +7,16 @@ import secrets
 import psycopg
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session
-
+ 
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'deepfake_research_secret_key_change_me')
-
+ 
 RESULTS_FILE = 'survey_responses.csv'
 REWARDS_FILE = 'reward_results.csv'
 DATABASE_URL = os.environ.get('DATABASE_URL')
 # Set ADMIN_PASSWORD in your hosting environment for production.
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Evan')
-
+ 
 # Nine main quiz clips. The quiz and result page use this exact same mapping.
 # Clips 2 and 5 are the two Deepfake Label Video Tests. The quiz and result page use this exact same mapping.
 QUIZ_MEDIA = {
@@ -75,7 +75,7 @@ QUIZ_MEDIA = {
         'source_name': 'Research Video 9',
     },
 }
-
+ 
 def drive_media(drive_id, source_name='Research Video'):
     return {
         'source_type': 'google_drive',
@@ -83,7 +83,7 @@ def drive_media(drive_id, source_name='Research Video'):
         'source_url': f'https://drive.google.com/file/d/{drive_id}/view',
         'source_name': source_name,
     }
-
+ 
 VIDEO_QUIZ = {
     1: {**QUIZ_MEDIA[1], 'answer': 'AI-Generated',
         'reason_en': 'The study answer key classifies this clip as AI-generated. Look for inconsistencies across face movement, voice, lighting and context rather than relying on one visual clue.',
@@ -113,7 +113,7 @@ VIDEO_QUIZ = {
         'reason_en': 'The configured answer is AI-generated. The strongest verification combines media cues with trusted-source cross-checking.',
         'reason_my': 'သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ အကောင်းဆုံးစစ်ဆေးနည်းမှာ မီဒီယာလက္ခဏာများနှင့် ယုံကြည်စိတ်ချရသော ရင်းမြစ်များကို နှိုင်းယှဉ်စစ်ဆေးခြင်း ဖြစ်သည်။'}
 }
-
+ 
 # Warning-label videos are intentionally separate from the nine main quiz clips.
 WARNING_EXPERIMENT = {
     1: {
@@ -143,7 +143,7 @@ WARNING_EXPERIMENT = {
         'title_my': 'စမ်းသပ်အခြေအနေ ၃ - AI တံဆိပ်ရှိသည့် Realism Challenge',
     },
 }
-
+ 
 # Educational recommendation videos are also kept separate.
 EDUCATIONAL_VIDEOS = [
     {
@@ -163,15 +163,34 @@ EDUCATIONAL_VIDEOS = [
         'title_my': 'Deepfake နှင့် AI-generated video ကို ခွဲခြားစစ်ဆေးနည်း',
     },
 ]
-
+ 
 REWARD_OPTIONS = [
-    {'key': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။', 'label_en': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။', 'label_my': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။!', 'emoji': ''},
-    {'key': '1000 KS', 'label_en': '1,000 KS', 'label_my': '1,000 ကျပ် ဆုရပါပြီ!', 'emoji': '💰'},
-    {'key': '3000 KS', 'label_en': '3,000 KS', 'label_my': '💵 3,000 ကျပ် ဆုရပါပြီ!', 'emoji': '🎊'},
-    {'key': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'label_en': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'label_my': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'emoji': '😊'},
-    {'key': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'label_en': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'label_my': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'emoji': '✨'},
+    {'key': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။', 'label_en': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။', 'label_my': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။!', 'emoji': '', 'weight': 30},
+    {'key': '1000 KS', 'label_en': '1,000 KS', 'label_my': '1,000 ကျပ် ဆုရပါပြီ!', 'emoji': '💰', 'weight': 20},
+    {'key': '3000 KS', 'label_en': '3,000 KS', 'label_my': '💵 3,000 ကျပ် ဆုရပါပြီ!', 'emoji': '🎊', 'weight': 2},
+    {'key': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'label_en': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'label_my': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'emoji': '😊', 'weight': 28},
+    {'key': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'label_en': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'label_my': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'emoji': '✨', 'weight': 20},
 ]
-
+# 'weight' = relative odds, not a percent. With the values above, 3,000 KS is
+# picked about 2 times out of 100 spins on average. Raise or lower any single
+# weight to change that prize's odds relative to the others — they don't need
+# to add up to 100, they just need to be in proportion to each other.
+ 
+ 
+def weighted_reward_index():
+    """Pick a reward index using each option's 'weight' instead of a flat
+    1-in-N chance, so rare prizes (like 3,000 KS) can be made unlikely while
+    still occasionally possible. Uses `secrets` so it stays unpredictable."""
+    weights = [item.get('weight', 1) for item in REWARD_OPTIONS]
+    total = sum(weights)
+    roll = secrets.randbelow(total)
+    running_total = 0
+    for index, weight in enumerate(weights):
+        running_total += weight
+        if roll < running_total:
+            return index
+    return len(REWARD_OPTIONS) - 1
+ 
 HEADERS = [
     'Timestamp', 'Participant_ID', 'Name', 'Age_Group', 'Gender', 'Education_Level', 'News_Frequency', 'News_Source',
     'Watched_Deepfake_Before', 'Heard_Deepfake', 'Deepfake_Description', 'Suspected_Deepfake_Before',
@@ -194,15 +213,15 @@ for i in range(1, 4):
         f'Warning_{i}_Realism_Influence', f'Warning_{i}_Reaction', f'Warning_{i}_Reason'
     ])
 HEADERS.extend(['Video_Score_Correct', 'Video_Score_Total', 'Video_Score_Percent'])
-
-
+ 
+ 
 def ensure_csv_headers():
     """Create/migrate the CSV while preserving older participant responses."""
     if not os.path.exists(RESULTS_FILE) or os.path.getsize(RESULTS_FILE) == 0:
         with open(RESULTS_FILE, 'w', newline='', encoding='utf-8') as f:
             csv.writer(f).writerow(HEADERS)
         return
-
+ 
     with open(RESULTS_FILE, 'r', newline='', encoding='utf-8') as f:
         rows = list(csv.reader(f))
     if not rows:
@@ -210,12 +229,12 @@ def ensure_csv_headers():
     old_headers = rows[0]
     if old_headers == HEADERS:
         return
-
+ 
     # Keep a backup, then map every existing column into the new schema.
     legacy_file = 'survey_responses_legacy.csv'
     if not os.path.exists(legacy_file):
         shutil.copy2(RESULTS_FILE, legacy_file)
-
+ 
     old_index = {h: i for i, h in enumerate(old_headers)}
     migrated = []
     for row_number, row in enumerate(rows[1:], start=1):
@@ -231,13 +250,13 @@ def ensure_csv_headers():
                 idx = old_index.get(header)
                 new_row.append(row[idx] if idx is not None and idx < len(row) else '')
         migrated.append(new_row)
-
+ 
     with open(RESULTS_FILE, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(HEADERS)
         writer.writerows(migrated)
-
-
+ 
+ 
 def admin_required(view):
     @wraps(view)
     def wrapped(*args, **kwargs):
@@ -245,19 +264,19 @@ def admin_required(view):
             return redirect(url_for('admin_login', next=request.path))
         return view(*args, **kwargs)
     return wrapped
-
-
+ 
+ 
 def video_page_context(start, end):
     # IMPORTANT: The quiz pages and the result page use this SAME VIDEO_QUIZ
     # configuration. This guarantees Video 1 in the quiz is Video 1 in results,
     # Video 2 is Video 2, and so on through Video 9.
     return {i: VIDEO_QUIZ[i] for i in range(start, end + 1)}
-
-
+ 
+ 
 def calculate_quiz():
     details = []
     correct = 0
-
+ 
     for i in range(1, 10):
         if i <= 3:
             data = session.get('page5', {})
@@ -265,7 +284,7 @@ def calculate_quiz():
             data = session.get('page6', {})
         else:
             data = session.get('page7', {})
-
+ 
         # Use the exact same configured stimulus used on the quiz page.
         stimulus = VIDEO_QUIZ[i]
         selected = data.get(f'v_real_{i}', '')
@@ -273,7 +292,7 @@ def calculate_quiz():
         is_correct = selected == expected
         if is_correct:
             correct += 1
-
+ 
         details.append({
             'number': i,
             'selected': selected,
@@ -290,26 +309,26 @@ def calculate_quiz():
             'youtube_id': stimulus.get('youtube_id', ''),
             'source_name': stimulus.get('source_name', '')
         })
-
+ 
     percent = round((correct / 9) * 100)
     return correct, 9, percent, details
-
-
+ 
+ 
 @app.route('/')
 def index():
     return render_template('index.html')
-
-
+ 
+ 
 @app.route('/consent')
 def consent():
     return render_template('consent.html')
-
-
+ 
+ 
 @app.route('/quiz-introduction')
 def quiz_intro():
     return render_template('quiz_intro.html', skipped=session.get('skipped_pre_video_sections', False))
-
-
+ 
+ 
 @app.route('/awareness-training/1')
 def awareness_training_1():
     phase = session.get('awareness_phase')
@@ -322,16 +341,16 @@ def awareness_training_1():
             return redirect(url_for('survey_reflection'))
         back_url = url_for('survey_reflection')
     return render_template('awareness_training_1.html', back_url=back_url)
-
-
+ 
+ 
 @app.route('/awareness-training/2')
 def awareness_training_2():
     phase = session.get('awareness_phase')
     if phase != 'pre_quiz' and 'reflection' not in session:
         return redirect(url_for('survey_reflection'))
     return render_template('awareness_training_2.html')
-
-
+ 
+ 
 @app.route('/awareness-training/3')
 def awareness_training_3():
     phase = session.get('awareness_phase')
@@ -346,8 +365,8 @@ def awareness_training_3():
         next_en = 'Continue to Warning-Label Section →'
         next_my = 'သတိပေးတံဆိပ်အပိုင်းသို့ ဆက်သွားရန် →'
     return render_template('awareness_training_3.html', next_url=next_url, next_en=next_en, next_my=next_my)
-
-
+ 
+ 
 @app.route('/survey/page1', methods=['GET', 'POST'])
 def survey_page1():
     if request.method == 'POST':
@@ -359,8 +378,8 @@ def survey_page1():
         session['page1'] = request.form.to_dict()
         return redirect(url_for('survey_page2'))
     return render_template('survey_page1.html')
-
-
+ 
+ 
 @app.route('/survey/page2', methods=['GET', 'POST'])
 def survey_page2():
     if request.method == 'POST':
@@ -381,42 +400,42 @@ def survey_page2():
         session.pop('awareness_phase', None)
         return redirect(url_for('survey_page3'))
     return render_template('survey_page2.html')
-
-
+ 
+ 
 @app.route('/survey/page3', methods=['GET', 'POST'])
 def survey_page3():
     if request.method == 'POST':
         session['page3'] = request.form.to_dict()
         return redirect(url_for('survey_page4'))
     return render_template('survey_page3.html')
-
-
+ 
+ 
 @app.route('/survey/page4', methods=['GET', 'POST'])
 def survey_page4():
     if request.method == 'POST':
         session['page4'] = request.form.to_dict()
-
+ 
         # Yes path: after Sections C and D, show awareness ONCE before the quiz.
         session['awareness_phase'] = 'pre_quiz'
         return redirect(url_for('awareness_training_1'))
-
+ 
     return render_template('survey_page4.html')
-
-
+ 
+ 
 @app.route('/survey/page5', methods=['GET', 'POST'])
 def survey_page5():
     if request.method == 'POST':
         session['page5'] = request.form.to_dict()
         return redirect(url_for('survey_page6'))
     return render_template('survey_page5.html', videos=video_page_context(1, 3), skipped=session.get('skipped_pre_video_sections', False))
-
-
+ 
+ 
 @app.route('/survey/page6', methods=['GET', 'POST'])
 def survey_page6():
     if request.method == 'POST':
         session['page6'] = request.form.to_dict()
         return redirect(url_for('survey_page7'))
-
+ 
     # Clips 4–6 come directly from VIDEO_QUIZ, so the quiz and result page always match.
     videos = {
         4: VIDEO_QUIZ[4],
@@ -424,13 +443,13 @@ def survey_page6():
         6: VIDEO_QUIZ[6],
     }
     return render_template('survey_page6.html', videos=videos)
-
-
+ 
+ 
 @app.route('/survey/page7', methods=['GET', 'POST'])
 def survey_page7():
     if request.method == 'POST':
         session['page7'] = request.form.to_dict()
-
+ 
         # Freeze the quiz result immediately after all 9 clips are answered.
         # calculate_quiz() uses the exact media snapshot shown during the quiz,
         # so the result page displays the same 9 clips the participant answered.
@@ -439,39 +458,39 @@ def survey_page7():
         session['quiz_total'] = total
         session['quiz_percent'] = percent
         session['quiz_details'] = details
-
+ 
         return redirect(url_for('survey_reflection'))
     return render_template('survey_page7.html', videos=video_page_context(7, 9))
-
-
+ 
+ 
 @app.route('/survey/reflection', methods=['GET', 'POST'])
 def survey_reflection():
     if 'page7' not in session:
         return redirect(url_for('survey_page7'))
-
+ 
     if request.method == 'POST':
         session['reflection'] = request.form.to_dict()
-
+ 
         # The 3-page awareness module is now completed BEFORE the quiz
         # for both Yes and No participants, so never show it again here.
         session.pop('awareness_phase', None)
         return redirect(url_for('survey_page8'))
-
+ 
     return render_template('survey_reflection.html', previous=session.get('reflection', {}))
-
-
+ 
+ 
 def warning_summary(data):
     before_belief = data.get('w1_belief_before', '')
     after_belief = data.get('w1_belief_after', '')
     before_trust = data.get('w1_trust_before', '')
     after_trust = data.get('w1_trust_after', '')
-
+ 
     def delta(a, b):
         try:
             return int(b) - int(a)
         except (TypeError, ValueError):
             return None
-
+ 
     return {
         'before_belief': before_belief,
         'after_belief': after_belief,
@@ -484,8 +503,8 @@ def warning_summary(data):
         'labelled_3_belief': data.get('w3_belief_after', ''),
         'labelled_3_realism': data.get('w3_realism', ''),
     }
-
-
+ 
+ 
 def save_survey_response():
     # Prefer the frozen result created immediately after Video 9.
     # Fall back to calculation only for an older/incomplete session.
@@ -500,7 +519,7 @@ def save_survey_response():
         session['quiz_total'] = total
         session['quiz_percent'] = percent
         session['quiz_details'] = details
-
+ 
     p1 = session.get('page1', {})
     p2 = session.get('page2', {})
     p3 = session.get('page3', {})
@@ -510,14 +529,14 @@ def save_survey_response():
     p7 = session.get('page7', {})
     p8 = session.get('page8', {})
     reflection = session.get('reflection', {})
-
+ 
     if p8.get('section_f_choice') == 'Participate':
         session['warning_summary'] = warning_summary(p8)
         session['section_f_completed'] = True
     else:
         session['warning_summary'] = {}
         session['section_f_completed'] = False
-
+ 
     row_map = {
         'Timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         'Participant_ID': session.get('participant_id', ''),
@@ -556,9 +575,9 @@ def save_survey_response():
         row_map[f'Warning_{i}_Realism_Influence'] = p8.get(f'w{i}_realism_influence', '')
         row_map[f'Warning_{i}_Reaction'] = p8.get(f'w{i}_reaction', '')
         row_map[f'Warning_{i}_Reason'] = p8.get(f'w{i}_reason', '')
-
+ 
     participant_id = get_participant_id()
-
+ 
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -577,12 +596,12 @@ def save_survey_response():
                     json.dumps(row_map)
                 )
             )
-
+ 
         conn.commit()
-
+ 
     session['survey_saved'] = True
-
-
+ 
+ 
 def validate_section_f(form):
     # All three labelled clips now use the same five visible questions (original questions 1, 2, 5, 6 and 7).
     # The legacy before-label fields are hidden/blank for database compatibility
@@ -594,8 +613,8 @@ def validate_section_f(form):
             f'w{i}_could_be_true', f'w{i}_realism_influence', f'w{i}_reaction'
         ])
     return [field for field in required if not str(form.get(field, '')).strip()]
-
-
+ 
+ 
 @app.route('/survey/page8', methods=['GET', 'POST'])
 def survey_page8():
     if 'page7' not in session:
@@ -622,14 +641,14 @@ def survey_page8():
                 save_survey_response()
                 return redirect(url_for('reward_page'))
     return render_template('survey_page8.html', experiments=WARNING_EXPERIMENT, error=error)
-
-
+ 
+ 
 def save_reward(prize):
     if not DATABASE_URL:
         return
-
+ 
     participant_id = get_participant_id()
-
+ 
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -649,13 +668,13 @@ def save_reward(prize):
                 )
             )
         conn.commit()
-
-
+ 
+ 
 @app.route('/reward', methods=['GET', 'POST'])
 def reward_page():
     if not session.get('section_f_completed'):
         return redirect(url_for('results_page'))
-
+ 
     prize = None
     prize_index = None
     if session.get('reward_key'):
@@ -665,14 +684,14 @@ def reward_page():
                 prize_index = idx
                 break
     elif request.method == 'POST':
-        prize_index = secrets.randbelow(len(REWARD_OPTIONS))
+        prize_index = weighted_reward_index()
         prize = REWARD_OPTIONS[prize_index]
         session['reward_key'] = prize['key']
         save_reward(prize)
-
+ 
     return render_template('reward.html', rewards=REWARD_OPTIONS, prize=prize, prize_index=prize_index)
-
-
+ 
+ 
 @app.route('/results')
 def results_page():
     if 'quiz_details' not in session:
@@ -684,8 +703,8 @@ def results_page():
                            details=session.get('quiz_details', []),
                            warning=session.get('warning_summary', {}),
                            educational_videos=EDUCATIONAL_VIDEOS)
-
-
+ 
+ 
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
     if session.get('admin_logged_in'):
@@ -698,8 +717,8 @@ def admin_login():
             return redirect(url_for('admin'))
         error = 'invalid'
     return render_template('admin_login.html', error=error)
-
-
+ 
+ 
 @app.route('/admin-logout')
 def admin_logout():
     session.pop('admin_logged_in', None)
@@ -707,10 +726,10 @@ def admin_logout():
     
 def get_all_responses():
     responses = []
-
+ 
     if not DATABASE_URL:
         return responses
-
+ 
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
             cur.execute("""
@@ -718,23 +737,23 @@ def get_all_responses():
                 FROM survey_responses
                 ORDER BY submitted_at DESC
             """)
-
+ 
             for participant_id, submitted_at, data in cur.fetchall():
                 responses.append({
                     'participant_id': participant_id,
                     'submitted_at': submitted_at,
                     'data': data
                 })
-
+ 
     return responses
-
+ 
 @app.route('/admin')
 @admin_required
 def admin():
     """Research-focused dashboard built from participant-level responses stored in Neon."""
     responses = get_all_responses()
     participant_summaries = []
-
+ 
     total_real_answers = 0
     total_ai_answers = 0
     total_unsure_answers = 0
@@ -744,7 +763,7 @@ def admin():
     per_video_answered = {i: 0 for i in range(1, 10)}
     per_video_confidence = {i: [] for i in range(1, 10)}
     cue_counts = {}
-
+ 
     section_f_count = 0
     warning_before_belief = []
     warning_after_belief = []
@@ -754,40 +773,40 @@ def admin():
     condition_belief = {1: [], 2: [], 3: []}
     condition_realism = {1: [], 2: [], 3: []}
     condition_trust = {1: [], 2: [], 3: []}
-
+ 
     def safe_float(value):
         try:
             return float(value)
         except (TypeError, ValueError):
             return None
-
+ 
     for response in responses:
         participant_id = response['participant_id']
         submitted_at = response['submitted_at']
         data = response['data'] or {}
-
+ 
         name = data.get('Name') or '—'
         watched_before = data.get('Watched_Deepfake_Before') or '—'
         section_f = data.get('Section_F_Participation') or 'Skip'
         if section_f == 'Participate':
             section_f_count += 1
-
+ 
         score_correct = data.get('Video_Score_Correct') or '0'
         score_total = data.get('Video_Score_Total') or '9'
         score_percent = safe_float(data.get('Video_Score_Percent'))
         if score_percent is not None:
             scores.append(score_percent)
-
+ 
         participant_video_details = []
         participant_conf = []
-
+ 
         for i in range(1, 10):
             answer = data.get(f'Video_{i}_Classification', '')
             confidence = safe_float(data.get(f'Video_{i}_Confidence'))
             cue = data.get(f'Video_{i}_Cue', '')
             expected = VIDEO_QUIZ[i]['answer']
             is_correct = answer == expected if answer else False
-
+ 
             if answer:
                 per_video_answered[i] += 1
                 if is_correct:
@@ -798,15 +817,15 @@ def admin():
                     total_ai_answers += 1
                 elif answer == 'Not sure':
                     total_unsure_answers += 1
-
+ 
             if confidence is not None:
                 per_video_confidence[i].append(confidence)
                 all_confidence.append(confidence)
                 participant_conf.append(confidence)
-
+ 
             if cue:
                 cue_counts[cue] = cue_counts.get(cue, 0) + 1
-
+ 
             participant_video_details.append({
                 'number': i,
                 'answer': answer or '—',
@@ -815,12 +834,12 @@ def admin():
                 'confidence': confidence if confidence is not None else '—',
                 'cue': cue or '—'
             })
-
+ 
         b_before = safe_float(data.get('Warning_1_Belief_Before'))
         b_after = safe_float(data.get('Warning_1_Belief_After'))
         t_before = safe_float(data.get('Warning_1_Trust_Before'))
         t_after = safe_float(data.get('Warning_1_Trust_After'))
-
+ 
         if b_before is not None:
             warning_before_belief.append(b_before)
         if b_after is not None:
@@ -829,13 +848,13 @@ def admin():
             warning_before_trust.append(t_before)
         if t_after is not None:
             warning_after_trust.append(t_after)
-
+ 
         warning_details = []
         for wi in range(1, 4):
             belief_after = safe_float(data.get(f'Warning_{wi}_Belief_After'))
             realism = safe_float(data.get(f'Warning_{wi}_Realism'))
             trust_after = safe_float(data.get(f'Warning_{wi}_Trust_After'))
-
+ 
             if belief_after is not None:
                 labelled_belief_values.append(belief_after)
                 condition_belief[wi].append(belief_after)
@@ -843,7 +862,7 @@ def admin():
                 condition_realism[wi].append(realism)
             if trust_after is not None:
                 condition_trust[wi].append(trust_after)
-
+ 
             warning_details.append({
                 'number': wi,
                 'belief_before': data.get(f'Warning_{wi}_Belief_Before') or '—',
@@ -854,7 +873,7 @@ def admin():
                 'reaction': data.get(f'Warning_{wi}_Reaction') or '—',
                 'reason': data.get(f'Warning_{wi}_Reason') or '—'
             })
-
+ 
         participant_summaries.append({
             'id': participant_id,
             'name': name,
@@ -877,12 +896,12 @@ def admin():
             'videos': participant_video_details,
             'warnings': warning_details,
         })
-
+ 
     total_submissions = len(participant_summaries)
     avg_score = round(sum(scores) / len(scores), 1) if scores else 0
     avg_confidence = round(sum(all_confidence) / len(all_confidence), 2) if all_confidence else 0
     section_f_rate = round((section_f_count / total_submissions) * 100, 1) if total_submissions else 0
-
+ 
     avg_before_belief = round(sum(warning_before_belief) / len(warning_before_belief), 2) if warning_before_belief else 0
     avg_after_belief = round(sum(warning_after_belief) / len(warning_after_belief), 2) if warning_after_belief else 0
     avg_before_trust = round(sum(warning_before_trust) / len(warning_before_trust), 2) if warning_before_trust else 0
@@ -890,7 +909,7 @@ def admin():
     belief_change = round(avg_after_belief - avg_before_belief, 2) if warning_before_belief and warning_after_belief else 0
     trust_change = round(avg_after_trust - avg_before_trust, 2) if warning_before_trust and warning_after_trust else 0
     continued_belief_rate = round((sum(1 for v in labelled_belief_values if v >= 3) / len(labelled_belief_values)) * 100, 1) if labelled_belief_values else 0
-
+ 
     video_labels = [f'Video {i}' for i in range(1, 10)]
     video_correct_rates = [
         round((per_video_correct[i] / per_video_answered[i]) * 100, 1) if per_video_answered[i] else 0
@@ -900,16 +919,16 @@ def admin():
         round(sum(per_video_confidence[i]) / len(per_video_confidence[i]), 2) if per_video_confidence[i] else 0
         for i in range(1, 10)
     ]
-
+ 
     top_cues = sorted(cue_counts.items(), key=lambda kv: kv[1], reverse=True)[:8]
     cue_labels = [k for k, _ in top_cues]
     cue_values = [v for _, v in top_cues]
-
+ 
     condition_labels = ['Condition 1', 'Condition 2', 'Condition 3']
     condition_belief_avg = [round(sum(condition_belief[i]) / len(condition_belief[i]), 2) if condition_belief[i] else 0 for i in range(1, 4)]
     condition_realism_avg = [round(sum(condition_realism[i]) / len(condition_realism[i]), 2) if condition_realism[i] else 0 for i in range(1, 4)]
     condition_trust_avg = [round(sum(condition_trust[i]) / len(condition_trust[i]), 2) if condition_trust[i] else 0 for i in range(1, 4)]
-
+ 
     return render_template(
         'admin.html',
         total_submissions=total_submissions,
@@ -938,12 +957,12 @@ def admin():
         condition_trust_avg=condition_trust_avg,
         participant_summaries=participant_summaries,
     )
-
+ 
 def init_database():
     if not DATABASE_URL:
         print("DATABASE_URL is not configured.")
         return
-
+ 
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
             cur.execute("""
@@ -964,18 +983,18 @@ def init_database():
                 )
             """)
         conn.commit()
-
-
+ 
+ 
 def get_participant_id():
     if 'participant_id' not in session:
         session['participant_id'] = 'DF-' + secrets.token_hex(4).upper()
-
+ 
     return session['participant_id']
-
-
+ 
+ 
 init_database()
-
-
+ 
+ 
 if __name__ == '__main__':
     app.run(
         host='0.0.0.0',
