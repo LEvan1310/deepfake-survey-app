@@ -52,18 +52,18 @@
     .center-cap { width:68px; height:68px; font-size:.82rem; }
   }
 </style>
-
+ 
 <div class="card shadow reward-card p-4 p-md-5 text-center">
   <h2 class="text-primary reward-heading mb-2">
     <span data-lang-block="en">🎡 Deepfake Lucky Spin</span>
     <span data-lang-block="my" style="display:none">🎡 Deepfake Lucky Spin</span>
   </h2>
-
+ 
   <p class="reward-subtitle">
     <span data-lang-block="en">Spin once. Your reward is the segment that stops directly under the arrow.</span>
     <span data-lang-block="my" style="display:none">တစ်ကြိမ်သာ လှည့်နိုင်ပါသည်။ မြှားအောက်တွင် ရပ်သည့် အပိုင်းသည် သင့်ဆုဖြစ်ပါသည်။</span>
   </p>
-
+ 
   <div class="wheel-stage">
     <div class="pointer" aria-hidden="true"></div>
     <div class="wheel-shell" id="wheelShell">
@@ -75,7 +75,7 @@
       <span data-lang-block="my" style="display:none">လှည့်</span>
     </div>
   </div>
-
+ 
   {% if not prize %}
     <form method="POST" id="spinForm">
       <button class="btn btn-success btn-lg spin-button" type="submit" id="spinButton">
@@ -88,7 +88,7 @@
       <span data-lang-block="en">🎡 Spinning… your reward will appear when the wheel stops.</span>
       <span data-lang-block="my" style="display:none">🎡 Wheel လှည့်နေပါသည်… ရပ်ပြီးမှ ဆုကို ပြပါမည်။</span>
     </div>
-
+ 
     <div id="resultArea" class="alert alert-success result-box mt-3" hidden>
       <strong>
         <span data-lang-block="en">Your result:</span>
@@ -98,14 +98,14 @@
       <span data-lang-block="en">{{ prize.emoji }} {{ prize.label_en }}</span>
       <span data-lang-block="my" style="display:none">{{ prize.emoji }} {{ prize.label_my }}</span>
     </div>
-
+ 
     <a id="resultLink" href="{{ url_for('results_page') }}" class="btn btn-primary btn-lg rounded-pill px-4" hidden>
       <span data-lang-block="en">View Survey & Quiz Results →</span>
       <span data-lang-block="my" style="display:none">စစ်တမ်းနှင့် Quiz ရလဒ်များ ကြည့်ရန် →</span>
     </a>
   {% endif %}
 </div>
-
+ 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const rewards = {{ rewards|tojson }};
@@ -113,16 +113,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('wheelCanvas');
   const labelsHost = document.getElementById('wheelLabels');
   const ctx = canvas.getContext('2d');
-
+ 
   const colors = ['#72C472', '#66B8F0', '#FF8A80', '#AA91D8', '#F4C95D'];
   const segmentCount = rewards.length;
   const segmentDeg = 360 / segmentCount;
-  const segmentRad = (Math.PI * 3) / segmentCount;
+  const segmentRad = (Math.PI * 2) / segmentCount;
   const cx = canvas.width / 2;
   const cy = canvas.height / 2;
   const radius = canvas.width * 0.47;
   const startAngle = -Math.PI / 2 - segmentRad / 2;
-
+ 
   function shortLabel(item) {
     if (item.key === '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။') return '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။';
     if (item.key === '1000 KS') return '1,000 KS';
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (item.key === '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!') return '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!';
     return item.label_en || item.key;
   }
-
+ 
   function drawWheel() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < segmentCount; i++) {
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.strokeStyle = '#212529';
     ctx.stroke();
   }
-
+ 
   function placeLabels() {
     labelsHost.innerHTML = '';
     const labelRadiusPercent = 31;
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const angleRad = angleDeg * Math.PI / 180;
       const x = 50 + Math.cos(angleRad) * labelRadiusPercent;
       const y = 50 + Math.sin(angleRad) * labelRadiusPercent;
-
+ 
       const label = document.createElement('div');
       label.className = 'wheel-label';
       label.style.left = `${x}%`;
@@ -175,20 +175,20 @@ document.addEventListener('DOMContentLoaded', () => {
       labelsHost.appendChild(label);
     });
   }
-
+ 
   drawWheel();
   placeLabels();
-
+ 
   {% if prize_index is not none %}
     const selectedIndex = {{ prize_index|int }};
     const extraTurns = 7 * 360;
     const finalRotation = extraTurns - (selectedIndex * segmentDeg);
-
+ 
     const spinningMessage = document.getElementById('spinningMessage');
     const resultArea = document.getElementById('resultArea');
     const resultLink = document.getElementById('resultLink');
     let revealed = false;
-
+ 
     function revealResult() {
       if (revealed) return;
       revealed = true;
@@ -196,19 +196,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (resultArea) resultArea.hidden = false;
       if (resultLink) resultLink.hidden = false;
     }
-
+ 
     wheelShell.addEventListener('transitionend', (event) => {
       if (event.propertyName === 'transform') revealResult();
     }, { once: true });
-
+ 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         wheelShell.style.transform = `rotate(${finalRotation}deg)`;
       });
     });
-
+ 
     setTimeout(revealResult, 5900);
   {% endif %}
 });
 </script>
 {% endblock %}
+ 
