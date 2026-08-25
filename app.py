@@ -773,6 +773,40 @@ def get_all_responses():
  
     return responses
  
+
+@app.route('/admin/participant/<participant_id>/delete', methods=['POST'])
+@admin_required
+def delete_participant(participant_id):
+    """Permanently delete one respondent and all associated reward data."""
+    participant_id = str(participant_id).strip()
+
+    if not participant_id:
+        return redirect(url_for('admin'))
+
+    if not DATABASE_URL:
+        return redirect(url_for('admin'))
+
+    try:
+        with psycopg.connect(DATABASE_URL) as conn:
+            with conn.cursor() as cur:
+                # Delete reward first, then the respondent record.
+                # Both are committed together as one transaction.
+                cur.execute(
+                    "DELETE FROM reward_results WHERE participant_id = %s",
+                    (participant_id,)
+                )
+                cur.execute(
+                    "DELETE FROM survey_responses WHERE participant_id = %s",
+                    (participant_id,)
+                )
+            conn.commit()
+    except Exception:
+        app.logger.exception("Failed to delete participant %s", participant_id)
+        return redirect(url_for('admin'))
+
+    return redirect(url_for('admin'))
+
+
 @app.route('/admin')
 @admin_required
 def admin():
