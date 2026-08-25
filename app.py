@@ -20,7 +20,7 @@ ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'Evan')
  
 # Nine main quiz clips. The quiz and result page use this exact same mapping.
 # Clips 2 and 5 are the two Deepfake Label Video Tests. The quiz and result page use this exact same mapping.
-QUIZ_MEDIA = { 
+QUIZ_MEDIA = {
     1: {
         'source_type': 'google_drive',
         'drive_id': '1ZSJa6MhzvghxAJrGg0NUwdME-Y7UDHNn',
@@ -136,10 +136,9 @@ WARNING_EXPERIMENT = {
         'title_my': 'စမ်းသပ်အခြေအနေ ၂ - အစကတည်းက AI တံဆိပ်မြင်ရခြင်း',
     },
     3: {
-        'source_type': 'youtube',
-        'youtube_id': 'WFc6t-c892A',
-        'source_url': 'https://www.youtube.com/watch?v=WFc6t-c892A',
-        'source_name': 'YouTube',
+        'source_type': 'external',
+        'source_url': 'https://www.bbc.com/reel/video/p0hkflt4/watch',
+        'source_name': 'BBC Reel',
         'condition': 'labelled',
         'title_en': 'Condition 3 - Realism Challenge With AI Label',
         'title_my': 'စမ်းသပ်အခြေအနေ ၃ - AI တံဆိပ်ရှိသည့် Realism Challenge',
@@ -167,36 +166,11 @@ EDUCATIONAL_VIDEOS = [
 ]
  
 REWARD_OPTIONS = [
-    {
-        'key': 'Thank You 1',
-        'label_en': '🙏 Thank you for taking part in the survey!',
-        'label_my': '🙏 စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!',
-        'emoji': '🙏'
-    },
-    {
-        'key': '1000 KS',
-        'label_en': '1,000 KS',
-        'label_my': '1,000 ကျပ် ဆုရပါပြီ!',
-        'emoji': '💰'
-    },
-    {
-        'key': 'Thank You 2',
-        'label_en': '😊 Thank you for participating!',
-        'label_my': '😊 ပါဝင်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!',
-        'emoji': '😊'
-    },
-    {
-        'key': 'Thank You 3',
-        'label_en': '✨ Thank you! Better luck next time!',
-        'label_my': '✨ ကျေးဇူးတင်ပါတယ်! နောက်တစ်ကြိမ် ကံကောင်းပါစေ!',
-        'emoji': '✨'
-    },
-    {
-        'key': 'Thank You 4',
-        'label_en': '🎊 Thank you for completing the survey!',
-        'label_my': '🎊 စစ်တမ်းကို ဖြေဆိုပြီးစီးပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!',
-        'emoji': '🎊'
-    },
+    {'key': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။', 'label_en': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။', 'label_my': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။!', 'emoji': '', 'weight': 30},
+    {'key': '1000 KS', 'label_en': '1,000 KS', 'label_my': '1,000 ကျပ် ဆုရပါပြီ!', 'emoji': '💰', 'weight': 20},
+    {'key': '3000 KS', 'label_en': '3,000 KS', 'label_my': '💵 3,000 ကျပ် ဆုရပါပြီ!', 'emoji': '🎊', 'weight': 2},
+    {'key': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'label_en': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'label_my': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'emoji': '😊', 'weight': 28},
+    {'key': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'label_en': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'label_my': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'emoji': '✨', 'weight': 20},
 ]
 # 'weight' = relative odds, not a percent. With the values above, 3,000 KS is
 # picked about 2 times out of 100 spins on average. Raise or lower any single
@@ -205,10 +179,19 @@ REWARD_OPTIONS = [
  
  
 def weighted_reward_index():
-    """Select one of the five reward categories with equal 20% probability."""
-    return secrets.randbelow(len(REWARD_OPTIONS))
-
-
+    """Pick a reward index using each option's 'weight' instead of a flat
+    1-in-N chance, so rare prizes (like 3,000 KS) can be made unlikely while
+    still occasionally possible. Uses `secrets` so it stays unpredictable."""
+    weights = [item.get('weight', 1) for item in REWARD_OPTIONS]
+    total = sum(weights)
+    roll = secrets.randbelow(total)
+    running_total = 0
+    for index, weight in enumerate(weights):
+        running_total += weight
+        if roll < running_total:
+            return index
+    return len(REWARD_OPTIONS) - 1
+ 
 HEADERS = [
     'Timestamp', 'Participant_ID', 'Name', 'Age_Group', 'Gender', 'Education_Level', 'News_Frequency', 'News_Source',
     'Watched_Deepfake_Before', 'Heard_Deepfake', 'Deepfake_Description', 'Suspected_Deepfake_Before',
@@ -393,8 +376,7 @@ def survey_page1():
         # respondent's quiz, warning-label and demographic answers without
         # relying on their name as the primary identifier.
         session['participant_id'] = 'DF-' + secrets.token_hex(4).upper()
-        session['page1'] = form_snapshot(request.form)
-        save_progress_snapshot()
+        session['page1'] = request.form.to_dict()
         return redirect(url_for('survey_page2'))
     return render_template('survey_page1.html')
  
@@ -402,13 +384,13 @@ def survey_page1():
 @app.route('/survey/page2', methods=['GET', 'POST'])
 def survey_page2():
     if request.method == 'POST':
-        form_data = form_snapshot(request.form)
+        form_data = request.form.to_dict()
+        form_data['suspicious_signs'] = ', '.join(request.form.getlist('suspicious_signs'))
         watched = form_data.get('watched_deepfake_before', '')
         # The first gate question must be answered before any later logic can run.
         if watched not in {'Yes', 'No'}:
             return redirect(url_for('survey_page2'))
         session['page2'] = form_data
-        save_progress_snapshot()
         if watched == 'No':
             session['skipped_pre_video_sections'] = True
             # Participants with no previous deepfake exposure receive the
@@ -424,8 +406,7 @@ def survey_page2():
 @app.route('/survey/page3', methods=['GET', 'POST'])
 def survey_page3():
     if request.method == 'POST':
-        session['page3'] = form_snapshot(request.form)
-        save_progress_snapshot()
+        session['page3'] = request.form.to_dict()
         return redirect(url_for('survey_page4'))
     return render_template('survey_page3.html')
  
@@ -433,8 +414,7 @@ def survey_page3():
 @app.route('/survey/page4', methods=['GET', 'POST'])
 def survey_page4():
     if request.method == 'POST':
-        session['page4'] = form_snapshot(request.form)
-        save_progress_snapshot()
+        session['page4'] = request.form.to_dict()
  
         # Yes path: after Sections C and D, show awareness ONCE before the quiz.
         session['awareness_phase'] = 'pre_quiz'
@@ -446,8 +426,7 @@ def survey_page4():
 @app.route('/survey/page5', methods=['GET', 'POST'])
 def survey_page5():
     if request.method == 'POST':
-        session['page5'] = form_snapshot(request.form)
-        save_progress_snapshot()
+        session['page5'] = request.form.to_dict()
         return redirect(url_for('survey_page6'))
     return render_template('survey_page5.html', videos=video_page_context(1, 3), skipped=session.get('skipped_pre_video_sections', False))
  
@@ -455,8 +434,7 @@ def survey_page5():
 @app.route('/survey/page6', methods=['GET', 'POST'])
 def survey_page6():
     if request.method == 'POST':
-        session['page6'] = form_snapshot(request.form)
-        save_progress_snapshot()
+        session['page6'] = request.form.to_dict()
         return redirect(url_for('survey_page7'))
  
     # Clips 4–6 come directly from VIDEO_QUIZ, so the quiz and result page always match.
@@ -471,8 +449,7 @@ def survey_page6():
 @app.route('/survey/page7', methods=['GET', 'POST'])
 def survey_page7():
     if request.method == 'POST':
-        session['page7'] = form_snapshot(request.form)
-        save_progress_snapshot()
+        session['page7'] = request.form.to_dict()
  
         # Freeze the quiz result immediately after all 9 clips are answered.
         # calculate_quiz() uses the exact media snapshot shown during the quiz,
@@ -493,8 +470,7 @@ def survey_reflection():
         return redirect(url_for('survey_page7'))
  
     if request.method == 'POST':
-        session['reflection'] = form_snapshot(request.form)
-        save_progress_snapshot()
+        session['reflection'] = request.form.to_dict()
  
         # The 3-page awareness module is now completed BEFORE the quiz
         # for both Yes and No participants, so never show it again here.
@@ -530,81 +506,6 @@ def warning_summary(data):
     }
  
  
-def form_snapshot(form):
-    """Capture every submitted field, preserving repeated values such as checkboxes."""
-    return {key: values for key, values in form.to_dict(flat=False).items()}
-
-
-def session_answer_snapshot():
-    return {
-        "page1": session.get("page1", {}),
-        "page2": session.get("page2", {}),
-        "page3": session.get("page3", {}),
-        "page4": session.get("page4", {}),
-        "page5": session.get("page5", {}),
-        "page6": session.get("page6", {}),
-        "page7": session.get("page7", {}),
-        "reflection": session.get("reflection", {}),
-        "page8": session.get("page8", {}),
-    }
-
-
-def answer_count(snapshot):
-    total = 0
-    for page in snapshot.values():
-        if not isinstance(page, dict):
-            continue
-        for value in page.values():
-            values = value if isinstance(value, list) else [value]
-            total += sum(1 for item in values if str(item).strip())
-    return total
-
-
-def _json_safe(value):
-    """Convert session/form values into JSON-safe Python values."""
-    if isinstance(value, dict):
-        return {str(k): _json_safe(v) for k, v in value.items()}
-    if isinstance(value, (list, tuple)):
-        return [_json_safe(v) for v in value]
-    if value is None or isinstance(value, (str, int, float, bool)):
-        return value
-    return str(value)
-
-
-def save_progress_snapshot(status="in_progress"):
-    """Persist every answer collected so far without dropping repeated fields."""
-    if not DATABASE_URL:
-        return
-
-    participant_id = get_participant_id()
-    raw = _json_safe(session_answer_snapshot())
-
-    payload = {
-        "Data_Version": 3,
-        "Participant_ID": participant_id,
-        "Progress_Status": status,
-        "Answer_Count": answer_count(raw),
-        "Raw_Answers": raw,
-        "Last_Saved_At": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "Reward": session.get("reward_key", ""),
-    }
-
-    with psycopg.connect(DATABASE_URL) as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                INSERT INTO survey_responses (participant_id, data)
-                VALUES (%s, %s::jsonb)
-                ON CONFLICT (participant_id)
-                DO UPDATE SET
-                    data = EXCLUDED.data,
-                    submitted_at = CURRENT_TIMESTAMP
-                """,
-                (participant_id, json.dumps(payload, ensure_ascii=False))
-            )
-        conn.commit()
-
-
 def save_survey_response():
     # Prefer the frozen result created immediately after Video 9.
     # Fall back to calculation only for an older/incomplete session.
@@ -629,15 +530,8 @@ def save_survey_response():
     p7 = session.get('page7', {})
     p8 = session.get('page8', {})
     reflection = session.get('reflection', {})
-
-    def scalar(page, key, default=''):
-        value = page.get(key, default) if isinstance(page, dict) else default
-        if isinstance(value, list):
-            return ', '.join(str(v) for v in value)
-        return value
-
  
-    if scalar(p8, 'section_f_choice') == 'Participate':
+    if p8.get('section_f_choice') == 'Participate':
         session['warning_summary'] = warning_summary(p8)
         session['section_f_completed'] = True
     else:
@@ -647,50 +541,42 @@ def save_survey_response():
     row_map = {
         'Timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         'Participant_ID': session.get('participant_id', ''),
-        'Name': scalar(p1, 'name'), 'Age_Group': scalar(p1, 'age_group'), 'Gender': scalar(p1, 'gender'),
-        'Education_Level': scalar(p1, 'education_level'), 'News_Frequency': scalar(p1, 'news_frequency'), 'News_Source': scalar(p1, 'news_source'),
-        'Watched_Deepfake_Before': scalar(p2, 'watched_deepfake_before'), 'Heard_Deepfake': scalar(p2, 'heard_deepfake'),
-        'Deepfake_Description': scalar(p2, 'deepfake_description'), 'Suspected_Deepfake_Before': scalar(p2, 'suspected_deepfake_before'),
-        'Confidence_Identifying': scalar(p2, 'confidence_identifying'), 'Suspicious_Signs': scalar(p2, 'suspicious_signs'),
-        'Political_Video_Authenticity': scalar(p3, 'video_real_immediate'), 'Media_Authenticity_Confidence': scalar(p3, 'confidence_immediate'),
-        'Deepfake_Believability': scalar(p3, 'believability'), 'Physical_Realism': scalar(p3, 'realism'),
-        'Political_Leader_Trust': scalar(p3, 'figure_trustworthiness'), 'Opinion_Change': scalar(p3, 'opinion_change'),
-        'Voting_Influence': scalar(p3, 'voting_influence'), 'Social_Media_Trust': scalar(p3, 'social_media_trust'),
-        'Election_Fairness_Concern': scalar(p3, 'election_fairness_concern'), 'Election_Trust_Reduction': scalar(p3, 'election_trust_reduction'),
-        'War_News_Believability': scalar(p3, 'war_believability'),
-        'Post_Warning_Belief': scalar(p4, 'post_warning_belief'), 'Post_Warning_Believability': scalar(p4, 'post_warning_believability'),
-        'Post_Warning_Trustworthiness': scalar(p4, 'post_warning_trustworthiness'), 'Warning_Effectiveness': scalar(p4, 'warning_effectiveness'),
-        'Action_After_Warning': scalar(p4, 'action_after_warning'),
-        'Qual_Real_Or_Fake_Features': scalar(reflection, 'q27'), 'Qual_Opinion_Effect': scalar(reflection, 'q28'),
-        'Qual_Warning_Impact': scalar(reflection, 'q29'), 'Qual_Recommended_Actions': scalar(reflection, 'q30'),
-        'Section_F_Participation': scalar(p8, 'section_f_choice', 'Skip'),
+        'Name': p1.get('name', ''), 'Age_Group': p1.get('age_group', ''), 'Gender': p1.get('gender', ''),
+        'Education_Level': p1.get('education_level', ''), 'News_Frequency': p1.get('news_frequency', ''), 'News_Source': p1.get('news_source', ''),
+        'Watched_Deepfake_Before': p2.get('watched_deepfake_before', ''), 'Heard_Deepfake': p2.get('heard_deepfake', ''),
+        'Deepfake_Description': p2.get('deepfake_description', ''), 'Suspected_Deepfake_Before': p2.get('suspected_deepfake_before', ''),
+        'Confidence_Identifying': p2.get('confidence_identifying', ''), 'Suspicious_Signs': p2.get('suspicious_signs', ''),
+        'Political_Video_Authenticity': p3.get('video_real_immediate', ''), 'Media_Authenticity_Confidence': p3.get('confidence_immediate', ''),
+        'Deepfake_Believability': p3.get('believability', ''), 'Physical_Realism': p3.get('realism', ''),
+        'Political_Leader_Trust': p3.get('figure_trustworthiness', ''), 'Opinion_Change': p3.get('opinion_change', ''),
+        'Voting_Influence': p3.get('voting_influence', ''), 'Social_Media_Trust': p3.get('social_media_trust', ''),
+        'Election_Fairness_Concern': p3.get('election_fairness_concern', ''), 'Election_Trust_Reduction': p3.get('election_trust_reduction', ''),
+        'War_News_Believability': p3.get('war_believability', ''),
+        'Post_Warning_Belief': p4.get('post_warning_belief', ''), 'Post_Warning_Believability': p4.get('post_warning_believability', ''),
+        'Post_Warning_Trustworthiness': p4.get('post_warning_trustworthiness', ''), 'Warning_Effectiveness': p4.get('warning_effectiveness', ''),
+        'Action_After_Warning': p4.get('action_after_warning', ''),
+        'Qual_Real_Or_Fake_Features': reflection.get('q27', ''), 'Qual_Opinion_Effect': reflection.get('q28', ''),
+        'Qual_Warning_Impact': reflection.get('q29', ''), 'Qual_Recommended_Actions': reflection.get('q30', ''),
+        'Section_F_Participation': p8.get('section_f_choice', 'Skip'),
         'Video_Score_Correct': str(correct), 'Video_Score_Total': str(total), 'Video_Score_Percent': str(percent)
     }
     for i in range(1, 10):
         page_data = p5 if i <= 3 else (p6 if i <= 6 else p7)
-        row_map[f'Video_{i}_Classification'] = scalar(page_data, f'v_real_{i}')
-        row_map[f'Video_{i}_Confidence'] = scalar(page_data, f'v_confidence_{i}')
-        row_map[f'Video_{i}_Cue'] = scalar(page_data, f'v_cue_{i}')
+        row_map[f'Video_{i}_Classification'] = page_data.get(f'v_real_{i}', '')
+        row_map[f'Video_{i}_Confidence'] = page_data.get(f'v_confidence_{i}', '')
+        row_map[f'Video_{i}_Cue'] = page_data.get(f'v_cue_{i}', '')
     for i in range(1, 4):
-        row_map[f'Warning_{i}_Belief_Before'] = scalar(p8, f'w{i}_belief_before')
-        row_map[f'Warning_{i}_Trust_Before'] = scalar(p8, f'w{i}_trust_before')
-        row_map[f'Warning_{i}_Belief_After'] = scalar(p8, f'w{i}_belief_after')
-        row_map[f'Warning_{i}_Realism'] = scalar(p8, f'w{i}_realism')
-        row_map[f'Warning_{i}_Trust_After'] = scalar(p8, f'w{i}_trust_after')
-        row_map[f'Warning_{i}_Influence_Removed'] = scalar(p8, f'w{i}_influence_removed')
-        row_map[f'Warning_{i}_Could_Be_True'] = scalar(p8, f'w{i}_could_be_true')
-        row_map[f'Warning_{i}_Realism_Influence'] = scalar(p8, f'w{i}_realism_influence')
-        row_map[f'Warning_{i}_Reaction'] = scalar(p8, f'w{i}_reaction')
-        row_map[f'Warning_{i}_Reason'] = scalar(p8, f'w{i}_reason')
+        row_map[f'Warning_{i}_Belief_Before'] = p8.get(f'w{i}_belief_before', '')
+        row_map[f'Warning_{i}_Trust_Before'] = p8.get(f'w{i}_trust_before', '')
+        row_map[f'Warning_{i}_Belief_After'] = p8.get(f'w{i}_belief_after', '')
+        row_map[f'Warning_{i}_Realism'] = p8.get(f'w{i}_realism', '')
+        row_map[f'Warning_{i}_Trust_After'] = p8.get(f'w{i}_trust_after', '')
+        row_map[f'Warning_{i}_Influence_Removed'] = p8.get(f'w{i}_influence_removed', '')
+        row_map[f'Warning_{i}_Could_Be_True'] = p8.get(f'w{i}_could_be_true', '')
+        row_map[f'Warning_{i}_Realism_Influence'] = p8.get(f'w{i}_realism_influence', '')
+        row_map[f'Warning_{i}_Reaction'] = p8.get(f'w{i}_reaction', '')
+        row_map[f'Warning_{i}_Reason'] = p8.get(f'w{i}_reason', '')
  
-    snapshot = session_answer_snapshot()
-    row_map['Data_Version'] = 2
-    row_map['Progress_Status'] = 'completed'
-    row_map['Answer_Count'] = answer_count(snapshot)
-    row_map['Raw_Answers'] = snapshot
-    row_map['Reward'] = session.get('reward_key', '')
-    row_map['Last_Saved_At'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
     participant_id = get_participant_id()
  
     with psycopg.connect(DATABASE_URL) as conn:
@@ -708,7 +594,7 @@ def save_survey_response():
                 """,
                 (
                     participant_id,
-                    json.dumps(_json_safe(row_map), ensure_ascii=False)
+                    json.dumps(row_map)
                 )
             )
  
@@ -742,8 +628,7 @@ def survey_page8():
         if choice not in {'Participate', 'Skip'}:
             error = 'choose_section_f'
         elif choice == 'Skip':
-            session['page8'] = {'section_f_choice': ['Skip']}
-            save_progress_snapshot('completed')
+            session['page8'] = {'section_f_choice': 'Skip'}
             save_survey_response()
             return redirect(url_for('results_page'))
         else:
@@ -751,10 +636,9 @@ def survey_page8():
             if missing:
                 error = 'complete_section_f'
             else:
-                form_data = form_snapshot(request.form)
-                form_data['section_f_choice'] = ['Participate']
+                form_data = request.form.to_dict()
+                form_data['section_f_choice'] = 'Participate'
                 session['page8'] = form_data
-                save_progress_snapshot('completed')
                 save_survey_response()
                 return redirect(url_for('reward_page'))
     return render_template('survey_page8.html', experiments=WARNING_EXPERIMENT, error=error)
@@ -791,37 +675,24 @@ def save_reward(prize):
 def reward_page():
     if not session.get('section_f_completed'):
         return redirect(url_for('results_page'))
-
+ 
     prize = None
     prize_index = None
-    spin_error = None
-
-    if request.method == 'POST':
-        if session.get('reward_key'):
-            spin_error = 'already_spun'
-        else:
-            prize_index = weighted_reward_index()
-            prize = REWARD_OPTIONS[prize_index]
-            session['reward_key'] = prize['key']
-            save_reward(prize)
-            save_progress_snapshot('completed')
-
-    if prize is None and session.get('reward_key'):
+    if session.get('reward_key'):
         for idx, item in enumerate(REWARD_OPTIONS):
             if item['key'] == session['reward_key']:
                 prize = item
                 prize_index = idx
                 break
-
-    return render_template(
-        'reward.html',
-        rewards=REWARD_OPTIONS,
-        prize=prize,
-        prize_index=prize_index,
-        spin_error=spin_error
-    )
-
-
+    elif request.method == 'POST':
+        prize_index = weighted_reward_index()
+        prize = REWARD_OPTIONS[prize_index]
+        session['reward_key'] = prize['key']
+        save_reward(prize)
+ 
+    return render_template('reward.html', rewards=REWARD_OPTIONS, prize=prize, prize_index=prize_index)
+ 
+ 
 @app.route('/results')
 def results_page():
     if 'quiz_details' not in session:
@@ -856,105 +727,36 @@ def admin_logout():
     
 def get_all_responses():
     responses = []
+ 
     if not DATABASE_URL:
         return responses
+ 
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
-            sql = (
-                "SELECT s.participant_id, s.submitted_at, s.data, r.prize "
-                "FROM survey_responses AS s "
-                "LEFT JOIN reward_results AS r ON r.participant_id = s.participant_id "
-                "ORDER BY s.submitted_at DESC"
-            )
-            cur.execute(sql)
+            cur.execute("""
+                SELECT s.participant_id, s.submitted_at, s.data, COALESCE(r.prize, '')
+                FROM survey_responses AS s
+                LEFT JOIN reward_results AS r ON r.participant_id = s.participant_id
+                ORDER BY s.submitted_at DESC
+            """)
+ 
             for participant_id, submitted_at, data, prize in cur.fetchall():
                 responses.append({
                     'participant_id': participant_id,
                     'submitted_at': submitted_at,
-                    'data': data or {},
+                    'data': data,
                     'prize': prize or ''
                 })
+ 
     return responses
-
-
-@app.route('/admin/clear-test-data', methods=['POST'])
-@admin_required
-def admin_clear_test_data():
-    """Delete response/reward rows only; database tables remain intact."""
-    if not DATABASE_URL:
-        return redirect(url_for('admin'))
-
-    if request.form.get('confirmation') != 'DELETE TEST DATA':
-        return redirect(url_for('admin'))
-
-    with psycopg.connect(DATABASE_URL) as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                "TRUNCATE TABLE reward_results, survey_responses RESTART IDENTITY"
-            )
-        conn.commit()
-
-    return redirect(url_for('admin'))
-
-
-@app.route('/admin/export.csv')
-@admin_required
-def admin_export_csv():
-    responses = get_all_responses()
-    rows = []
-    all_columns = set()
-
-    for response in responses:
-        data = response.get('data') or {}
-        row = {
-            'Participant_ID': response.get('participant_id', ''),
-            'Submitted_At': response.get('submitted_at').isoformat() if response.get('submitted_at') else '',
-            'Reward': response.get('prize', '') or data.get('Reward', ''),
-            'Progress_Status': data.get('Progress_Status', ''),
-            'Answer_Count': data.get('Answer_Count', ''),
-        }
-
-        for key, value in data.items():
-            if key == 'Raw_Answers':
-                continue
-            row[key] = json.dumps(value, ensure_ascii=False) if isinstance(value, (dict, list)) else value
-
-        raw = data.get('Raw_Answers') or {}
-        for page_name, fields in raw.items():
-            if not isinstance(fields, dict):
-                continue
-            for field, value in fields.items():
-                row[f'{page_name}.{field}'] = (
-                    ', '.join(str(x) for x in value) if isinstance(value, list) else value
-                )
-
-        rows.append(row)
-        all_columns.update(row.keys())
-
-    preferred = ['Participant_ID', 'Submitted_At', 'Name', 'Age_Group', 'Gender',
-                 'Education_Level', 'Progress_Status', 'Answer_Count', 'Reward']
-    columns = [c for c in preferred if c in all_columns]
-    columns += sorted(all_columns - set(columns))
-
-    output = io.StringIO()
-    writer = csv.DictWriter(output, fieldnames=columns, extrasaction='ignore')
-    writer.writeheader()
-    writer.writerows(rows)
-
-    return Response(
-        output.getvalue(),
-        mimetype='text/csv; charset=utf-8',
-        headers={'Content-Disposition': 'attachment; filename=survey_all_answers.csv'}
-    )
-
-
+ 
 @app.route('/admin')
 @admin_required
 def admin():
-    """Research-focused dashboard built from participant-level responses stored in Neon."""
+    """Research dashboard: descriptive analysis of participant-level deepfake study data."""
     responses = get_all_responses()
     participant_summaries = []
- 
+
     total_real_answers = 0
     total_ai_answers = 0
     total_unsure_answers = 0
@@ -963,8 +765,11 @@ def admin():
     per_video_correct = {i: 0 for i in range(1, 10)}
     per_video_answered = {i: 0 for i in range(1, 10)}
     per_video_confidence = {i: [] for i in range(1, 10)}
-    cue_counts = {}
- 
+    per_video_classifications = {i: {'Real': 0, 'AI-Generated': 0, 'Not sure': 0} for i in range(1, 10)}
+    per_video_high_conf_wrong = {i: 0 for i in range(1, 10)}
+    per_video_high_conf_answered = {i: 0 for i in range(1, 10)}
+    cue_stats = {}
+
     section_f_count = 0
     warning_before_belief = []
     warning_after_belief = []
@@ -974,42 +779,85 @@ def admin():
     condition_belief = {1: [], 2: [], 3: []}
     condition_realism = {1: [], 2: [], 3: []}
     condition_trust = {1: [], 2: [], 3: []}
- 
+    condition_could_be_true = {1: [], 2: [], 3: []}
+    condition_realism_influence = {1: [], 2: [], 3: []}
+    condition_reactions = {1: {}, 2: {}, 3: {}}
+
+    # Group-level data used for research questions.
+    experience_scores = {'Yes': [], 'No': []}
+    news_scores = {}
+    age_scores = {}
+    education_scores = {}
+    prior_awareness_scores = {'Yes': [], 'No': []}
+    prior_suspicion_scores = {'Yes': [], 'No': []}
+    gender_scores = {}
+
+    # Section C / D descriptive responses.
+    pre_believability = []
+    pre_realism = []
+    pre_voting_influence = []
+    warning_effectiveness_counts = {}
+    warning_action_counts = {}
+    post_warning_belief_counts = {}
+    post_warning_trust_counts = {}
+
     def safe_float(value):
         try:
             return float(value)
         except (TypeError, ValueError):
             return None
- 
+
+    def avg(values):
+        return round(sum(values) / len(values), 2) if values else 0
+
+    def map_scale(value, mapping):
+        if value is None:
+            return None
+        return mapping.get(str(value))
+
+    # Explicit mappings preserve the questionnaire's wording while making
+    # ordinal Likert-style responses chartable on a common 1–5 scale.
+    believability_map = {
+        'Very unbelievable': 1, 'Unbelievable': 2, 'Neutral': 3,
+        'Believable': 4, 'Very believable': 5
+    }
+    voting_map = {
+        'Very unlikely': 1, 'Unlikely': 2, 'Neutral': 3,
+        'Likely': 4, 'Very likely': 5
+    }
+
     for response in responses:
         participant_id = response['participant_id']
         submitted_at = response['submitted_at']
         data = response['data'] or {}
- 
+
         name = data.get('Name') or '—'
         watched_before = data.get('Watched_Deepfake_Before') or '—'
         section_f = data.get('Section_F_Participation') or 'Skip'
         if section_f == 'Participate':
             section_f_count += 1
- 
+
         score_correct = data.get('Video_Score_Correct') or '0'
         score_total = data.get('Video_Score_Total') or '9'
         score_percent = safe_float(data.get('Video_Score_Percent'))
+        score_value = safe_float(score_correct)
         if score_percent is not None:
             scores.append(score_percent)
- 
+
         participant_video_details = []
         participant_conf = []
- 
+
         for i in range(1, 10):
             answer = data.get(f'Video_{i}_Classification', '')
             confidence = safe_float(data.get(f'Video_{i}_Confidence'))
             cue = data.get(f'Video_{i}_Cue', '')
             expected = VIDEO_QUIZ[i]['answer']
             is_correct = answer == expected if answer else False
- 
+
             if answer:
                 per_video_answered[i] += 1
+                if answer in per_video_classifications[i]:
+                    per_video_classifications[i][answer] += 1
                 if is_correct:
                     per_video_correct[i] += 1
                 if answer == 'Real':
@@ -1018,15 +866,22 @@ def admin():
                     total_ai_answers += 1
                 elif answer == 'Not sure':
                     total_unsure_answers += 1
- 
+
             if confidence is not None:
                 per_video_confidence[i].append(confidence)
                 all_confidence.append(confidence)
                 participant_conf.append(confidence)
- 
+                if confidence >= 4 and answer:
+                    per_video_high_conf_answered[i] += 1
+                    if not is_correct:
+                        per_video_high_conf_wrong[i] += 1
+
             if cue:
-                cue_counts[cue] = cue_counts.get(cue, 0) + 1
- 
+                cue_stats.setdefault(cue, {'count': 0, 'correct': 0})
+                cue_stats[cue]['count'] += 1
+                if is_correct:
+                    cue_stats[cue]['correct'] += 1
+
             participant_video_details.append({
                 'number': i,
                 'answer': answer or '—',
@@ -1035,35 +890,72 @@ def admin():
                 'confidence': confidence if confidence is not None else '—',
                 'cue': cue or '—'
             })
- 
+
+        # Research-question grouping variables.
+        if watched_before in experience_scores and score_value is not None:
+            experience_scores[watched_before].append(score_value)
+        for field, target in [('News_Frequency', news_scores), ('Age_Group', age_scores),
+                              ('Education_Level', education_scores), ('Gender', gender_scores)]:
+            value = data.get(field)
+            if value and score_value is not None:
+                target.setdefault(value, []).append(score_value)
+        for field, target in [('Heard_Deepfake', prior_awareness_scores),
+                              ('Suspected_Deepfake_Before', prior_suspicion_scores)]:
+            value = data.get(field)
+            if value in target and score_value is not None:
+                target[value].append(score_value)
+
+        # Section C: pre-exposure perception.
+        b = map_scale(data.get('Deepfake_Believability'), believability_map)
+        r = safe_float(data.get('Physical_Realism'))
+        v = map_scale(data.get('Voting_Influence'), voting_map)
+        if b is not None: pre_believability.append(b)
+        if r is not None: pre_realism.append(r)
+        if v is not None: pre_voting_influence.append(v)
+
+        # Section D: warning label expectations.
+        effectiveness = data.get('Warning_Effectiveness')
+        if effectiveness:
+            warning_effectiveness_counts[effectiveness] = warning_effectiveness_counts.get(effectiveness, 0) + 1
+        post_belief = data.get('Post_Warning_Belief')
+        if post_belief:
+            post_warning_belief_counts[post_belief] = post_warning_belief_counts.get(post_belief, 0) + 1
+        post_trust = data.get('Post_Warning_Trustworthiness')
+        if post_trust:
+            post_warning_trust_counts[post_trust] = post_warning_trust_counts.get(post_trust, 0) + 1
+        actions = data.get('Action_After_Warning', '')
+        if actions:
+            for action in [x.strip() for x in str(actions).split(',') if x.strip()]:
+                warning_action_counts[action] = warning_action_counts.get(action, 0) + 1
+
         b_before = safe_float(data.get('Warning_1_Belief_Before'))
         b_after = safe_float(data.get('Warning_1_Belief_After'))
         t_before = safe_float(data.get('Warning_1_Trust_Before'))
         t_after = safe_float(data.get('Warning_1_Trust_After'))
- 
-        if b_before is not None:
-            warning_before_belief.append(b_before)
-        if b_after is not None:
-            warning_after_belief.append(b_after)
-        if t_before is not None:
-            warning_before_trust.append(t_before)
-        if t_after is not None:
-            warning_after_trust.append(t_after)
- 
+        if b_before is not None: warning_before_belief.append(b_before)
+        if b_after is not None: warning_after_belief.append(b_after)
+        if t_before is not None: warning_before_trust.append(t_before)
+        if t_after is not None: warning_after_trust.append(t_after)
+
         warning_details = []
         for wi in range(1, 4):
             belief_after = safe_float(data.get(f'Warning_{wi}_Belief_After'))
             realism = safe_float(data.get(f'Warning_{wi}_Realism'))
             trust_after = safe_float(data.get(f'Warning_{wi}_Trust_After'))
- 
+            could_be_true = safe_float(data.get(f'Warning_{wi}_Could_Be_True'))
+            realism_influence = safe_float(data.get(f'Warning_{wi}_Realism_Influence'))
+            reaction = data.get(f'Warning_{wi}_Reaction') or '—'
+
             if belief_after is not None:
                 labelled_belief_values.append(belief_after)
                 condition_belief[wi].append(belief_after)
-            if realism is not None:
-                condition_realism[wi].append(realism)
-            if trust_after is not None:
-                condition_trust[wi].append(trust_after)
- 
+            if realism is not None: condition_realism[wi].append(realism)
+            if trust_after is not None: condition_trust[wi].append(trust_after)
+            if could_be_true is not None: condition_could_be_true[wi].append(could_be_true)
+            if realism_influence is not None: condition_realism_influence[wi].append(realism_influence)
+            if reaction != '—':
+                condition_reactions[wi][reaction] = condition_reactions[wi].get(reaction, 0) + 1
+
             warning_details.append({
                 'number': wi,
                 'belief_before': data.get(f'Warning_{wi}_Belief_Before') or '—',
@@ -1071,10 +963,12 @@ def admin():
                 'realism': data.get(f'Warning_{wi}_Realism') or '—',
                 'trust_before': data.get(f'Warning_{wi}_Trust_Before') or '—',
                 'trust_after': data.get(f'Warning_{wi}_Trust_After') or '—',
-                'reaction': data.get(f'Warning_{wi}_Reaction') or '—',
+                'could_be_true': data.get(f'Warning_{wi}_Could_Be_True') or '—',
+                'realism_influence': data.get(f'Warning_{wi}_Realism_Influence') or '—',
+                'reaction': reaction,
                 'reason': data.get(f'Warning_{wi}_Reason') or '—'
             })
- 
+
         participant_summaries.append({
             'id': participant_id,
             'name': name,
@@ -1086,7 +980,7 @@ def admin():
             'score_correct': score_correct,
             'score_total': score_total,
             'score_percent': round(score_percent, 1) if score_percent is not None else 0,
-            'avg_confidence': round(sum(participant_conf) / len(participant_conf), 2) if participant_conf else 0,
+            'avg_confidence': avg(participant_conf),
             'section_f': section_f,
             'belief_before': b_before if b_before is not None else '—',
             'belief_after': b_after if b_after is not None else '—',
@@ -1096,51 +990,99 @@ def admin():
             'trust_change': round(t_after - t_before, 2) if t_before is not None and t_after is not None else '—',
             'videos': participant_video_details,
             'warnings': warning_details,
-            'raw_answers': data.get('Raw_Answers', {}),
-            'answer_count': data.get('Answer_Count', 0),
-            'progress_status': data.get('Progress_Status', 'completed'),
-            'reward': response.get('prize', '') or data.get('Reward', ''),
         })
- 
+
     total_submissions = len(participant_summaries)
     avg_score = round(sum(scores) / len(scores), 1) if scores else 0
-    avg_confidence = round(sum(all_confidence) / len(all_confidence), 2) if all_confidence else 0
+    avg_confidence = avg(all_confidence)
     section_f_rate = round((section_f_count / total_submissions) * 100, 1) if total_submissions else 0
- 
-    avg_before_belief = round(sum(warning_before_belief) / len(warning_before_belief), 2) if warning_before_belief else 0
-    avg_after_belief = round(sum(warning_after_belief) / len(warning_after_belief), 2) if warning_after_belief else 0
-    avg_before_trust = round(sum(warning_before_trust) / len(warning_before_trust), 2) if warning_before_trust else 0
-    avg_after_trust = round(sum(warning_after_trust) / len(warning_after_trust), 2) if warning_after_trust else 0
+    median_score = round(sorted(scores)[len(scores)//2] if scores and len(scores) % 2 else ((sorted(scores)[len(scores)//2 - 1] + sorted(scores)[len(scores)//2]) / 2 if scores else 0), 1)
+
+    score_distribution = [sum(1 for p in participant_summaries if p['score_correct'] == str(i)) for i in range(10)]
+    # If an older record stores a numeric value with formatting, fall back to numeric parsing.
+    if sum(score_distribution) != total_submissions:
+        score_distribution = []
+        for i in range(10):
+            score_distribution.append(sum(1 for p in participant_summaries if safe_float(p['score_correct']) == i))
+
+    video_labels = [f'Video {i}' for i in range(1, 10)]
+    video_correct_rates = [round((per_video_correct[i] / per_video_answered[i]) * 100, 1) if per_video_answered[i] else 0 for i in range(1, 10)]
+    video_avg_confidence = [avg(per_video_confidence[i]) for i in range(1, 10)]
+    video_classification_real = [per_video_classifications[i]['Real'] for i in range(1, 10)]
+    video_classification_ai = [per_video_classifications[i]['AI-Generated'] for i in range(1, 10)]
+    video_classification_unsure = [per_video_classifications[i]['Not sure'] for i in range(1, 10)]
+    high_conf_wrong_rates = [round((per_video_high_conf_wrong[i] / per_video_high_conf_answered[i]) * 100, 1) if per_video_high_conf_answered[i] else 0 for i in range(1, 10)]
+
+    # Rank the videos from hardest to easiest for a research-friendly table/chart.
+    video_rank = sorted(zip(video_labels, video_correct_rates), key=lambda x: x[1])
+    video_rank_labels = [x[0] for x in video_rank]
+    video_rank_rates = [x[1] for x in video_rank]
+
+    top_cues = sorted(cue_stats.items(), key=lambda kv: kv[1]['count'], reverse=True)[:10]
+    cue_labels = [k for k, _ in top_cues]
+    cue_values = [v['count'] for _, v in top_cues]
+    cue_accuracy = [round((v['correct'] / v['count']) * 100, 1) if v['count'] else 0 for _, v in top_cues]
+
+    def grouped_average(group_dict, preferred_order=None):
+        keys = [k for k in (preferred_order or []) if k in group_dict]
+        keys += [k for k in group_dict if k not in keys]
+        return keys, [avg(group_dict[k]) for k in keys], [len(group_dict[k]) for k in keys]
+
+    exp_labels, exp_avg, exp_n = grouped_average(experience_scores, ['Yes', 'No'])
+    news_order = ['Daily', 'Several times a week', 'Weekly', 'Less than weekly', 'Rarely/Never']
+    news_labels, news_avg, news_n = grouped_average(news_scores, news_order)
+    age_labels, age_avg, age_n = grouped_average(age_scores, ['Under 18', '18-24', '25-34', '35-44', '45+'])
+    edu_labels, edu_avg, edu_n = grouped_average(education_scores)
+    aware_labels, aware_avg, aware_n = grouped_average(prior_awareness_scores, ['Yes', 'No'])
+    suspicion_labels, suspicion_avg, suspicion_n = grouped_average(prior_suspicion_scores, ['Yes', 'No'])
+
+    condition_labels = ['Labelled Clip 1', 'Labelled Clip 2', 'Labelled Clip 3']
+    condition_belief_avg = [avg(condition_belief[i]) for i in range(1, 4)]
+    condition_realism_avg = [avg(condition_realism[i]) for i in range(1, 4)]
+    condition_trust_avg = [avg(condition_trust[i]) for i in range(1, 4)]
+    condition_true_avg = [avg(condition_could_be_true[i]) for i in range(1, 4)]
+    condition_realism_influence_avg = [avg(condition_realism_influence[i]) for i in range(1, 4)]
+
+    # Warning reaction categories across the three labelled clips.
+    reaction_order = [
+        'Knew fake and did not believe',
+        'Some parts believable',
+        'Realism caused uncertainty',
+        'Still affected opinion',
+        'Would verify claims'
+    ]
+    reaction_labels = reaction_order
+    reaction_values = [sum(condition_reactions[i].get(r, 0) for i in range(1, 4)) for r in reaction_order]
+
+    avg_before_belief = avg(warning_before_belief)
+    avg_after_belief = avg(warning_after_belief)
+    avg_before_trust = avg(warning_before_trust)
+    avg_after_trust = avg(warning_after_trust)
     belief_change = round(avg_after_belief - avg_before_belief, 2) if warning_before_belief and warning_after_belief else 0
     trust_change = round(avg_after_trust - avg_before_trust, 2) if warning_before_trust and warning_after_trust else 0
     continued_belief_rate = round((sum(1 for v in labelled_belief_values if v >= 3) / len(labelled_belief_values)) * 100, 1) if labelled_belief_values else 0
- 
-    video_labels = [f'Video {i}' for i in range(1, 10)]
-    video_correct_rates = [
-        round((per_video_correct[i] / per_video_answered[i]) * 100, 1) if per_video_answered[i] else 0
-        for i in range(1, 10)
-    ]
-    video_avg_confidence = [
-        round(sum(per_video_confidence[i]) / len(per_video_confidence[i]), 2) if per_video_confidence[i] else 0
-        for i in range(1, 10)
-    ]
- 
-    top_cues = sorted(cue_counts.items(), key=lambda kv: kv[1], reverse=True)[:8]
-    cue_labels = [k for k, _ in top_cues]
-    cue_values = [v for _, v in top_cues]
- 
-    condition_labels = ['Condition 1', 'Condition 2', 'Condition 3']
-    condition_belief_avg = [round(sum(condition_belief[i]) / len(condition_belief[i]), 2) if condition_belief[i] else 0 for i in range(1, 4)]
-    condition_realism_avg = [round(sum(condition_realism[i]) / len(condition_realism[i]), 2) if condition_realism[i] else 0 for i in range(1, 4)]
-    condition_trust_avg = [round(sum(condition_trust[i]) / len(condition_trust[i]), 2) if condition_trust[i] else 0 for i in range(1, 4)]
- 
+
+    # Overall calibration: high confidence is defined descriptively as 4–5/5.
+    high_conf_wrong = 0
+    high_conf_total = 0
+    for p in participant_summaries:
+        for v in p['videos']:
+            c = safe_float(v['confidence'])
+            if c is not None and c >= 4:
+                high_conf_total += 1
+                if not v['correct']:
+                    high_conf_wrong += 1
+    high_conf_wrong_rate = round((high_conf_wrong / high_conf_total) * 100, 1) if high_conf_total else 0
+
     return render_template(
         'admin.html',
         total_submissions=total_submissions,
         section_f_count=section_f_count,
         section_f_rate=section_f_rate,
         avg_score=avg_score,
+        median_score=median_score,
         avg_confidence=avg_confidence,
+        high_conf_wrong_rate=high_conf_wrong_rate,
         real_answers=total_real_answers,
         ai_answers=total_ai_answers,
         unsure_answers=total_unsure_answers,
@@ -1154,15 +1096,90 @@ def admin():
         video_labels=video_labels,
         video_correct_rates=video_correct_rates,
         video_avg_confidence=video_avg_confidence,
+        video_classification_real=video_classification_real,
+        video_classification_ai=video_classification_ai,
+        video_classification_unsure=video_classification_unsure,
+        high_conf_wrong_rates=high_conf_wrong_rates,
+        video_rank_labels=video_rank_labels,
+        video_rank_rates=video_rank_rates,
+        score_distribution=score_distribution,
         cue_labels=cue_labels,
         cue_values=cue_values,
+        cue_accuracy=cue_accuracy,
+        exp_labels=exp_labels, exp_avg=exp_avg, exp_n=exp_n,
+        news_labels=news_labels, news_avg=news_avg, news_n=news_n,
+        age_labels=age_labels, age_avg=age_avg, age_n=age_n,
+        edu_labels=edu_labels, edu_avg=edu_avg, edu_n=edu_n,
+        aware_labels=aware_labels, aware_avg=aware_avg, aware_n=aware_n,
+        suspicion_labels=suspicion_labels, suspicion_avg=suspicion_avg, suspicion_n=suspicion_n,
+        pre_believability_avg=avg(pre_believability),
+        pre_realism_avg=avg(pre_realism),
+        pre_voting_influence_avg=avg(pre_voting_influence),
+        warning_effectiveness_labels=list(warning_effectiveness_counts.keys()),
+        warning_effectiveness_values=list(warning_effectiveness_counts.values()),
+        post_warning_belief_labels=list(post_warning_belief_counts.keys()),
+        post_warning_belief_values=list(post_warning_belief_counts.values()),
+        post_warning_trust_labels=list(post_warning_trust_counts.keys()),
+        post_warning_trust_values=list(post_warning_trust_counts.values()),
+        warning_action_labels=list(warning_action_counts.keys()),
+        warning_action_values=list(warning_action_counts.values()),
         condition_labels=condition_labels,
         condition_belief_avg=condition_belief_avg,
         condition_realism_avg=condition_realism_avg,
         condition_trust_avg=condition_trust_avg,
+        condition_true_avg=condition_true_avg,
+        condition_realism_influence_avg=condition_realism_influence_avg,
+        reaction_labels=reaction_labels,
+        reaction_values=reaction_values,
         participant_summaries=participant_summaries,
     )
- 
+
+
+@app.route('/admin/export.csv')
+@admin_required
+def admin_export_csv():
+    """Export all participant-level survey fields for statistical analysis."""
+    responses = get_all_responses()
+    rows = []
+    all_columns = set()
+
+    for response in responses:
+        data = response.get('data') or {}
+        row = {
+            'Participant_ID': response.get('participant_id', ''),
+            'Submitted_At': response.get('submitted_at').isoformat() if response.get('submitted_at') else '',
+            'Reward': response.get('prize', '') or '',
+        }
+        for key, value in data.items():
+            if isinstance(value, (dict, list)):
+                row[key] = json.dumps(value, ensure_ascii=False)
+            else:
+                row[key] = value
+        rows.append(row)
+        all_columns.update(row.keys())
+
+    preferred = [
+        'Participant_ID', 'Submitted_At', 'Name', 'Age_Group', 'Gender',
+        'Education_Level', 'News_Frequency', 'News_Source',
+        'Watched_Deepfake_Before', 'Heard_Deepfake', 'Suspected_Deepfake_Before',
+        'Video_Score_Correct', 'Video_Score_Total', 'Video_Score_Percent',
+        'Section_F_Participation', 'Reward'
+    ]
+    columns = [c for c in preferred if c in all_columns]
+    columns += sorted(all_columns - set(columns))
+
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=columns, extrasaction='ignore')
+    writer.writeheader()
+    writer.writerows(rows)
+
+    return Response(
+        output.getvalue(),
+        mimetype='text/csv; charset=utf-8',
+        headers={'Content-Disposition': 'attachment; filename=deepfake_research_analysis.csv'}
+    )
+
+
 def init_database():
     if not DATABASE_URL:
         print("DATABASE_URL is not configured.")
