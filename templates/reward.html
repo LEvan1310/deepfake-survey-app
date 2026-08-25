@@ -115,8 +115,8 @@
   {% endif %}
 
   <div class="chance-note mt-4 mx-auto">
-    <span data-lang-block="en">🎯 There are exactly 5 possible outcomes. Each outcome has an equal 20% chance.</span>
-    <span data-lang-block="my" style="display:none">🎯 ရလဒ် ၅ မျိုးသာရှိပြီး ရလဒ်တစ်မျိုးစီ ရနိုင်ခြေ 20% တူညီပါသည်။</span>
+    <span data-lang-block="en">🎯 Cash prizes have a 10% total chance: 5% for 3,000 kyats and 5% for 1,000 kyats. The three other results have 30% each.</span>
+    <span data-lang-block="my" style="display:none">🎯 ငွေသားဆုရနိုင်ခြေ စုစုပေါင်း 10% ဖြစ်ပါသည် — 3,000 ကျပ်အတွက် 5% နှင့် 1,000 ကျပ်အတွက် 5% ဖြစ်ပြီး အခြားရလဒ် ၃ မျိုးမှာ တစ်မျိုးလျှင် 30% ဖြစ်ပါသည်။</span>
   </div>
 </div>
 
@@ -140,8 +140,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const colors = ['#72C472', '#66B8F0', '#FF8A80', '#AA91D8', '#F4C95D'];
   const segmentCount = rewards.length;
-  const segmentDeg = 360 / segmentCount;
-  const segmentRad = (Math.PI * 2) / segmentCount;
+  // The visual wheel uses the same probabilities as the backend:
+  // 5%, 5%, 30%, 30%, 30%.
+  const probabilities = rewards.map(item => Number(item.probability || 0));
+  const totalProbability = probabilities.reduce((a, b) => a + b, 0);
+  const segmentAngles = probabilities.map(p => (p / totalProbability) * Math.PI * 2);
   const cx = canvas.width / 2;
   const cy = canvas.height / 2;
   const radius = canvas.width * 0.47;
@@ -159,9 +162,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function drawWheel() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let cumulative = 0;
     for (let i = 0; i < segmentCount; i++) {
-      const a0 = startAngle + i * segmentRad;
-      const a1 = a0 + segmentRad;
+      const a0 = startAngle + cumulative;
+      const a1 = a0 + segmentAngles[i];
+      cumulative += segmentAngles[i];
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.arc(cx, cy, radius, a0, a1);
