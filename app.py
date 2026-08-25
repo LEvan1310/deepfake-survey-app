@@ -136,9 +136,10 @@ WARNING_EXPERIMENT = {
         'title_my': 'စမ်းသပ်အခြေအနေ ၂ - အစကတည်းက AI တံဆိပ်မြင်ရခြင်း',
     },
     3: {
-        'source_type': 'external',
-        'source_url': 'https://www.bbc.com/reel/video/p0hkflt4/watch',
-        'source_name': 'BBC Reel',
+        'source_type': 'youtube',
+        'youtube_id': 'WFc6t-c892A',
+        'source_url': 'https://www.youtube.com/watch?v=WFc6t-c892A',
+        'source_name': 'YouTube',
         'condition': 'labelled',
         'title_en': 'Condition 3 - Realism Challenge With AI Label',
         'title_my': 'စမ်းသပ်အခြေအနေ ၃ - AI တံဆိပ်ရှိသည့် Realism Challenge',
