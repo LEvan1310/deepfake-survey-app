@@ -165,11 +165,11 @@ EDUCATIONAL_VIDEOS = [
 ]
  
 REWARD_OPTIONS = [
-    {'key': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။', 'label_en': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။', 'label_my': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။!', 'emoji': '', 'weight': 30},
-    {'key': '1000 KS', 'label_en': '1,000 KS', 'label_my': '1,000 ကျပ် ဆုရပါပြီ!', 'emoji': '💰', 'weight': 20},
-    {'key': '3000 KS', 'label_en': '3,000 KS', 'label_my': '💵 3,000 ကျပ် ဆုရပါပြီ!', 'emoji': '🎊', 'weight': 2},
-    {'key': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'label_en': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'label_my': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'emoji': '😊', 'weight': 28},
-    {'key': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'label_en': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'label_my': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'emoji': '✨', 'weight': 20},
+    {'key': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။', 'label_en': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။', 'label_my': '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။!', 'emoji': ''},
+    {'key': '1000 KS', 'label_en': '1,000 KS', 'label_my': '1,000 ကျပ် ဆုရပါပြီ!', 'emoji': '💰'},
+    {'key': '3000 KS', 'label_en': '🙏 ကျေးဇူးတင်ပါတယ်! စစ်တမ်းမှာ ပါဝင်ပေးတဲ့အတွက် ဝမ်းမြောက်ပါတယ်။', 'label_my': '🙏 ကျေးဇူးတင်ပါတယ်! စစ်တမ်းမှာ ပါဝင်ပေးတဲ့အတွက် ဝမ်းမြောက်ပါတယ်။', 'emoji': '🙏'},
+    {'key': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'label_en': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'label_my': '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!', 'emoji': '😊'},
+    {'key': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'label_en': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'label_my': '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!', 'emoji': '✨'},
 ]
 # 'weight' = relative odds, not a percent. With the values above, 3,000 KS is
 # picked about 2 times out of 100 spins on average. Raise or lower any single
@@ -178,19 +178,9 @@ REWARD_OPTIONS = [
  
  
 def weighted_reward_index():
-    """Pick a reward index using each option's 'weight' instead of a flat
-    1-in-N chance, so rare prizes (like 3,000 KS) can be made unlikely while
-    still occasionally possible. Uses `secrets` so it stays unpredictable."""
-    weights = [item.get('weight', 1) for item in REWARD_OPTIONS]
-    total = sum(weights)
-    roll = secrets.randbelow(total)
-    running_total = 0
-    for index, weight in enumerate(weights):
-        running_total += weight
-        if roll < running_total:
-            return index
-    return len(REWARD_OPTIONS) - 1
- 
+    """Select one of the five reward categories with exactly 20% probability each."""
+    return secrets.randbelow(5)
+
 HEADERS = [
     'Timestamp', 'Participant_ID', 'Name', 'Age_Group', 'Gender', 'Education_Level', 'News_Frequency', 'News_Source',
     'Watched_Deepfake_Before', 'Heard_Deepfake', 'Deepfake_Description', 'Suspected_Deepfake_Before',
