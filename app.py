@@ -183,14 +183,7 @@ REWARD_OPTIONS = [
 reward_bag = []
 
 def weighted_reward_index():
-    """Return a prize index using an exact 20% distribution per 5 spins."""
-    global reward_bag
-
-    if not reward_bag:
-        reward_bag = list(range(len(REWARD_OPTIONS)))
-        random.shuffle(reward_bag)
-
-    return reward_bag.pop()
+    return secrets.randbelow(len(REWARD_OPTIONS))
 
 HEADERS = [
     'Timestamp', 'Participant_ID', 'Name', 'Age_Group', 'Gender', 'Education_Level', 'News_Frequency', 'News_Source',
