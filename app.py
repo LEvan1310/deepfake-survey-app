@@ -650,7 +650,7 @@ def survey_page8():
             if missing:
                 error = 'complete_section_f'
             else:
-                form_data = request.form.to_dict()
+                form_data = form_snapshot(request.form)
                 form_data['section_f_choice'] = 'Participate'
                 session['page8'] = form_data
                 save_survey_response()
@@ -673,8 +673,7 @@ def save_reward(prize):
                 ON CONFLICT (participant_id)
                 DO UPDATE SET
                     name = EXCLUDED.name,
-                    prize = EXCLUDED.prize,
-                    submitted_at = CURRENT_TIMESTAMP
+                    prize = EXCLUDED.prize
                 """,
                 (
                     participant_id,
@@ -1289,6 +1288,10 @@ def init_database():
                     prize TEXT NOT NULL,
                     submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
+            """)
+            cur.execute("""
+                ALTER TABLE reward_results
+                ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             """)
         conn.commit()
  
