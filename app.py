@@ -1178,7 +1178,6 @@ def admin_export_csv():
         ('B6 - Which clues would make you question whether a video is authentic? (Select all that apply)', 'Suspicious_Signs'),
 
         ('C1 - Before seeing the study clips, how often do you think political videos online are authentic?', 'Political_Video_Authenticity'),
-        ('C2 - How believable do you think a well-made political deepfake can be?', 'Deepfake_Believability'),
         ('C3 - How realistic do you expect modern AI-generated political videos to look?', 'Physical_Realism'),
         ('C4 - How likely could a convincing deepfake influence voters’ decisions?', 'Voting_Influence'),
         ('C5 - How much do you trust political videos shared on social media before checking another source?', 'Social_Media_Trust'),
@@ -1186,8 +1185,7 @@ def admin_export_csv():
         ('C7 - Repeated exposure to political deepfakes could make me trust election information less, even when some information is genuine.', 'Election_Trust_Reduction'),
         ('C8 - How much would you trust a dramatic warfare video before it is verified by reliable sources?', 'War_News_Believability'),
         ('C9 - Before believing a political video online, how often do you check another reliable source?', 'Fact_Check_Frequency'),
-        ('C10 - Which part of a political video would make you most suspicious that it was AI-generated?', 'Suspicion_Trigger'),
-        ('C11 - If a political video looks very realistic, how likely are you to believe it before checking the source?', 'Realism_Belief_Risk'),
+        ('C10 - Which signs would make you suspicious that a political video is AI-generated? (Select all that apply)', 'Suspicion_Trigger'),
         ('C12 - How important is checking the original source before sharing a political video?', 'Source_Check_Importance'),
 
         ('D1 - After seeing a deepfake warning, how likely would you be to believe the video?', 'Post_Warning_Belief'),
