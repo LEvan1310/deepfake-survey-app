@@ -124,11 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const startAngle = -Math.PI / 2 - segmentRad / 2;
 
   function shortLabel(item) {
-    if (item.key === '3000 KS') return '3,000 KS';
+    if (item.key === '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ! ') return '🎊 ဒီတစ်ခါတော့ ငွေသားဆု မကျသေးပါ။ နောက်တစ်ကြိမ်မှာ ကံကောင်းပါစေ!';
     if (item.key === '1000 KS') return '1,000 KS';
-    if (item.key === 'No Cash Prize - Next Time') return 'Next time';
-    if (item.key === 'No Cash Prize - Thank You') return 'Thank you';
-    if (item.key === 'No Prize - Thanks for Spinning') return 'Thanks!';
+    if (item.key === '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။') return '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။';
+    if (item.key === '3000 KS') return '3,000 KS';
+    if (item.key === '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!') return '✨ ဒီတစ်ခါ ဆုမကျသေးပါ — လှည့်ကြည့်ပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!';
     return item.label_en || item.key;
   }
 
