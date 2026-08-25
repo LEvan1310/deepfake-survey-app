@@ -85,6 +85,8 @@ def drive_media(drive_id, source_name='Research Video'):
         'source_name': source_name,
     }
  
+# VERIFIED ANSWER KEY: Video 5 is REAL (confirmed by the researcher).
+# Do not duplicate or override video answers elsewhere in the app.
 VIDEO_QUIZ = {
     1: {**QUIZ_MEDIA[1], 'answer': 'AI-Generated',
         'reason_en': 'The study answer key classifies this clip as AI-generated. Look for inconsistencies across face movement, voice, lighting and context rather than relying on one visual clue.',
@@ -98,7 +100,7 @@ VIDEO_QUIZ = {
     4: {**QUIZ_MEDIA[4], 'answer': 'Real',
         'reason_en': 'The study answer key classifies this clip as real. Natural-looking video alone is not proof; source and context verification remain important.',
         'reason_my': 'သုတေသနအတွက် သတ်မှတ်ထားသော အဖြေတွင် ဤကလစ်ကို အစစ်အမှန်ဗီဒီယိုအဖြစ် သတ်မှတ်ထားသည်။ သဘာဝကျသလိုမြင်ရခြင်းတစ်ခုတည်းဖြင့် အစစ်ဟု မဆိုနိုင်သဖြင့် ရင်းမြစ်နှင့် အကြောင်းအရာကို ထပ်မံစစ်ဆေးရန် အရေးကြီးသည်။'},
-    5: {**QUIZ_MEDIA[5], 'answer': 'AI-Generated',
+    5: {**QUIZ_MEDIA[5], 'answer': 'Real',
         'reason_en': 'The configured answer is AI-generated. Pay attention to synchronization, facial consistency and whether the claim can be verified elsewhere.',
         'reason_my': 'သတ်မှတ်ထားသော အဖြေမှာ AI ဖြင့် ဖန်တီးထားသော ဗီဒီယို ဖြစ်သည်။ အသံနှင့် ရုပ်ပုံချိန်ညှိမှု၊ မျက်နှာပုံစံတည်ငြိမ်မှုနှင့် အခြားရင်းမြစ်များတွင် သတင်းကို အတည်ပြုနိုင်ခြင်းရှိမရှိ စစ်ဆေးပါ။'},
     6: {**QUIZ_MEDIA[6], 'answer': 'Real',
@@ -287,7 +289,7 @@ def calculate_quiz():
         else:
             data = session.get('page7', {})
  
-        # Use the exact same configured stimulus used on the quiz page.
+        # IMPORTANT: The answer key is defined only in VIDEO_QUIZ. Quiz scoring, results, dashboard analysis, and CSV correctness must all use this same verified key.
         stimulus = VIDEO_QUIZ[i]
         selected = data.get(f'v_real_{i}', '')
         expected = stimulus['answer']
@@ -773,40 +775,6 @@ def get_all_responses():
  
     return responses
  
-
-@app.route('/admin/participant/<participant_id>/delete', methods=['POST'])
-@admin_required
-def delete_participant(participant_id):
-    """Permanently delete one respondent and all associated reward data."""
-    participant_id = str(participant_id).strip()
-
-    if not participant_id:
-        return redirect(url_for('admin'))
-
-    if not DATABASE_URL:
-        return redirect(url_for('admin'))
-
-    try:
-        with psycopg.connect(DATABASE_URL) as conn:
-            with conn.cursor() as cur:
-                # Delete reward first, then the respondent record.
-                # Both are committed together as one transaction.
-                cur.execute(
-                    "DELETE FROM reward_results WHERE participant_id = %s",
-                    (participant_id,)
-                )
-                cur.execute(
-                    "DELETE FROM survey_responses WHERE participant_id = %s",
-                    (participant_id,)
-                )
-            conn.commit()
-    except Exception:
-        app.logger.exception("Failed to delete participant %s", participant_id)
-        return redirect(url_for('admin'))
-
-    return redirect(url_for('admin'))
-
-
 @app.route('/admin')
 @admin_required
 def admin():
