@@ -4,6 +4,7 @@ import datetime
 import shutil
 import json
 import secrets
+import random
 import psycopg
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session
@@ -177,9 +178,19 @@ REWARD_OPTIONS = [
 # to add up to 100, they just need to be in proportion to each other.
  
  
+# Randomized 5-prize bag.
+# Every completed group of 5 spins contains each category exactly once.
+reward_bag = []
+
 def weighted_reward_index():
-    """Select one of the five reward categories with exactly 20% probability each."""
-    return secrets.randbelow(5)
+    """Return a prize index using an exact 20% distribution per 5 spins."""
+    global reward_bag
+
+    if not reward_bag:
+        reward_bag = list(range(len(REWARD_OPTIONS)))
+        random.shuffle(reward_bag)
+
+    return reward_bag.pop()
 
 HEADERS = [
     'Timestamp', 'Participant_ID', 'Name', 'Age_Group', 'Gender', 'Education_Level', 'News_Frequency', 'News_Source',
