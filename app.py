@@ -703,7 +703,17 @@ def reward_page():
         session['reward_key'] = prize['key']
         save_reward(prize)
  
-    return render_template('reward.html', rewards=REWARD_OPTIONS, prize=prize, prize_index=prize_index)
+    try:
+        return render_template(
+            'reward.html',
+            rewards=REWARD_OPTIONS,
+            prize=prize,
+            prize_index=prize_index
+        )
+    except Exception:
+        app.logger.exception("Reward page rendering failed")
+        # Do not show a 500 page after a completed survey.
+        return redirect(url_for('results_page'))
  
  
 @app.route('/results')
