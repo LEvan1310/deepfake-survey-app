@@ -3,10 +3,11 @@ import csv
 import datetime
 import shutil
 import json
+import io
 import secrets
 import psycopg
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, Response
  
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'deepfake_research_secret_key_change_me')
@@ -392,7 +393,8 @@ def survey_page1():
         # respondent's quiz, warning-label and demographic answers without
         # relying on their name as the primary identifier.
         session['participant_id'] = 'DF-' + secrets.token_hex(4).upper()
-        session['page1'] = request.form.to_dict()
+        session['page1'] = form_snapshot(request.form)
+        save_progress_snapshot()
         return redirect(url_for('survey_page2'))
     return render_template('survey_page1.html')
  
@@ -407,6 +409,7 @@ def survey_page2():
         if watched not in {'Yes', 'No'}:
             return redirect(url_for('survey_page2'))
         session['page2'] = form_data
+        save_progress_snapshot()
         if watched == 'No':
             session['skipped_pre_video_sections'] = True
             # Participants with no previous deepfake exposure receive the
@@ -422,7 +425,8 @@ def survey_page2():
 @app.route('/survey/page3', methods=['GET', 'POST'])
 def survey_page3():
     if request.method == 'POST':
-        session['page3'] = request.form.to_dict()
+        session['page3'] = form_snapshot(request.form)
+        save_progress_snapshot()
         return redirect(url_for('survey_page4'))
     return render_template('survey_page3.html')
  
@@ -430,7 +434,9 @@ def survey_page3():
 @app.route('/survey/page4', methods=['GET', 'POST'])
 def survey_page4():
     if request.method == 'POST':
-        session['page4'] = request.form.to_dict()
+        session['page4'] = form_snapshot(request.form)
+        session['page4']['action_after_warning'] = request.form.getlist('action_after_warning')
+        save_progress_snapshot()
  
         # Yes path: after Sections C and D, show awareness ONCE before the quiz.
         session['awareness_phase'] = 'pre_quiz'
@@ -442,7 +448,8 @@ def survey_page4():
 @app.route('/survey/page5', methods=['GET', 'POST'])
 def survey_page5():
     if request.method == 'POST':
-        session['page5'] = request.form.to_dict()
+        session['page5'] = form_snapshot(request.form)
+        save_progress_snapshot()
         return redirect(url_for('survey_page6'))
     return render_template('survey_page5.html', videos=video_page_context(1, 3), skipped=session.get('skipped_pre_video_sections', False))
  
@@ -450,7 +457,8 @@ def survey_page5():
 @app.route('/survey/page6', methods=['GET', 'POST'])
 def survey_page6():
     if request.method == 'POST':
-        session['page6'] = request.form.to_dict()
+        session['page6'] = form_snapshot(request.form)
+        save_progress_snapshot()
         return redirect(url_for('survey_page7'))
  
     # Clips 4–6 come directly from VIDEO_QUIZ, so the quiz and result page always match.
@@ -465,7 +473,8 @@ def survey_page6():
 @app.route('/survey/page7', methods=['GET', 'POST'])
 def survey_page7():
     if request.method == 'POST':
-        session['page7'] = request.form.to_dict()
+        session['page7'] = form_snapshot(request.form)
+        save_progress_snapshot()
  
         # Freeze the quiz result immediately after all 9 clips are answered.
         # calculate_quiz() uses the exact media snapshot shown during the quiz,
@@ -486,7 +495,8 @@ def survey_reflection():
         return redirect(url_for('survey_page7'))
  
     if request.method == 'POST':
-        session['reflection'] = request.form.to_dict()
+        session['reflection'] = form_snapshot(request.form)
+        save_progress_snapshot()
  
         # The 3-page awareness module is now completed BEFORE the quiz
         # for both Yes and No participants, so never show it again here.
@@ -522,6 +532,61 @@ def warning_summary(data):
     }
  
  
+def form_snapshot(form):
+    """Capture every submitted field, preserving repeated values such as checkboxes."""
+    return {key: values for key, values in form.to_dict(flat=False).items()}
+
+
+def session_answer_snapshot():
+    return {
+        "page1": session.get("page1", {}),
+        "page2": session.get("page2", {}),
+        "page3": session.get("page3", {}),
+        "page4": session.get("page4", {}),
+        "page5": session.get("page5", {}),
+        "page6": session.get("page6", {}),
+        "page7": session.get("page7", {}),
+        "reflection": session.get("reflection", {}),
+        "page8": session.get("page8", {}),
+    }
+
+
+def answer_count(snapshot):
+    total = 0
+    for page in snapshot.values():
+        if not isinstance(page, dict):
+            continue
+        for value in page.values():
+            values = value if isinstance(value, list) else [value]
+            total += sum(1 for item in values if str(item).strip())
+    return total
+
+
+def save_progress_snapshot(status="in_progress"):
+    """Save all answers collected so far, not only the final normalized fields."""
+    if not DATABASE_URL:
+        return
+    participant_id = get_participant_id()
+    raw = session_answer_snapshot()
+    payload = {
+        "Data_Version": 2,
+        "Participant_ID": participant_id,
+        "Progress_Status": status,
+        "Answer_Count": answer_count(raw),
+        "Raw_Answers": raw,
+        "Last_Saved_At": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "Reward": session.get("reward_key", ""),
+    }
+    with psycopg.connect(DATABASE_URL) as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO survey_responses (participant_id, data) VALUES (%s, %s::jsonb) "
+                "ON CONFLICT (participant_id) DO UPDATE SET data=EXCLUDED.data, submitted_at=CURRENT_TIMESTAMP",
+                (participant_id, json.dumps(payload, ensure_ascii=False))
+            )
+        conn.commit()
+
+
 def save_survey_response():
     # Prefer the frozen result created immediately after Video 9.
     # Fall back to calculation only for an older/incomplete session.
@@ -546,8 +611,15 @@ def save_survey_response():
     p7 = session.get('page7', {})
     p8 = session.get('page8', {})
     reflection = session.get('reflection', {})
+
+    def scalar(page, key, default=''):
+        value = page.get(key, default) if isinstance(page, dict) else default
+        if isinstance(value, list):
+            return ', '.join(str(v) for v in value)
+        return value
+
  
-    if p8.get('section_f_choice') == 'Participate':
+    if scalar(p8, 'section_f_choice') == 'Participate':
         session['warning_summary'] = warning_summary(p8)
         session['section_f_completed'] = True
     else:
@@ -557,42 +629,50 @@ def save_survey_response():
     row_map = {
         'Timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         'Participant_ID': session.get('participant_id', ''),
-        'Name': p1.get('name', ''), 'Age_Group': p1.get('age_group', ''), 'Gender': p1.get('gender', ''),
-        'Education_Level': p1.get('education_level', ''), 'News_Frequency': p1.get('news_frequency', ''), 'News_Source': p1.get('news_source', ''),
-        'Watched_Deepfake_Before': p2.get('watched_deepfake_before', ''), 'Heard_Deepfake': p2.get('heard_deepfake', ''),
-        'Deepfake_Description': p2.get('deepfake_description', ''), 'Suspected_Deepfake_Before': p2.get('suspected_deepfake_before', ''),
-        'Confidence_Identifying': p2.get('confidence_identifying', ''), 'Suspicious_Signs': p2.get('suspicious_signs', ''),
-        'Political_Video_Authenticity': p3.get('video_real_immediate', ''), 'Media_Authenticity_Confidence': p3.get('confidence_immediate', ''),
-        'Deepfake_Believability': p3.get('believability', ''), 'Physical_Realism': p3.get('realism', ''),
-        'Political_Leader_Trust': p3.get('figure_trustworthiness', ''), 'Opinion_Change': p3.get('opinion_change', ''),
-        'Voting_Influence': p3.get('voting_influence', ''), 'Social_Media_Trust': p3.get('social_media_trust', ''),
-        'Election_Fairness_Concern': p3.get('election_fairness_concern', ''), 'Election_Trust_Reduction': p3.get('election_trust_reduction', ''),
-        'War_News_Believability': p3.get('war_believability', ''),
-        'Post_Warning_Belief': p4.get('post_warning_belief', ''), 'Post_Warning_Believability': p4.get('post_warning_believability', ''),
-        'Post_Warning_Trustworthiness': p4.get('post_warning_trustworthiness', ''), 'Warning_Effectiveness': p4.get('warning_effectiveness', ''),
-        'Action_After_Warning': p4.get('action_after_warning', ''),
-        'Qual_Real_Or_Fake_Features': reflection.get('q27', ''), 'Qual_Opinion_Effect': reflection.get('q28', ''),
-        'Qual_Warning_Impact': reflection.get('q29', ''), 'Qual_Recommended_Actions': reflection.get('q30', ''),
-        'Section_F_Participation': p8.get('section_f_choice', 'Skip'),
+        'Name': scalar(p1, 'name'), 'Age_Group': scalar(p1, 'age_group'), 'Gender': scalar(p1, 'gender'),
+        'Education_Level': scalar(p1, 'education_level'), 'News_Frequency': scalar(p1, 'news_frequency'), 'News_Source': scalar(p1, 'news_source'),
+        'Watched_Deepfake_Before': scalar(p2, 'watched_deepfake_before'), 'Heard_Deepfake': scalar(p2, 'heard_deepfake'),
+        'Deepfake_Description': scalar(p2, 'deepfake_description'), 'Suspected_Deepfake_Before': scalar(p2, 'suspected_deepfake_before'),
+        'Confidence_Identifying': scalar(p2, 'confidence_identifying'), 'Suspicious_Signs': scalar(p2, 'suspicious_signs'),
+        'Political_Video_Authenticity': scalar(p3, 'video_real_immediate'), 'Media_Authenticity_Confidence': scalar(p3, 'confidence_immediate'),
+        'Deepfake_Believability': scalar(p3, 'believability'), 'Physical_Realism': scalar(p3, 'realism'),
+        'Political_Leader_Trust': scalar(p3, 'figure_trustworthiness'), 'Opinion_Change': scalar(p3, 'opinion_change'),
+        'Voting_Influence': scalar(p3, 'voting_influence'), 'Social_Media_Trust': scalar(p3, 'social_media_trust'),
+        'Election_Fairness_Concern': scalar(p3, 'election_fairness_concern'), 'Election_Trust_Reduction': scalar(p3, 'election_trust_reduction'),
+        'War_News_Believability': scalar(p3, 'war_believability'),
+        'Post_Warning_Belief': scalar(p4, 'post_warning_belief'), 'Post_Warning_Believability': scalar(p4, 'post_warning_believability'),
+        'Post_Warning_Trustworthiness': scalar(p4, 'post_warning_trustworthiness'), 'Warning_Effectiveness': scalar(p4, 'warning_effectiveness'),
+        'Action_After_Warning': scalar(p4, 'action_after_warning'),
+        'Qual_Real_Or_Fake_Features': scalar(reflection, 'q27'), 'Qual_Opinion_Effect': scalar(reflection, 'q28'),
+        'Qual_Warning_Impact': scalar(reflection, 'q29'), 'Qual_Recommended_Actions': scalar(reflection, 'q30'),
+        'Section_F_Participation': scalar(p8, 'section_f_choice', 'Skip'),
         'Video_Score_Correct': str(correct), 'Video_Score_Total': str(total), 'Video_Score_Percent': str(percent)
     }
     for i in range(1, 10):
         page_data = p5 if i <= 3 else (p6 if i <= 6 else p7)
-        row_map[f'Video_{i}_Classification'] = page_data.get(f'v_real_{i}', '')
-        row_map[f'Video_{i}_Confidence'] = page_data.get(f'v_confidence_{i}', '')
-        row_map[f'Video_{i}_Cue'] = page_data.get(f'v_cue_{i}', '')
+        row_map[f'Video_{i}_Classification'] = scalar(page_data, f'v_real_{i}')
+        row_map[f'Video_{i}_Confidence'] = scalar(page_data, f'v_confidence_{i}')
+        row_map[f'Video_{i}_Cue'] = scalar(page_data, f'v_cue_{i}')
     for i in range(1, 4):
-        row_map[f'Warning_{i}_Belief_Before'] = p8.get(f'w{i}_belief_before', '')
-        row_map[f'Warning_{i}_Trust_Before'] = p8.get(f'w{i}_trust_before', '')
-        row_map[f'Warning_{i}_Belief_After'] = p8.get(f'w{i}_belief_after', '')
-        row_map[f'Warning_{i}_Realism'] = p8.get(f'w{i}_realism', '')
-        row_map[f'Warning_{i}_Trust_After'] = p8.get(f'w{i}_trust_after', '')
-        row_map[f'Warning_{i}_Influence_Removed'] = p8.get(f'w{i}_influence_removed', '')
-        row_map[f'Warning_{i}_Could_Be_True'] = p8.get(f'w{i}_could_be_true', '')
-        row_map[f'Warning_{i}_Realism_Influence'] = p8.get(f'w{i}_realism_influence', '')
-        row_map[f'Warning_{i}_Reaction'] = p8.get(f'w{i}_reaction', '')
-        row_map[f'Warning_{i}_Reason'] = p8.get(f'w{i}_reason', '')
+        row_map[f'Warning_{i}_Belief_Before'] = scalar(p8, f'w{i}_belief_before')
+        row_map[f'Warning_{i}_Trust_Before'] = scalar(p8, f'w{i}_trust_before')
+        row_map[f'Warning_{i}_Belief_After'] = scalar(p8, f'w{i}_belief_after')
+        row_map[f'Warning_{i}_Realism'] = scalar(p8, f'w{i}_realism')
+        row_map[f'Warning_{i}_Trust_After'] = scalar(p8, f'w{i}_trust_after')
+        row_map[f'Warning_{i}_Influence_Removed'] = scalar(p8, f'w{i}_influence_removed')
+        row_map[f'Warning_{i}_Could_Be_True'] = scalar(p8, f'w{i}_could_be_true')
+        row_map[f'Warning_{i}_Realism_Influence'] = scalar(p8, f'w{i}_realism_influence')
+        row_map[f'Warning_{i}_Reaction'] = scalar(p8, f'w{i}_reaction')
+        row_map[f'Warning_{i}_Reason'] = scalar(p8, f'w{i}_reason')
  
+    snapshot = session_answer_snapshot()
+    row_map['Data_Version'] = 2
+    row_map['Progress_Status'] = 'completed'
+    row_map['Answer_Count'] = answer_count(snapshot)
+    row_map['Raw_Answers'] = snapshot
+    row_map['Reward'] = session.get('reward_key', '')
+    row_map['Last_Saved_At'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
     participant_id = get_participant_id()
  
     with psycopg.connect(DATABASE_URL) as conn:
@@ -644,7 +724,8 @@ def survey_page8():
         if choice not in {'Participate', 'Skip'}:
             error = 'choose_section_f'
         elif choice == 'Skip':
-            session['page8'] = {'section_f_choice': 'Skip'}
+            session['page8'] = {'section_f_choice': ['Skip']}
+            save_progress_snapshot('completed')
             save_survey_response()
             return redirect(url_for('results_page'))
         else:
@@ -652,9 +733,10 @@ def survey_page8():
             if missing:
                 error = 'complete_section_f'
             else:
-                form_data = request.form.to_dict()
-                form_data['section_f_choice'] = 'Participate'
+                form_data = form_snapshot(request.form)
+                form_data['section_f_choice'] = ['Participate']
                 session['page8'] = form_data
+                save_progress_snapshot('completed')
                 save_survey_response()
                 return redirect(url_for('reward_page'))
     return render_template('survey_page8.html', experiments=WARNING_EXPERIMENT, error=error)
@@ -694,18 +776,19 @@ def reward_page():
 
     prize = None
     prize_index = None
+    spin_error = None
 
     if request.method == 'POST':
-        # Every spin is a fresh random selection.
-        # There are 5 categories, so each has a 20% probability.
-        prize_index = weighted_reward_index()
-        prize = REWARD_OPTIONS[prize_index]
+        if session.get('reward_key'):
+            spin_error = 'already_spun'
+        else:
+            prize_index = weighted_reward_index()
+            prize = REWARD_OPTIONS[prize_index]
+            session['reward_key'] = prize['key']
+            save_reward(prize)
+            save_progress_snapshot('completed')
 
-        session['reward_key'] = prize['key']
-        save_reward(prize)
-
-    elif session.get('reward_key'):
-        # Refreshing the page shows the latest result.
+    if prize is None and session.get('reward_key'):
         for idx, item in enumerate(REWARD_OPTIONS):
             if item['key'] == session['reward_key']:
                 prize = item
@@ -716,7 +799,8 @@ def reward_page():
         'reward.html',
         rewards=REWARD_OPTIONS,
         prize=prize,
-        prize_index=prize_index
+        prize_index=prize_index,
+        spin_error=spin_error
     )
 
 
@@ -754,27 +838,78 @@ def admin_logout():
     
 def get_all_responses():
     responses = []
- 
     if not DATABASE_URL:
         return responses
- 
     with psycopg.connect(DATABASE_URL) as conn:
         with conn.cursor() as cur:
-            cur.execute("""
-                SELECT participant_id, submitted_at, data
-                FROM survey_responses
-                ORDER BY submitted_at DESC
-            """)
- 
-            for participant_id, submitted_at, data in cur.fetchall():
+            sql = (
+                "SELECT s.participant_id, s.submitted_at, s.data, r.prize "
+                "FROM survey_responses AS s "
+                "LEFT JOIN reward_results AS r ON r.participant_id = s.participant_id "
+                "ORDER BY s.submitted_at DESC"
+            )
+            cur.execute(sql)
+            for participant_id, submitted_at, data, prize in cur.fetchall():
                 responses.append({
                     'participant_id': participant_id,
                     'submitted_at': submitted_at,
-                    'data': data
+                    'data': data or {},
+                    'prize': prize or ''
                 })
- 
     return responses
- 
+
+
+@app.route('/admin/export.csv')
+@admin_required
+def admin_export_csv():
+    responses = get_all_responses()
+    rows = []
+    all_columns = set()
+
+    for response in responses:
+        data = response.get('data') or {}
+        row = {
+            'Participant_ID': response.get('participant_id', ''),
+            'Submitted_At': response.get('submitted_at').isoformat() if response.get('submitted_at') else '',
+            'Reward': response.get('prize', '') or data.get('Reward', ''),
+            'Progress_Status': data.get('Progress_Status', ''),
+            'Answer_Count': data.get('Answer_Count', ''),
+        }
+
+        for key, value in data.items():
+            if key == 'Raw_Answers':
+                continue
+            row[key] = json.dumps(value, ensure_ascii=False) if isinstance(value, (dict, list)) else value
+
+        raw = data.get('Raw_Answers') or {}
+        for page_name, fields in raw.items():
+            if not isinstance(fields, dict):
+                continue
+            for field, value in fields.items():
+                row[f'{page_name}.{field}'] = (
+                    ', '.join(str(x) for x in value) if isinstance(value, list) else value
+                )
+
+        rows.append(row)
+        all_columns.update(row.keys())
+
+    preferred = ['Participant_ID', 'Submitted_At', 'Name', 'Age_Group', 'Gender',
+                 'Education_Level', 'Progress_Status', 'Answer_Count', 'Reward']
+    columns = [c for c in preferred if c in all_columns]
+    columns += sorted(all_columns - set(columns))
+
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=columns, extrasaction='ignore')
+    writer.writeheader()
+    writer.writerows(rows)
+
+    return Response(
+        output.getvalue(),
+        mimetype='text/csv; charset=utf-8',
+        headers={'Content-Disposition': 'attachment; filename=survey_all_answers.csv'}
+    )
+
+
 @app.route('/admin')
 @admin_required
 def admin():
@@ -923,6 +1058,10 @@ def admin():
             'trust_change': round(t_after - t_before, 2) if t_before is not None and t_after is not None else '—',
             'videos': participant_video_details,
             'warnings': warning_details,
+            'raw_answers': data.get('Raw_Answers', {}),
+            'answer_count': data.get('Answer_Count', 0),
+            'progress_status': data.get('Progress_Status', 'completed'),
+            'reward': response.get('prize', '') or data.get('Reward', ''),
         })
  
     total_submissions = len(participant_summaries)
@@ -1010,6 +1149,7 @@ def init_database():
                     submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_survey_responses_submitted_at ON survey_responses (submitted_at)")
         conn.commit()
  
  
