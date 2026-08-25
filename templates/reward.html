@@ -27,13 +27,13 @@
   .wheel-label .emoji { display:block; font-size:1.45rem; margin-bottom:4px; }
   .wheel-label .small-label { display:block; font-size:.86rem; }
   .pointer {
-    position:absolute; z-index:20; left:50%; top:-12px;
+    position:absolute; z-index:20; left:50%; bottom:-12px;
     transform:translateX(-50%); width:0; height:0;
     border-left:19px solid transparent; border-right:19px solid transparent;
-    border-top:42px solid #212529; filter:drop-shadow(0 4px 3px rgba(0,0,0,.28));
+    border-bottom:42px solid #212529; filter:drop-shadow(0 -4px 3px rgba(0,0,0,.28));
   }
   .pointer::after {
-    content:""; position:absolute; left:-7px; top:-39px; width:14px; height:14px;
+    content:""; position:absolute; left:-7px; bottom:-39px; width:14px; height:14px;
     border-radius:50%; background:#fff; border:3px solid #212529;
   }
   .center-cap {
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const cx = canvas.width / 2;
   const cy = canvas.height / 2;
   const radius = canvas.width * 0.47;
-  const startAngle = -Math.PI / 2 - segmentRad / 2;
+  const startAngle = Math.PI / 2 - segmentRad / 2;
  
   function shortLabel(item) {
     if (item.key === '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။') return '😊 ဒီတစ်ခါ ငွေသားဆု မရသေးပါ။ စစ်တမ်းမှာ ပါဝင်ဖြေဆိုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။';
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     labelsHost.innerHTML = '';
     const labelRadiusPercent = 31;
     rewards.forEach((item, i) => {
-      const angleDeg = -90 + i * segmentDeg;
+      const angleDeg = 90 + i * segmentDeg;
       const angleRad = angleDeg * Math.PI / 180;
       const x = 50 + Math.cos(angleRad) * labelRadiusPercent;
       const y = 50 + Math.sin(angleRad) * labelRadiusPercent;
@@ -212,4 +212,3 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 {% endblock %}
- 
