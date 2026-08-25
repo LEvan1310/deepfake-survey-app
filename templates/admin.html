@@ -8,7 +8,6 @@
     </div>
     <div>
       <a href="/" class="btn btn-outline-primary me-2">← Return to Home</a>
-      <a href="/admin/export.csv" class="btn btn-success me-2">⬇ Export All Answers CSV</a>
       <a href="/admin-logout" class="btn btn-outline-danger">Logout</a>
     </div>
   </div>
@@ -73,27 +72,85 @@
   <div class="card shadow-sm border-0 p-4 mb-4">
     <div class="d-flex flex-wrap justify-content-between gap-3 align-items-start mb-3">
       <div>
-        <h4 class="fw-bold text-primary mb-1">Section F — AI Label & Continued-Belief Analysis</h4>
-        <p class="text-muted mb-0">Measures whether belief/trust remains after participants are told the media is AI-generated.</p>
+        <h4 class="fw-bold text-primary mb-1">Section F — What Happens After the AI Label?</h4>
+        <p class="text-muted mb-0">Respondent reactions after being told the media was AI-generated. These are descriptive research indicators, not causal proof.</p>
       </div>
       <span class="badge text-bg-primary fs-6">n = {{ section_f_count }}</span>
     </div>
 
-    <div class="row g-3 mb-4 text-center">
-      <div class="col-md-3"><div class="border rounded p-3 h-100"><div class="small text-muted">Belief before label</div><div class="h2 mb-0">{{ avg_before_belief }}/5</div></div></div>
-      <div class="col-md-3"><div class="border rounded p-3 h-100"><div class="small text-muted">Belief after label</div><div class="h2 mb-0">{{ avg_after_belief }}/5</div><small class="{% if belief_change < 0 %}text-success{% elif belief_change > 0 %}text-danger{% else %}text-muted{% endif %}">Change: {{ belief_change }}</small></div></div>
-      <div class="col-md-3"><div class="border rounded p-3 h-100"><div class="small text-muted">Trust before label</div><div class="h2 mb-0">{{ avg_before_trust }}/5</div></div></div>
-      <div class="col-md-3"><div class="border rounded p-3 h-100"><div class="small text-muted">Trust after label</div><div class="h2 mb-0">{{ avg_after_trust }}/5</div><small class="{% if trust_change < 0 %}text-success{% elif trust_change > 0 %}text-danger{% else %}text-muted{% endif %}">Change: {{ trust_change }}</small></div></div>
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="border rounded-4 p-3 h-100 bg-light">
+          <div class="small text-muted">Continued-belief rate</div>
+          <div class="display-6 fw-bold">{{ continued_belief_rate }}%</div>
+          <div class="small text-muted">Post-label believability ≥ 3/5</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="border rounded-4 p-3 h-100 bg-light">
+          <div class="small text-muted">Average post-label believability</div>
+          <div class="display-6 fw-bold">{{ avg_after_belief }}/5</div>
+          <div class="small text-muted">Across respondents completing the warning experiment</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="border rounded-4 p-3 h-100 bg-light">
+          <div class="small text-muted">Warning experiment participation</div>
+          <div class="display-6 fw-bold">{{ section_f_rate }}%</div>
+          <div class="small text-muted">{{ section_f_count }} respondents completed Section F</div>
+        </div>
+      </div>
     </div>
 
-    <div class="alert alert-warning mb-4">
-      <strong>Continued-belief rate after an AI label:</strong> <span class="fs-5 fw-bold">{{ continued_belief_rate }}%</span>
-      <div class="small mt-1">Defined descriptively as post-label believability ≥ 3/5. This indicates residual believability, not proof that a participant accepted the claim as fact.</div>
+    <div class="row g-4 mb-4">
+      <div class="col-xl-4">
+        <div class="border rounded-4 p-3 h-100">
+          <h6 class="fw-bold mb-1">Reaction to the AI label</h6>
+          <p class="small text-muted">What respondents said the label did to their judgement.</p>
+          <canvas id="reactionChart" style="max-height:300px"></canvas>
+        </div>
+      </div>
+      <div class="col-xl-4">
+        <div class="border rounded-4 p-3 h-100">
+          <h6 class="fw-bold mb-1">Did the warning remove influence?</h6>
+          <p class="small text-muted">Distribution across all labelled conditions.</p>
+          <canvas id="influenceRemovedChart" style="max-height:300px"></canvas>
+        </div>
+      </div>
+      <div class="col-xl-4">
+        <div class="border rounded-4 p-3 h-100">
+          <h6 class="fw-bold mb-1">Could part of the claim still be true?</h6>
+          <p class="small text-muted">Post-label likelihood judgement.</p>
+          <canvas id="couldBeTrueChart" style="max-height:300px"></canvas>
+        </div>
+      </div>
     </div>
 
     <div class="row g-4">
-      <div class="col-xl-5"><canvas id="beforeAfterChart" style="max-height:320px"></canvas></div>
-      <div class="col-xl-7"><canvas id="conditionChart" style="max-height:320px"></canvas></div>
+      <div class="col-xl-7">
+        <div class="border rounded-4 p-3 h-100">
+          <h6 class="fw-bold mb-1">Labelled Condition Comparison</h6>
+          <p class="small text-muted">Average believability, realism and trust for Conditions 1–3.</p>
+          <canvas id="conditionChart" style="max-height:330px"></canvas>
+        </div>
+      </div>
+      <div class="col-xl-5">
+        <div class="border rounded-4 p-3 h-100">
+          <h6 class="fw-bold mb-3">How to interpret Section F</h6>
+          <div class="d-flex gap-3 mb-3">
+            <div class="fs-3">🏷️</div>
+            <div><strong>AI label</strong><div class="small text-muted">Respondents knew the media was presented as AI-generated.</div></div>
+          </div>
+          <div class="d-flex gap-3 mb-3">
+            <div class="fs-3">🧠</div>
+            <div><strong>Continued belief</strong><div class="small text-muted">Residual believability at or above 3/5 after the label.</div></div>
+          </div>
+          <div class="d-flex gap-3">
+            <div class="fs-3">📊</div>
+            <div><strong>Response distribution</strong><div class="small text-muted">Counts show how respondents actually reacted, rather than relying only on averages.</div></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -111,7 +168,7 @@
       <table class="table table-hover align-middle" id="participantTable">
         <thead class="table-dark">
           <tr>
-            <th>Participant ID</th><th>Name</th><th>Prior deepfake</th><th>Quiz</th><th>Avg confidence</th><th>Section F</th><th>Status</th><th>Answers</th><th>Reward</th><th>Belief before → after</th><th>Trust before → after</th><th>Details</th>
+            <th>Participant ID</th><th>Name</th><th>Prior deepfake</th><th>Quiz</th><th>Avg confidence</th><th>Section F</th><th>Belief before → after</th><th>Trust before → after</th><th>Details</th>
           </tr>
         </thead>
         <tbody>
@@ -123,15 +180,12 @@
             <td><strong>{{ p.score_correct }}/{{ p.score_total }}</strong> <span class="text-muted">({{ p.score_percent }}%)</span></td>
             <td>{{ p.avg_confidence }}/5</td>
             <td>{% if p.section_f == 'Participate' %}<span class="badge text-bg-success">Completed</span>{% else %}<span class="badge text-bg-secondary">Skipped</span>{% endif %}</td>
-            <td>{% if p.progress_status == 'completed' %}<span class="badge text-bg-success">Complete</span>{% else %}<span class="badge text-bg-warning">In progress</span>{% endif %}</td>
-            <td>{{ p.answer_count }}</td>
-            <td>{{ p.reward or '—' }}</td>
             <td>{{ p.belief_before }} → {{ p.belief_after }} {% if p.belief_change != '—' %}<small class="text-muted">({{ p.belief_change }})</small>{% endif %}</td>
             <td>{{ p.trust_before }} → {{ p.trust_after }} {% if p.trust_change != '—' %}<small class="text-muted">({{ p.trust_change }})</small>{% endif %}</td>
             <td><button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#detail-{{ loop.index }}">View</button></td>
           </tr>
           <tr class="collapse" id="detail-{{ loop.index }}">
-            <td colspan="12" class="bg-body-tertiary">
+            <td colspan="9" class="bg-body-tertiary">
               <div class="p-3">
                 <div class="row g-4">
                   <div class="col-xl-7">
@@ -156,32 +210,10 @@
                   </div>
                 </div>
               </div>
-
-              <hr class="my-4">
-              <h6 class="fw-bold">Complete Raw Answers</h6>
-              <p class="text-muted small">All submitted fields captured from the survey pages. Repeated checkbox values are preserved.</p>
-              {% for page_name, fields in p.raw_answers.items() %}
-                <details class="mb-2">
-                  <summary class="fw-semibold">{{ page_name }}</summary>
-                  <div class="table-responsive mt-2">
-                    <table class="table table-sm table-bordered">
-                      <tbody>
-                      {% for field, value in fields.items() %}
-                        <tr>
-                          <th style="width:30%">{{ field }}</th>
-                          <td>{{ value }}</td>
-                        </tr>
-                      {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
-                </details>
-              {% endfor %}
-            </div>
             </td>
           </tr>
           {% else %}
-          <tr><td colspan="12" class="text-center text-muted py-4">No survey responses recorded yet.</td></tr>
+          <tr><td colspan="9" class="text-center text-muted py-4">No survey responses recorded yet.</td></tr>
           {% endfor %}
         </tbody>
       </table>
@@ -220,13 +252,109 @@ new Chart(document.getElementById('cueChart'), {
   type:'bar', data:{labels:cueLabels,datasets:[{label:'Selections',data:cueValues}]},
   options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}
 });
-new Chart(document.getElementById('beforeAfterChart'), {
-  type:'bar', data:{labels:['Belief','Trust'],datasets:[{label:'Before AI label',data:[{{ avg_before_belief }},{{ avg_before_trust }}]},{label:'After AI label',data:[{{ avg_after_belief }},{{ avg_after_trust }}]}]},
-  options:{responsive:true,scales:{y:{beginAtZero:true,max:5}}}
+/* ---------- Section F: Google-Forms-style response distributions ---------- */
+const reactionLabels = [
+  'Knew it was fake / did not believe',
+  'Some parts still seemed believable',
+  'Realism caused uncertainty',
+  'Still affected my opinion',
+  'Would verify before deciding'
+];
+
+const influenceLabels = [
+  'Yes, completely',
+  'Mostly',
+  'Partly',
+  'Very little',
+  'Still influenced'
+];
+
+const couldBeTrueLabels = [
+  'Very unlikely',
+  'Unlikely',
+  'Neither',
+  'Likely',
+  'Very likely'
+];
+
+const reactionCounts = [0,0,0,0,0];
+const influenceCounts = [0,0,0,0,0];
+const couldBeTrueCounts = [0,0,0,0,0];
+
+{% for p in participant_summaries %}
+  {% if p.section_f == 'Participate' %}
+    {% for w in p.warnings %}
+      {% if w.reaction and w.reaction != '—' %}
+        {% if 'did not believe' in w.reaction %}
+          reactionCounts[0]++;
+        {% elif 'some parts' in w.reaction %}
+          reactionCounts[1]++;
+        {% elif 'realism made me uncertain' in w.reaction %}
+          reactionCounts[2]++;
+        {% elif 'still affected my opinion' in w.reaction %}
+          reactionCounts[3]++;
+        {% elif 'verify the claims' in w.reaction %}
+          reactionCounts[4]++;
+        {% endif %}
+      {% endif %}
+
+      {% if w.influence_removed and w.influence_removed != '—' %}
+        {% if w.influence_removed == 'Yes, completely' %}
+          influenceCounts[0]++;
+        {% elif w.influence_removed == 'Mostly' %}
+          influenceCounts[1]++;
+        {% elif w.influence_removed == 'Partly' %}
+          influenceCounts[2]++;
+        {% elif w.influence_removed == 'Very little' %}
+          influenceCounts[3]++;
+        {% elif 'still influenced' in w.influence_removed %}
+          influenceCounts[4]++;
+        {% endif %}
+      {% endif %}
+
+      {% if w.could_be_true and w.could_be_true != '—' %}
+        {% if 'Very unlikely' in w.could_be_true %}
+          couldBeTrueCounts[0]++;
+        {% elif w.could_be_true == 'Unlikely' %}
+          couldBeTrueCounts[1]++;
+        {% elif w.could_be_true == 'Neither' %}
+          couldBeTrueCounts[2]++;
+        {% elif w.could_be_true == 'Likely' %}
+          couldBeTrueCounts[3]++;
+        {% elif 'Very likely' in w.could_be_true %}
+          couldBeTrueCounts[4]++;
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endfor %}
+
+new Chart(document.getElementById('reactionChart'), {
+  type:'bar',
+  data:{labels:reactionLabels,datasets:[{label:'Responses',data:reactionCounts}]},
+  options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{precision:0}}}}
 });
+
+new Chart(document.getElementById('influenceRemovedChart'), {
+  type:'doughnut',
+  data:{labels:influenceLabels,datasets:[{data:influenceCounts}]},
+  options:{responsive:true,plugins:{legend:{position:'bottom'}}}
+});
+
+new Chart(document.getElementById('couldBeTrueChart'), {
+  type:'doughnut',
+  data:{labels:couldBeTrueLabels,datasets:[{data:couldBeTrueCounts}]},
+  options:{responsive:true,plugins:{legend:{position:'bottom'}}}
+});
+
 new Chart(document.getElementById('conditionChart'), {
-  type:'bar', data:{labels:conditionLabels,datasets:[{label:'Believability',data:conditionBelief},{label:'Realism',data:conditionRealism},{label:'Trust',data:conditionTrust}]},
-  options:{responsive:true,scales:{y:{beginAtZero:true,max:5}}}
+  type:'bar',
+  data:{labels:conditionLabels,datasets:[
+    {label:'Believability',data:conditionBelief},
+    {label:'Realism',data:conditionRealism},
+    {label:'Trust',data:conditionTrust}
+  ]},
+  options:{responsive:true,scales:{y:{beginAtZero:true,max:5}},plugins:{legend:{position:'bottom'}}}
 });
 
 const search=document.getElementById('participantSearch');
