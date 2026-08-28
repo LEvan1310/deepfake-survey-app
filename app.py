@@ -661,7 +661,12 @@ def survey_page8():
                 session['section_f_completed'] = True
                 session.modified = True
 
-                save_survey_response()
+                # Always send a valid Section F submission to the Lucky Spin.
+                # A database save failure must not trap the participant on Section F.
+                try:
+                    save_survey_response()
+                except Exception:
+                    app.logger.exception('Could not save Section F response before reward page')
                 return redirect(url_for('reward_page'))
     return render_template('survey_page8.html', experiments=WARNING_EXPERIMENT, error=error)
  
@@ -697,13 +702,12 @@ def reward_page():
     # Allow the wheel only after Section F is completed.
     # Some sessions may have the completion data saved but not the old flag,
     # so recover the status from page8 instead of skipping the wheel.
-    if not session.get('section_f_completed'):
-        page8 = session.get('page8', {})
-        if page8.get('section_f_choice') == 'Participate':
-            session['section_f_completed'] = True
-            session.modified = True
-        else:
-            return redirect(url_for('results_page'))
+    page8 = session.get('page8', {})
+    if page8.get('section_f_choice') == 'Participate':
+        session['section_f_completed'] = True
+        session.modified = True
+    elif not session.get('section_f_completed'):
+        return redirect(url_for('survey_page8'))
  
     prize = None
     prize_index = None
@@ -752,8 +756,13 @@ def admin_login():
     error = None
     if request.method == 'POST':
         password = request.form.get('password', '')
-        if password == ADMIN_PASSWORD:
+        expected_password = os.environ.get('ADMIN_PASSWORD') or ADMIN_PASSWORD
+        if password == expected_password:
             session['admin_logged_in'] = True
+            session.modified = True
+            next_url = request.args.get('next', '')
+            if next_url and next_url.startswith('/') and not next_url.startswith('//'):
+                return redirect(next_url)
             return redirect(url_for('admin'))
         error = 'invalid'
     return render_template('admin_login.html', error=error)
