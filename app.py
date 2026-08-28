@@ -653,6 +653,14 @@ def survey_page8():
                 form_data = form_snapshot(request.form)
                 form_data['section_f_choice'] = 'Participate'
                 session['page8'] = form_data
+
+                # Mark Section F as completed before saving and redirecting.
+                # reward_page() checks this flag before allowing the wheel page.
+                # Without this, the session can reach /reward without permission
+                # and redirect the user away to results.
+                session['section_f_completed'] = True
+                session.modified = True
+
                 save_survey_response()
                 return redirect(url_for('reward_page'))
     return render_template('survey_page8.html', experiments=WARNING_EXPERIMENT, error=error)
