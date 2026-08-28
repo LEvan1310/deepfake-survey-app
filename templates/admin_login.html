@@ -3,6 +3,6 @@
   <h3 class="text-primary fw-bold text-center" data-translate="admin_login_title">Researcher / Admin Login</h3>
   <p class="text-muted small text-center mb-4" data-translate="admin_login_desc">This area is restricted. Enter the researcher password to access survey responses and analytics.</p>
   {% if error %}<div class="alert alert-danger" data-translate="invalid_password">Incorrect password. Access denied.</div>{% endif %}
-  <form method="POST"><div class="mb-3"><label class="fw-bold" data-translate="password_label">Password:</label><input type="password" class="form-control" name="password" required autofocus autocomplete="current-password"></div><button class="btn btn-primary w-100" data-translate="login_btn">Login to Dashboard</button></form>
+  <form method="POST" action="{{ url_for('admin_login') }}"><div class="mb-3"><label class="fw-bold" data-translate="password_label">Password:</label><input type="password" class="form-control" name="password" required autofocus autocomplete="current-password"></div><button type="submit" class="btn btn-primary w-100" data-translate="login_btn">Login to Dashboard</button></form>
   <div class="text-center mt-3"><a href="/" class="small text-decoration-none" data-translate="return_home">← Return to Home</a></div>
 </div>{% endblock %}
