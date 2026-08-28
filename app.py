@@ -694,8 +694,16 @@ def save_reward(prize):
  
 @app.route('/reward', methods=['GET', 'POST'])
 def reward_page():
+    # Allow the wheel only after Section F is completed.
+    # Some sessions may have the completion data saved but not the old flag,
+    # so recover the status from page8 instead of skipping the wheel.
     if not session.get('section_f_completed'):
-        return redirect(url_for('results_page'))
+        page8 = session.get('page8', {})
+        if page8.get('section_f_choice') == 'Participate':
+            session['section_f_completed'] = True
+            session.modified = True
+        else:
+            return redirect(url_for('results_page'))
  
     prize = None
     prize_index = None
