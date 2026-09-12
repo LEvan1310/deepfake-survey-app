@@ -707,7 +707,13 @@ def reward_page():
         session['section_f_completed'] = True
         session.modified = True
     elif not session.get('section_f_completed'):
-        return redirect(url_for('survey_page8'))
+        # Recover completed Section F even if the completion flag was lost
+        # (for example after a browser/session cookie issue).
+        if page8.get('section_f_choice') == 'Participate':
+            session['section_f_completed'] = True
+            session.modified = True
+        else:
+            return redirect(url_for('survey_page8'))
  
     prize = None
     prize_index = None
