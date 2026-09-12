@@ -699,22 +699,39 @@ def save_reward(prize):
  
 @app.route('/reward', methods=['GET', 'POST'])
 def reward_page():
-    # Allow the wheel only after Section F is completed.
-    # Some sessions may have the completion data saved but not the old flag,
-    # so recover the status from page8 instead of skipping the wheel.
+    # Permanent Section F completion check
     page8 = session.get('page8', {})
+
     if page8.get('section_f_choice') == 'Participate':
         session['section_f_completed'] = True
         session.modified = True
     elif not session.get('section_f_completed'):
-        # Recover completed Section F even if the completion flag was lost
-        # (for example after a browser/session cookie issue).
-        if page8.get('section_f_choice') == 'Participate':
+        completed = False
+
+        try:
+            participant_id = session.get('participant_id')
+            if DATABASE_URL and participant_id:
+                with psycopg.connect(DATABASE_URL) as conn:
+                    with conn.cursor() as cur:
+                        cur.execute("""
+                            SELECT data->'page8'->>'section_f_choice'
+                            FROM survey_responses
+                            WHERE participant_id = %s
+                            ORDER BY id DESC
+                            LIMIT 1
+                        """, (participant_id,))
+                        result = cur.fetchone()
+                        if result and result[0] == 'Participate':
+                            completed = True
+        except Exception:
+            app.logger.exception('Section F recovery failed')
+
+        if completed:
             session['section_f_completed'] = True
             session.modified = True
         else:
             return redirect(url_for('survey_page8'))
- 
+
     prize = None
     prize_index = None
     if session.get('reward_key'):
@@ -728,20 +745,14 @@ def reward_page():
         prize = REWARD_OPTIONS[prize_index]
         session['reward_key'] = prize['key']
         save_reward(prize)
- 
+
     try:
-        return render_template(
-            'reward.html',
-            rewards=REWARD_OPTIONS,
-            prize=prize,
-            prize_index=prize_index
-        )
+        return render_template('reward.html', rewards=REWARD_OPTIONS, prize=prize, prize_index=prize_index)
     except Exception:
         app.logger.exception("Reward page rendering failed")
-        # Do not show a 500 page after a completed survey.
         return redirect(url_for('results_page'))
- 
- 
+
+
 @app.route('/results')
 def results_page():
     if 'quiz_details' not in session:
