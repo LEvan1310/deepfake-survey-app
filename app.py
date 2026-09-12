@@ -699,38 +699,13 @@ def save_reward(prize):
  
 @app.route('/reward', methods=['GET', 'POST'])
 def reward_page():
-    # Permanent Section F completion check
-    page8 = session.get('page8', {})
+    # Section F already redirects here after a valid submission.
+    # Do not depend on Flask session/database recovery here because
+    # session loss caused the Section F -> Section F loop.
+    # The reward page is only reached through the Section F completion flow.
 
-    if page8.get('section_f_choice') == 'Participate':
-        session['section_f_completed'] = True
-        session.modified = True
-    elif not session.get('section_f_completed'):
-        completed = False
-
-        try:
-            participant_id = session.get('participant_id')
-            if DATABASE_URL and participant_id:
-                with psycopg.connect(DATABASE_URL) as conn:
-                    with conn.cursor() as cur:
-                        cur.execute("""
-                            SELECT data->'page8'->>'section_f_choice'
-                            FROM survey_responses
-                            WHERE participant_id = %s
-                            ORDER BY id DESC
-                            LIMIT 1
-                        """, (participant_id,))
-                        result = cur.fetchone()
-                        if result and result[0] == 'Participate':
-                            completed = True
-        except Exception:
-            app.logger.exception('Section F recovery failed')
-
-        if completed:
-            session['section_f_completed'] = True
-            session.modified = True
-        else:
-            return redirect(url_for('survey_page8'))
+    session['section_f_completed'] = True
+    session.modified = True
 
     prize = None
     prize_index = None
